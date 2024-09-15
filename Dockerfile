@@ -1,9 +1,11 @@
-FROM node:22-alpine
+FROM node:22.8-bookworm
 
 WORKDIR /app
 
-COPY package*.json .
+COPY package.json .
 
-RUN npm ci && npm cache clean --force
+RUN yarn install
 
-COPY . .
+EXPOSE 3000
+
+CMD ["yarn", "run", "dev"]

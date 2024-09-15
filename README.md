@@ -13,7 +13,6 @@ Proyecto de ingenieria de Software 1 2024 - FAMAF UNC
     |   ├── api
     |   └── state
     └── main.tsx
-
 ```
 
 - **public**: Contiene los archivos estáticos de la aplicación (imagenes, fuentes, etc).
@@ -27,38 +26,42 @@ Proyecto de ingenieria de Software 1 2024 - FAMAF UNC
 
 ## Comenzando 🚀
 
-### Pre-requisitos 📋
+### Requisitos 📋
 
 Para poder correr el proyecto necesitas tener instalado:
 - [Docker](https://www.docker.com/)
 
 Opcionalmente, si no queres usar Docker, necesitas tener instalado:
 - [Node.js](https://nodejs.org/es/)
-- [npm](https://www.npmjs.com/)
 
 
+### Instalación
 
-### Instalación 🔧 (Linux + Docker)
+#### Linux
 
 1. Clonar el repositorio
 ```bash
 git clone git@github.com:NoSeRecursaMas/switcher-frontend.git
 ```
 
-1. Ingresar al repositorio
+2. Ingresar al repositorio
 ```bash
 cd switcher-frontend
 ```
 
-1. Ejecutar make
+3. Ejecutar el script de instalación
 ```bash
-make
+make build-docker
 ```
 
-1. Ingresar a [http://localhost:3000](http://localhost:3000)
-2. Listo! Ya podes empezar a usar la aplicación
+4. Iniciar el contenedor
+```bash
+make run-docker
+```
 
-### Instalación 🔧 (Windows + Docker)
+5. Ingresar a la aplicación en [http://localhost:3000](http://localhost:3000)
+
+#### Windows
 
 1. Clonar el repositorio 
 ```bash
@@ -70,15 +73,19 @@ git clone git@github.com:NoSeRecursaMas/switcher-frontend.git
 cd switcher-frontend
 ```
 
-3. Ejecutar el docker-compose
+3. Ejecutar el script de instalación
 ```bash
-docker-compose up
+docker build -t frontend .
 ```
 
-4. Ingresar a [http://localhost:3000](http://localhost:3000)
-5. Listo! Ya podes empezar a usar la aplicación
+4. Iniciar el contenedor
+```bash
+docker run -p 8000:80 -v .:/app frontend
+```
 
-### Instalación 🔧 (Sin Docker)
+5. Ingresar a la aplicación en [http://localhost:3000](http://localhost:3000)
+
+#### Sin Docker
 
 1. Clonar el repositorio
 ```bash
@@ -100,15 +107,11 @@ npm install
 npm run dev
 ```
 
-5. Ingresar a [http://localhost:3000](http://localhost:3000)
-6. Listo! Ya podes empezar a usar la aplicación
+5. Ingresar a la aplicación en [http://localhost:3000](http://localhost:3000)
 
-### Ejecución de pruebas unitarias ⚙️ (Linux)
+## Otras tareas
+
+### Ejecución de pruebas unitarias
 ```bash
 make test
-```
-
-### Ejecución de pruebas unitarias ⚙️ (Windows)
-```bash
-npm run test
 ```
