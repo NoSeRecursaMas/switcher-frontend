@@ -1,5 +1,5 @@
 run-docker:
-	docker run -p 3000:3000 -v .:/app frontend
+	docker run -p 3000:3000 -v ./src:/app/src frontend
 
 build-docker:
 	docker build -t frontend .

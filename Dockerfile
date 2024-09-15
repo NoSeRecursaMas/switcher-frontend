@@ -2,12 +2,10 @@ FROM node:22.8-bookworm
 
 WORKDIR /app
 
-ENV PATH=/app/node_modules/.bin:$PATH
+COPY . .
 
-COPY package.json .
-
-RUN yarn install
+RUN npm install
 
 EXPOSE 3000
 
-CMD ["yarn", "run", "dev"]
+CMD ["npm", "run", "dev"]
