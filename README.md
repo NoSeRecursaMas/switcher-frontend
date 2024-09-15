@@ -80,7 +80,7 @@ docker build -t frontend .
 
 4. Iniciar el contenedor
 ```bash
-docker run -p 8000:80 -v .:/app frontend
+docker run -p 3000:3000 -v ./src:/app/src frontend
 ```
 
 5. Ingresar a la aplicación en [http://localhost:3000](http://localhost:3000)
