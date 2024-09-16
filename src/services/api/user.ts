@@ -31,7 +31,7 @@ export const setUserEndpoint = async (name: string) => {
           username: response.data.username,
         })
       );
-      sendToast("Nombre seleccionado correctamente", null, "success");
+      sendToast("Nombre seleccionado exitosamente", null, "success");
     } else {
       sendToast(
         "Error al seleccionar nombre",

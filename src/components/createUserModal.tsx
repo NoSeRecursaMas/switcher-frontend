@@ -19,13 +19,15 @@ import { userSchema } from "../services/validations/userSchema";
 import { setUserEndpoint } from "../services/api/user";
 
 export default function CreateUserModal() {
-  const loaded = useSelector((state: RootState) => state.user.loaded);
+  const userLoaded = useSelector((state: RootState) => state.user.loaded);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof userSchema>>({
+  } 
+  = 
+  useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
   });
 
@@ -34,7 +36,7 @@ export default function CreateUserModal() {
   };
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={!loaded} onClose={() => null}>
+    <Modal closeOnOverlayClick={false} isOpen={!userLoaded} onClose={() => null}>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>

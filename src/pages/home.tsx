@@ -5,7 +5,7 @@ import CreateUserModal from "../components/createUserModal";
 
 export default function Home() {
   const userData = useSelector((state : RootState) => state.user.data);
-  const loaded = useSelector((state : RootState) => state.user.loaded);
+  const userLoaded = useSelector((state : RootState) => state.user.loaded);
 
   return (
     <>
@@ -17,7 +17,7 @@ export default function Home() {
             <Text fontSize="xl" as="i">
               Bienvenido,
             </Text>
-            <Skeleton isLoaded={loaded}>
+            <Skeleton isLoaded={userLoaded}>
               <Text fontSize="xl" as="b">{userData ? userData.username : "invitado sin nombre"}</Text>
             </Skeleton>
           </HStack>
