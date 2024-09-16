@@ -21,9 +21,9 @@ interface responseSuccess {
 
 export const setUserEndpoint = async (name: string) => {
   try {
-    const response: responseSuccess = await axiosClient.post(
-      "players?username=" + name
-    );
+    const response: responseSuccess = await axiosClient.post("players", {
+      username: name,
+    });
     if (response.status === 201) {
       store.dispatch(
         setUser({
