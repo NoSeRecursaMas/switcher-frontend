@@ -5,6 +5,9 @@ import { setUser } from "../../services/state/userSlice";
 import { store } from "../../services/state/store";
 import { responseError } from "../types";
 import { setUserResponseSuccess } from "./types";
+import userMock from "./mock";
+
+userMock();
 
 export const setUserEndpoint = async (name: string) => {
   try {
