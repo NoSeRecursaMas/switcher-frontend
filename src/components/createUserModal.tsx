@@ -16,7 +16,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../services/validations/userSchema";
-import { setUserEndpoint } from "../services/api/user";
+import { setUserEndpoint } from "../api/user/endpoints";
 
 export default function CreateUserModal() {
   const userLoaded = useSelector((state: RootState) => state.user.loaded);

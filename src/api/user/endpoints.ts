@@ -1,27 +1,14 @@
 import { isAxiosError } from "axios";
-import axiosClient from "./httpClient";
-import { sendToast } from "../utils";
-import { setUser } from "../state/userSlice";
-import { store } from "../state/store";
-
-interface responseError {
-  status: number;
-  data: {
-    detail: string;
-  };
-}
-
-interface responseSuccess {
-  status: number;
-  data: {
-    playerID: number;
-    username: string;
-  };
-}
+import axiosClient from "../httpClient";
+import { sendToast } from "../../services/utils";
+import { setUser } from "../../services/state/userSlice";
+import { store } from "../../services/state/store";
+import { responseError } from "../types";
+import { setUserResponseSuccess } from "./types";
 
 export const setUserEndpoint = async (name: string) => {
   try {
-    const response: responseSuccess = await axiosClient.post("players", {
+    const response: setUserResponseSuccess = await axiosClient.post("players", {
       username: name,
     });
     if (response.status === 201) {
