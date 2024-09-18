@@ -10,16 +10,16 @@ import {
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
-import { RootState } from "../services/state/store";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema } from "../services/validations/userSchema";
-import { setUserEndpoint } from "../api/user/userEndpoint";
+import { userSchema } from "../../services/validation/user-schema";
+import { createUser } from "../../api/user/user-endpoints";
+import { useUser } from "../../context/user-context";
+import { sendToast } from "../../services/utils";
 
 export default function CreateUserModal() {
-  const userLoaded = useSelector((state: RootState) => state.user.loaded);
+  const { isUserLoaded, setUser } = useUser();
 
   const {
     register,
@@ -32,11 +32,18 @@ export default function CreateUserModal() {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
-    await setUserEndpoint(data.name);
+    const response = await createUser(data.name);
+    if (response.error) {
+      sendToast("Error al seleccionar nombre", response.detail, "error");
+    }
+    if (response.id && response.username) {
+      setUser({ id: response.id, username: response.username });
+      sendToast("¡Nombre seleccionado con éxito!", null, "success");
+    }
   };
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={!userLoaded} onClose={() => null}>
+    <Modal closeOnOverlayClick={false} isOpen={!isUserLoaded} onClose={() => null}>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>

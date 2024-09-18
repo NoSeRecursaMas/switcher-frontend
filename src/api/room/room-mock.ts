@@ -1,9 +1,9 @@
-import mockAdapter from "../mockAdapter";
-import { roomRequest } from "./roomTypes";
+import mockAdapter from "../mock-adapter";
+import { roomRequest } from "./room-types";
 
 const roomMock = (isTest = false) => {
     if (import.meta.env.VITE_MOCK === "true" || isTest) {
-        mockAdapter.onPost("/lobbys").reply((config) => {
+        mockAdapter.onPost("/rooms").reply((config) => {
             JSON.parse(config.data as string) as roomRequest;
 
             const mockResponse = {

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Skeleton, Box, Text, VStack, CardBody, HStack, Heading, Card, Center, Button } from "@chakra-ui/react";
-import { roomData } from '../api/room/roomTypes';
+import { roomData } from '../api/room/room-types';
 
 // Las líneas comentadas se usarán cuando se puedan recibir datos de la sala
 

@@ -18,19 +18,18 @@ import {
     FormErrorMessage,
     useDisclosure
 } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
-import { RootState } from "../services/state/store";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { roomSchema } from "../services/validations/roomSchema";
-import { setRoomEndpoint } from "../api/room/roomEndpoint";
-import { sendToast } from "../services/utils";
+import { roomSchema } from "../../services/validation/room-schema";
+import { setRoomEndpoint } from "../../api/room/room-endpoints";
+import { sendToast } from "../../services/utils";
+import { useUser } from "../../context/user-context";
 
 export default function CreateRoomModal() {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const user = useSelector((state: RootState) => state.user.data);
+    const { user, isUserLoaded } = useUser();
 
     const {
         register,
@@ -55,7 +54,7 @@ export default function CreateRoomModal() {
 
     return (
         <>
-            <Button onClick={onOpen} colorScheme="teal" size="lg" mt={4}> Crear partida </Button>
+            <Button onClick={onOpen} colorScheme="teal" size="lg" mt={4} isLoading={!isUserLoaded}> Crear partida </Button>
             <Modal closeOnOverlayClick={true} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
