@@ -33,6 +33,11 @@ Proyecto de ingenieria de Software 1 2024 - FAMAF UNC
       - **AppRoutes.tsx**: Contiene las rutas de la aplicación.
       - **main.tsx**: Archivo principal de la aplicación.
 
+### Nombres de archivos
+
+- Los archivos que exportan componentes usan camelCase en su nombre
+- Los archivos que exportan funciones usan kebab-case en su nombre
+
 ## Comenzando 🚀
 
 ### Requisitos 📋
