@@ -13,7 +13,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema } from "../../services/validations/userSchema";
+import { userSchema } from "../../services/validation/userSchema";
 import { createUser } from "../../api/user/user-endpoints";
 import { useUser } from "../../context/user-context";
 import { sendToast } from "../../services/utils";

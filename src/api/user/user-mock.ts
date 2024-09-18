@@ -1,4 +1,4 @@
-import mockAdapter from "../mockAdapter";
+import mockAdapter from "../mock-adapter";
 import { loadUserRequest } from "./types";
 
 const userMock = (isTest = false) => {
