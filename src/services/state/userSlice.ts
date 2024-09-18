@@ -18,13 +18,13 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserData>) => {
+    loadUser: (state, action: PayloadAction<UserData>) => {
       state.data = action.payload;
       state.loaded = true;
     },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { loadUser } = userSlice.actions;
 
 export default userSlice.reducer;

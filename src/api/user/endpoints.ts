@@ -1,22 +1,22 @@
 import { isAxiosError } from "axios";
 import axiosClient from "../httpClient";
 import { sendToast } from "../../services/utils";
-import { setUser } from "../../services/state/userSlice";
+import { loadUser } from "../../services/state/userSlice";
 import { store } from "../../services/state/store";
 import { responseError } from "../types";
-import { setUserResponseSuccess } from "./types";
+import { loadUserResponseSuccess } from "./types";
 import userMock from "./mock";
 
 userMock();
 
-export const setUserEndpoint = async (name: string) => {
+export const loadUserEndpoint = async (name: string) => {
   try {
-    const response: setUserResponseSuccess = await axiosClient.post("players", {
+    const response: loadUserResponseSuccess = await axiosClient.post("players", {
       username: name,
     });
     if (response.status === 201) {
       store.dispatch(
-        setUser({
+        loadUser({
           id: response.data.playerID,
           username: response.data.username,
         })

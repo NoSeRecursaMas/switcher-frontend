@@ -16,7 +16,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../services/validations/userSchema";
-import { setUserEndpoint } from "../api/user/endpoints";
+import { loadUserEndpoint } from "../api/user/endpoints";
 
 export default function CreateUserModal() {
   const userLoaded = useSelector((state: RootState) => state.user.loaded);
@@ -32,7 +32,7 @@ export default function CreateUserModal() {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
-    await setUserEndpoint(data.name);
+    await loadUserEndpoint(data.name);
   };
 
   return (

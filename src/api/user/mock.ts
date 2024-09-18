@@ -1,19 +1,18 @@
 import mockAdapter from "../mockAdapter";
-import { setUserRequest } from "./types";
+import { loadUserRequest } from "./types";
 
-const userMock = () => {
-  if (import.meta.env.VITE_MOCK === "true") {
+const userMock = (isTest = false) => {
+  if (import.meta.env.VITE_MOCK === "true" || isTest) {
     mockAdapter.onPost("players").reply((config) => {
-      const data = JSON.parse(config.data as string) as setUserRequest;
+      const data = JSON.parse(config.data as string) as loadUserRequest;
       const username = data.username;
 
-      return [
-        201,
-        {
-          playerID: Math.floor(Math.random() * 100),
-          username: username,
-        },
-      ];
+      const mockResponse = {
+        playerID: Math.floor(Math.random() * 100),
+        username: username,
+      };
+
+      return [201, mockResponse];
     });
   }
 };

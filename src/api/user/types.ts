@@ -1,4 +1,4 @@
-interface setUserResponseSuccess {
+interface loadUserResponseSuccess {
     status: number;
     data: {
       playerID: number;
@@ -6,8 +6,8 @@ interface setUserResponseSuccess {
     };
   }
 
-interface setUserRequest {
+interface loadUserRequest {
     username: string;
 }
 
-export type { setUserResponseSuccess, setUserRequest };
+export type { loadUserResponseSuccess, loadUserRequest };
