@@ -3,7 +3,6 @@ import {
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalBody,
     ModalFooter,
     ModalCloseButton,
@@ -25,9 +24,11 @@ import { roomSchema } from "../../services/validation/room-schema";
 import { setRoomEndpoint } from "../../api/room/room-endpoints";
 import { sendToast } from "../../services/utils";
 import { useUser } from "../../context/user-context";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateRoomModal() {
 
+    const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { user, isUserLoaded } = useUser();
 
@@ -49,7 +50,7 @@ export default function CreateRoomModal() {
             sendToast("Error", "No se pudo obtener el usuario", "error");
             return null;
         }
-        await setRoomEndpoint(user.id, data.name, data.minPlayers, data.maxPlayers);
+        await setRoomEndpoint(user.id, data.name, data.minPlayers, data.maxPlayers, navigate);
     };
 
     return (
@@ -59,10 +60,10 @@ export default function CreateRoomModal() {
                 <ModalOverlay />
                 <ModalContent>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <ModalHeader>Nombre de la sala</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <FormControl isRequired isInvalid={!!errors.name}>
+                                <FormLabel mt={4}>Nombre de la sala</FormLabel>
                                 <Input
                                     autoComplete="off"
                                     {...register("name")}
