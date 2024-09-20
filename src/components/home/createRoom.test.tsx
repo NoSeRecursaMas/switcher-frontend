@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import CreateRoomModal from "./createRoomModal";
+import CreateRoomModal from "./createRoom";
 import { useUser } from "../../context/user-context";
 import { setRoomEndpoint } from "../../api/room/room-endpoints";
 import { BrowserRouter as Router } from "react-router-dom";
