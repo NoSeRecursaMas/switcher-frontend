@@ -2,6 +2,7 @@ import { Center, Heading, HStack, Skeleton, Text, VStack } from "@chakra-ui/reac
 import { useUser } from "../context/user-context";
 import CreateUserModal from "../components/home/createUserModal";
 import CreateRoomModal from "../components/home/createRoomModal";
+import JoinRoomModal from "../components/home/joinRoomModal";
 
 export default function Home() {
   const { user, isUserLoaded } = useUser();
@@ -20,7 +21,10 @@ export default function Home() {
               <Text fontSize="xl" as="b">{isUserLoaded ? user?.username : "invitado sin nombre"}</Text>
             </Skeleton>
           </HStack>
-          <CreateRoomModal />
+          <HStack>
+            <CreateRoomModal />
+            <JoinRoomModal />
+          </HStack>
         </VStack>
       </Center>
     </>
