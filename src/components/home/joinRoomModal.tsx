@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { Button, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure, Text, Card, UnorderedList, ListItem } from "@chakra-ui/react";
 import { useUser } from "../../context/user-context";
 import { roomData } from "../../api/room/room-types";
 import { requestRooms } from "../../api/room/room-list-endpoints";
@@ -15,6 +15,10 @@ export default function JoinRoomModal() {
         setRooms(roomList);
     }
 
+    // const joinRoom = async (roomID: number) => {
+    //     await joinRoomRequest(roomID, user);
+    // }
+
     return (
         <>
             <Button onClick={getRoomList} colorScheme="teal" size="lg" mt={4} isLoading={!isUserLoaded}> Unirse a partida </Button>
@@ -24,16 +28,25 @@ export default function JoinRoomModal() {
                     <ModalHeader>Unirse a partida</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <p>Lista de partidas disponibles</p>
-                        <ul>
-                            {rooms?.map((room: roomData) => (
-                                <li key={room.roomID}>
-                                    <p>{room.roomName}</p>
-                                    <p>Jugadores: {room.currentPlayers}/{room.maxPlayers}</p>
-                                    <Button colorScheme="teal" size="lg" mt={4} isLoading={!isUserLoaded}> Unirse </Button>
-                                </li>
+                        <Text mb={2}>Lista de partidas disponibles</Text>
+                        <UnorderedList styleType="none" maxHeight="400px" overflowY="auto" pr={4}> 
+                            {/* Se filtran las salas empezadas y las que están llenas */}
+                            {rooms?.filter((room: roomData) => !room.started && room.currentPlayers < room.maxPlayers)
+                                   .map((room: roomData) => (
+                                <ListItem key={room.roomID}>
+                                    <Card m={4}>
+                                    <HStack justifyContent="space-between">
+                                    <Text fontSize="md" as= "b" ml={2} maxWidth="200px" whiteSpace="break-spaces" overflow="hidden" textOverflow="ellipsis">
+                                        {room.roomName}
+                                    </Text>
+                                    <Text>{room.currentPlayers}/{room.maxPlayers}</Text>
+                                    <Button colorScheme="teal" size="md" m={4} minWidth="90px" isLoading={!isUserLoaded}> Unirse </Button>
+                                    {/* onClick={() => joinRoom(room.roomID)} para agregar función de unirse a la sala*/}
+                                    </HStack>
+                                    </Card>
+                                </ListItem>
                             ))}
-                        </ul>
+                        </UnorderedList>
                     </ModalBody>
                 </ModalContent>
             </Modal>
