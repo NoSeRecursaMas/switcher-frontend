@@ -1,110 +1,267 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import CreateRoomModal from "./createRoom";
-import { useUser } from "../../context/user-context";
-import { setRoomEndpoint } from "../../api/room/room-endpoints";
+import {
+  render,
+  screen,
+  waitFor,
+  cleanup,
+  fireEvent,
+} from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { BrowserRouter as Router } from "react-router-dom";
+import { UserContext } from "../../context/user-context";
+import Home from "../../pages/home";
+import MockAdapter from "axios-mock-adapter";
+import roomMock from "../../api/room/room-mock";
+import axios from "axios";
+import * as utils from "../../services/utils";
+import * as roomEndpoints from "../../api/room/room-endpoints";
 
-// Mock the necessary modules
-vi.mock("../../context/user-context", () => ({
-    useUser: vi.fn(),
-}));
+let mock: MockAdapter;
 
-vi.mock("../../api/room/room-endpoints", () => ({
-    setRoomEndpoint: vi.fn(),
-}));
+beforeEach(() => {
+  mock = new MockAdapter(axios, { onNoMatch: "throwException" });
+});
 
-describe("CreateRoomModal", () => {
+afterEach(() => {
+  cleanup();
+  mock.restore();
+});
 
-    it("Renderiza el componente", () => {
-        useUser.mockReturnValue({ user: { id: "123" }, isUserLoaded: true });
+describe("CreateRoom", () => {
+  it("Abre el modal cuando se aprieta el botón y se puede cerrar", async () => {
+    render(
+      <Router>
+        <UserContext.Provider
+          value={{
+            user: { id: 1, username: "Nombre test" },
+            setUser: () => null,
+            isUserLoaded: true,
+          }}
+        >
+          <Home />
+        </UserContext.Provider>
+      </Router>
+    );
 
-        render(
-            <Router>
-                <CreateRoomModal />
-            </Router>
-        );
+    // El botón de crear partida debería estar presente
+    expect(screen.getByText("Crear partida")).toBeDefined();
 
-        expect(screen.getByText("Crear partida")).toBeDefined();
+    // El modal no debería estar presente
+    expect(screen.queryByText("Creación de partida")).toBeNull();
+
+    // Se aprieta el botón de crear partida y el modal debería aparecer
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Creación de partida")).toBeDefined();
     });
 
-    it("Abre el modal cuando se aprieta el botón", () => {
-        useUser.mockReturnValue({ user: { id: "123" }, isUserLoaded: true });
+    // Se aprieta el botón X y el modal debería desaparecer
+    fireEvent.click(screen.getByLabelText("Close"));
 
-        render(
-            <Router>
-                <CreateRoomModal />
-            </Router>
-        );
-
-        fireEvent.click(screen.getByText("Crear partida"));
-        expect(screen.getByText("Nombre de la sala")).toBeDefined();
+    await waitFor(() => {
+      expect(screen.queryByText("Creación de partida")).toBeNull();
     });
 
-    it("Envía el formulario con datos válidos", async () => {
-        useUser.mockReturnValue({ user: { id: "123" }, isUserLoaded: true });
+    // Se aprieta el botón de crear partida de vuelta y el modal debería aparecer
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
 
-        render(
-            <Router>
-                <CreateRoomModal />
-            </Router>
-        );
-
-        fireEvent.click(screen.getByText("Crear partida"));
-
-        fireEvent.change(screen.getByLabelText("Nombre de la sala", { exact: false }), { target: { value: "Test Room" } });
-        fireEvent.change(screen.getByLabelText("Mínimo de jugadores", { exact: false }), { target: { value: "2" } });
-        fireEvent.change(screen.getByLabelText("Máximo de jugadores", { exact: false }), { target: { value: "4" } });
-
-        fireEvent.click(screen.getByText("Aceptar"));
-
-        await waitFor(() => {
-            expect(setRoomEndpoint).toHaveBeenCalledWith("123", "Test Room", 2, 4, expect.any(Function));
-        });
+    await waitFor(() => {
+      expect(screen.getByText("Creación de partida")).toBeDefined();
     });
 
-    it("Muestra errores cuando el nombre es demasiado largo y la cantidad de jugadores es inválida", async () => {
-        useUser.mockReturnValue({ user: { id: "123" }, isUserLoaded: true });
+    // Se aprieta el segundo botón para cerrar y el modal debería desaparecer
+    fireEvent.click(screen.getByText("Cancelar"));
 
-        render(
-            <Router>
-                <CreateRoomModal />
-            </Router>
-        );
+    await waitFor(() => {
+      expect(screen.queryByText("Creación de partida")).toBeNull();
+    });
+  });
 
-        fireEvent.click(screen.getByText("Crear partida"));
+  it("Se crea una partida con los datos correctos", async () => {
+    const spy = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const spyToast = vi.spyOn(utils, "sendToast");
 
-        fireEvent.change(screen.getByLabelText("Nombre de la sala", { exact: false }), { target: { value: "Test Roooooooooooooooooooooooooooooom" } });
-        fireEvent.change(screen.getByLabelText("Mínimo de jugadores", { exact: false }), { target: { value: "4" } });
-        fireEvent.change(screen.getByLabelText("Máximo de jugadores", { exact: false }), { target: { value: "2" } });
+    roomMock(true);
 
-        fireEvent.click(screen.getByText("Aceptar"));
+    render(
+      <Router>
+        <UserContext.Provider
+          value={{
+            user: { id: 1, username: "Nombre test" },
+            setUser: () => null,
+            isUserLoaded: true,
+          }}
+        >
+          <Home />
+        </UserContext.Provider>
+      </Router>
+    );
 
-        await waitFor(() => {
-            expect(screen.getByText("El nombre no puede tener más de 32 caracteres")).toBeDefined();
-            expect(screen.getByText("El mínimo de jugadores debe ser menor o igual al máximo")).toBeDefined();
-        });
+    // Se aprieta el botón de crear partida
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
+
+    // Se llena el formulario con los datos correctos
+    fireEvent.change(
+      screen.getByLabelText("Nombre de la sala", { exact: false }),
+      { target: { value: "Sala de prueba" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Mínimo de jugadores", { exact: false }),
+      { target: { value: "2" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Máximo de jugadores", { exact: false }),
+      { target: { value: "4" } }
+    );
+
+    // Se aprieta el botón de aceptar
+    fireEvent.click(screen.getByText("Aceptar"));
+
+    // Se debería haber llamado a la función de crear sala
+    await waitFor(() => {
+      expect(spy).toHaveBeenCalled();
     });
 
-    it("Muestra errores cuando el nombre contiene caracteres inválidos", async () => {
-        useUser.mockReturnValue({ user: { id: "123" }, isUserLoaded: true });
-
-        render(
-            <Router>
-                <CreateRoomModal />
-            </Router>
-        );
-
-        fireEvent.click(screen.getByText("Crear partida"));
-
-        fireEvent.change(screen.getByLabelText("Nombre de la sala", { exact: false }), { target: { value: "Tést róóm" } });
-        fireEvent.change(screen.getByLabelText("Mínimo de jugadores", { exact: false }), { target: { value: "2" } });
-        fireEvent.change(screen.getByLabelText("Máximo de jugadores", { exact: false }), { target: { value: "4" } });
-
-        fireEvent.click(screen.getByText("Aceptar"));
-
-        await waitFor(() => {
-            expect(screen.getByText("El nombre solo puede contener caracteres ASCII")).toBeDefined();
-        });
+    // Se debería haber mostrado un toast de éxito
+    await waitFor(() => {
+      expect(spyToast).toHaveBeenCalledWith(
+        "Sala creada exitosamente",
+        null,
+        "success"
+      );
     });
+  });
+
+  it("Muestra error cuando el nombre es demasiado largo", async () => {
+    render(
+      <Router>
+        <UserContext.Provider
+          value={{
+            user: { id: 1, username: "Nombre test" },
+            setUser: () => null,
+            isUserLoaded: true,
+          }}
+        >
+          <Home />
+        </UserContext.Provider>
+      </Router>
+    );
+
+    // Se aprieta el botón de crear partida
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
+
+    // Se llena el formulario con un nombre demasiado largo
+    fireEvent.change(
+      screen.getByLabelText("Nombre de la sala", { exact: false }),
+      { target: { value: "a".repeat(33) } }
+    );
+
+    // Se ponen los jugadores mínimos y máximos
+    fireEvent.change(
+      screen.getByLabelText("Mínimo de jugadores", { exact: false }),
+      { target: { value: "2" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Máximo de jugadores", { exact: false }),
+      { target: { value: "4" } }
+    );
+
+    // Se aprieta el botón de aceptar
+    fireEvent.click(screen.getByText("Aceptar"));
+
+    // Debería mostrar un error
+    await waitFor(() => {
+      expect(
+        screen.getByText("El nombre no puede tener más de 32 caracteres")
+      ).toBeDefined();
+    });
+  });
+
+  it("Muestra errores cuando el nombre contiene caracteres inválidos", async () => {
+    render(
+      <Router>
+        <UserContext.Provider
+          value={{
+            user: { id: 1, username: "Nombre test" },
+            setUser: () => null,
+            isUserLoaded: true,
+          }}
+        >
+          <Home />
+        </UserContext.Provider>
+      </Router>
+    );
+
+    // Se aprieta el botón de crear partida
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
+
+    // Se llena el formulario con un nombre con caracteres inválidos
+    fireEvent.change(
+      screen.getByLabelText("Nombre de la sala", { exact: false }),
+      { target: { value: "🤔" } }
+    );
+
+    // Se ponen los jugadores mínimos y máximos
+    fireEvent.change(
+      screen.getByLabelText("Mínimo de jugadores", { exact: false }),
+      { target: { value: "2" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Máximo de jugadores", { exact: false }),
+      { target: { value: "4" } }
+    );
+
+    // Se aprieta el botón de aceptar
+    fireEvent.click(screen.getByText("Aceptar"));
+
+    // Debería mostrar un error
+    await waitFor(() => {
+      expect(
+        screen.getByText("El nombre solo puede contener caracteres ASCII")
+      ).toBeDefined();
+    });
+  });
+
+  it("Muestra error cuando el mínimo de jugadores es mayor al máximo", async () => {
+    render(
+      <Router>
+        <UserContext.Provider
+          value={{
+            user: { id: 1, username: "Nombre test" },
+            setUser: () => null,
+            isUserLoaded: true,
+          }}
+        >
+          <Home />
+        </UserContext.Provider>
+      </Router>
+    );
+
+    // Se aprieta el botón de crear partida
+    fireEvent.click(screen.getByRole("button", { name: "Crear partida" }));
+
+    // Se llena el formulario con un mínimo de jugadores mayor al máximo
+    fireEvent.change(
+      screen.getByLabelText("Nombre de la sala", { exact: false }),
+      { target: { value: "Sala de prueba" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Mínimo de jugadores", { exact: false }),
+      { target: { value: "4" } }
+    );
+    fireEvent.change(
+      screen.getByLabelText("Máximo de jugadores", { exact: false }),
+      { target: { value: "2" } }
+    );
+
+    // Se aprieta el botón de aceptar
+    fireEvent.click(screen.getByText("Aceptar"));
+
+    // Debería mostrar un error
+    await waitFor(() => {
+      expect(
+        screen.getByText("El mínimo de jugadores debe ser menor o igual al máximo")
+      ).toBeDefined();
+    });
+  });
 });

@@ -15,7 +15,8 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     FormErrorMessage,
-    useDisclosure
+    useDisclosure,
+    ModalHeader,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -61,9 +62,10 @@ export default function CreateRoomModal() {
                 <ModalContent>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <ModalCloseButton />
+                        <ModalHeader>Creación de partida</ModalHeader>
                         <ModalBody>
                             <FormControl isRequired isInvalid={!!errors.name}>
-                                <FormLabel mt={4}>Nombre de la sala</FormLabel>
+                                <FormLabel>Nombre de la sala</FormLabel>
                                 <Input
                                     autoComplete="off"
                                     {...register("name")}
@@ -100,7 +102,10 @@ export default function CreateRoomModal() {
                                 <FormErrorMessage> {errors.maxPlayers?.message} </FormErrorMessage>
                             </FormControl>
                         </ModalBody>
-                        <ModalFooter>
+                        <ModalFooter justifyContent="space-between">
+                            <Button colorScheme="gray" onClick={onClose}>
+                                Cancelar
+                            </Button>
                             <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
                                 Aceptar
                             </Button>
