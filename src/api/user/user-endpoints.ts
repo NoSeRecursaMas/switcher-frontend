@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import axiosClient from "../http-client";
 import { responseError } from "../types";
-import { loadUserResponseSuccess } from "./types";
+import { loadUserResponseSuccess } from "./user-types";
 import userMock from "./user-mock";
 
 userMock();

@@ -1,5 +1,5 @@
 import mockAdapter from "../mock-adapter";
-import { loadUserRequest } from "./types";
+import { loadUserRequest } from "./user-types";
 
 const userMock = (isTest = false) => {
   if (import.meta.env.VITE_MOCK === "true" || isTest) {
