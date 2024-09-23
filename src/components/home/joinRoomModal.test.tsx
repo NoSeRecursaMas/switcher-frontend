@@ -17,10 +17,10 @@ vi.mock('../../api/room/room-list-endpoints', () => ({
 describe('JoinRoomModal', () => {
     const mockUser = { id: 1, name: 'Test User' };
     const mockRooms = [
-        { roomID: 1, roomName: 'Room 1', started: false, currentPlayers: 2, maxPlayers: 4 },
-        { roomID: 2, roomName: 'Full Room', started: false, currentPlayers: 4, maxPlayers: 4 },
-        { roomID: 3, roomName: 'Room 3', started: false, currentPlayers: 1, maxPlayers: 4 },
-        { roomID: 2, roomName: 'Started Room', started: true, currentPlayers: 2, maxPlayers: 4 },
+        { roomID: 1, roomName: 'Room 1', started: false, currentPlayers: 2, minPlayers: 3, maxPlayers: 4, private: true },
+        { roomID: 2, roomName: 'Full Room', started: false, currentPlayers: 4, minPlayers: 2, maxPlayers: 2, private: false  },
+        { roomID: 3, roomName: 'Room 3', started: false, currentPlayers: 1, minPlayers: 2, maxPlayers: 4, private: false  },
+        { roomID: 2, roomName: 'Started Room', started: true, currentPlayers: 4, minPlayers: 4, maxPlayers: 4, private: false },
     ];
 
     it('Renderiza el botón de unirse a partida', () => {

@@ -12,6 +12,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 2,
                             started: false,
+                            private: true,
                         },
                         {
                             roomID: 2,
@@ -20,6 +21,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 3,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 3,
@@ -28,6 +30,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 2,
                             currentPlayers: 2,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 4,
@@ -36,6 +39,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 2,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 5,
@@ -44,6 +48,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 3,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 6,
@@ -52,6 +57,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 2,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 7,
@@ -60,6 +66,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 2,
                             started: true,
+                            private: false,
                         },
                         {
                             roomID: 8,
@@ -68,6 +75,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 4,
                             currentPlayers: 4,
                             started: false,
+                            private: false,
                         },
                         {
                             roomID: 9,
@@ -76,6 +84,7 @@ const roomListMock = (isTest = false) => {
                             maxPlayers: 3,
                             currentPlayers: 2,
                             started: false,
+                            private: false,
                         },
                     ];
             //const mockResponse = []; Test de caso sin salas

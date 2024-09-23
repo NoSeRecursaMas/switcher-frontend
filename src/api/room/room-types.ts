@@ -19,6 +19,7 @@ export interface roomData {
     maxPlayers: number;
     currentPlayers: number;
     started: boolean;
+    private: boolean;
 }
 
 export interface roomListResponse {
