@@ -20,6 +20,7 @@ export interface roomData {
     currentPlayers: number;
     started: boolean;
     private: boolean;
+    hostID: number;
 }
 
 export interface roomListResponse {
