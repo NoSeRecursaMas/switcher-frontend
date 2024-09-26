@@ -1,25 +1,49 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Skeleton, Box, Text, VStack, CardBody, HStack, Heading, Card, Center, Button } from "@chakra-ui/react";
 import { roomData } from '../api/room/room-types';
+import { useUser } from "../context/user-context";
+import { FaCrown } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { startGameEndpoint } from "../api/room/room-startGame-endpoints";
 
-// Las líneas comentadas se usarán cuando se puedan recibir datos de la sala
+// Lista de jugadores de ejemplo
+const playersMock = [
+    { id: 1, name: "Jugador 1" },
+    { id: 2, name: "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" },
+    { id: 3, name: "Jugador 3" },
+    { id: 4, name: "Jugador 4" },
+];
+
+const roomMock = {
+    roomID: 11,
+    roomName: 'Sala de Pruebas',
+    minPlayers: 3,
+    maxPlayers: 4,
+    currentPlayers: 4,
+    started: false,
+    private: false,
+    hostID: 3
+};
 
 export default function Room() {
-    const id = useParams().ID;
-    // const [roomInfo, setRoomInfo] = useState<roomData>;
+    const { user } = useUser();
+    const id = useParams().ID; // Quizás no sea necesaria, ya accedemos a la info de la sala de otra forma
+    const navigate = useNavigate();
+
+    // Mock de ID de usuario, reemplazar más adelante todas sus instancias por user.id
+    const userID_Mock = 1;
+
+    // Reemplazar por llamada a API para obtener información de la sala
+    const [roomInfo, setRoomInfo] = useState(roomMock);
+    const [players, setPlayers] = useState(playersMock);
     const [loading, setLoading] = useState(false);
 
-    // const isMinReached = roomInfo.currentPlayers >= roomInfo.minPlayers; 
-    const isMinReached = true;
+    const isMinReached = roomInfo.currentPlayers >= roomInfo.minPlayers;
 
-    // Lista de jugadores de ejemplo
-    const players = [
-        { id: 1, username: "Jugador 1" },
-        { id: 2, username: "Jugador 2" },
-        { id: 3, username: "Jugador 3" },
-        { id: 4, username: "Jugador 4" },
-    ];
+    const startGame = async () => {
+        await startGameEndpoint(roomInfo.hostID, roomInfo.roomID, navigate);
+    };
 
     return (
         <>
@@ -28,19 +52,18 @@ export default function Room() {
                     <CardBody>
                         <Skeleton isLoaded={!loading}>
                             <VStack>
-                                {/* <Heading size="4xl">{roomInfo ? roomInfo.name : "Sala"}</Heading> */}
-
-                                {/* Ejemplo hardcodeado*/}
-                                <Heading size="3xl" as="b" >Sala</Heading>
+                                <Heading
+                                    size="lg"
+                                    textAlign="center"
+                                    wordBreak="break-word"
+                                    whiteSpace="normal"
+                                    overflowWrap="break-word">
+                                    {roomInfo.roomName}
+                                </Heading>
                             </VStack>
                             <Center>
-                                {/* <Text mt={2} color={isMinReached ? "green.500" : "red.500"}>
-                            {currentPlayers}/{maxPlayers}
-                            </Text> */}
-
-                                {/* Ejemplo hardcodeado*/}
-                                <Text mt={2} mb={2} color={isMinReached ? "green.500" : "red.500"}>
-                                    4/4
+                                <Text mt={2} color={isMinReached ? "green.500" : "red.500"}>
+                                    {roomInfo.currentPlayers}/{roomInfo.maxPlayers}
                                 </Text>
                             </Center>
                             <VStack spacing={4} align="start" w="100%">
@@ -52,7 +75,13 @@ export default function Room() {
                                         borderWidth="1px"
                                         borderRadius="md"
                                     >
-                                        <Text fontSize="lg">{player.username}</Text>
+                                        <HStack>
+                                            <Text fontSize="lg"
+                                                textAlign="left"
+                                                wordBreak="break-word"
+                                                whiteSpace="normal"
+                                                overflowWrap="break-word">{player.name}</Text> {roomInfo.hostID === player.id && <FaCrown color="gold" />}
+                                        </HStack>
                                     </Box>
                                 ))}
                             </VStack>
@@ -61,11 +90,11 @@ export default function Room() {
                             <Button colorScheme="red" mt={5}>
                                 Abandonar sala
                             </Button>
-
-                            {/*Falta chequeo para mostrar este botón solamente al administrador*/}
-                            <Button colorScheme="teal" mt={5}>
-                                Iniciar partida
-                            </Button>
+                            {roomInfo.hostID === userID_Mock && (
+                                <Button colorScheme="teal" mt={5} onClick={startGame}>
+                                    Iniciar partida
+                                </Button>)
+                            }
                         </HStack>
                     </CardBody>
                 </Card >

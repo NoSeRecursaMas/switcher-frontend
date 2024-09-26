@@ -5,6 +5,17 @@ export interface roomResponse {
     };
 }
 
+export interface gameResponse {
+    status: number;
+    data: {
+        gameID: number;
+    };
+}
+
+export interface gameRequest {
+    playerID: number;
+}
+
 export interface roomRequest {
     playerID: number;
     roomName: string;

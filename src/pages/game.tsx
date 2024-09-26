@@ -44,7 +44,7 @@ export default function Game() {
     const [roomInfo, setRoomInfo] = useState(roomMock);
     const [gameStatus, setGameStatus] = useState(statusMock);
 
-    // Mock de ID de usuario, reemplazar más adelante por user.id
+    // Mock de ID de usuario, reemplazar más adelante todas sus instancias por user.id
     const userID_Mock = 1;
 
     // Obtener información del jugador que corresponde
