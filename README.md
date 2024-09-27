@@ -7,22 +7,36 @@ Proyecto de ingenieria de Software 1 2024 - FAMAF UNC
 ```
 ├── public
 └── src
+    ├── api
     ├── components
+    |   ├── container/page
+    |   |   ├── component.tsx
+    |   |   └── component.test.tsx
+    ├── context
     ├── pages
     ├── services
-    |   ├── api
-    |   └── state
+    |   ├── validation
+    |   └── utils
+    ├── AppRoutes.tsx
     └── main.tsx
 ```
 
 - **public**: Contiene los archivos estáticos de la aplicación (imagenes, fuentes, etc).
 - **src**: Contiene el código fuente de la aplicación.
-    - **components**: Contiene los componentes de React, que luego son utilizados en las páginas. También contiene el test correspondiente a cada componente.
-    - **pages**: Contiene las páginas de la aplicación. Cada página es una vista que el usuario puede ver.
-    - **services**: Contiene los servicios de la aplicación.
-        - **api**: Contiene los servicios que se comunican con el backend.
-        - **state**: Contiene los servicios que manejan el estado de la aplicación.
-    - **App.tsx**: Componente principal de la aplicación.
+    - **components**: Contiene los componentes de la aplicación.
+        - **container/page**: Contiene los componentes que se utilizan en esa página/vista de la aplicación. También contiene los tests de los componentes.
+      - **context**: Contiene los contextos de la aplicación.
+      - **pages**: Contiene las páginas/vistas de la aplicación.
+      - **services**: Contiene los servicios de la aplicación.
+        - **validation**: Contiene las validaciones de los formularios.
+        - **utils**: Contiene funciones de utilidad.
+      - **AppRoutes.tsx**: Contiene las rutas de la aplicación.
+      - **main.tsx**: Archivo principal de la aplicación.
+
+### Nombres de archivos
+
+- Los archivos que exportan componentes usan camelCase en su nombre
+- Los archivos que exportan funciones usan kebab-case en su nombre
 
 ## Comenzando 🚀
 
