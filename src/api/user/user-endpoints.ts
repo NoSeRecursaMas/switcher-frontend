@@ -8,8 +8,9 @@ userMock();
 
 export const createUser = async (username: string) => {
   try {
+    const mock_prefix = import.meta.env.VITE_MOCK === "true" ? "mock/" : "";
     const response: loadUserResponseSuccess = await axiosClient.post(
-      "players",
+      `${mock_prefix}players`,
       {
         username: username,
       }

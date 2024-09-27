@@ -1,7 +1,7 @@
 import { Button, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure, Text, Card, UnorderedList, ListItem } from "@chakra-ui/react";
 import { useUser } from "../../context/user-context";
 import { roomData } from "../../api/room/room-types";
-import { requestRooms } from "../../api/room/room-list-endpoints";
+import { requestRooms } from "../../api/room/room-endpoints";
 import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 
