@@ -1,15 +1,15 @@
 import { Center, Heading, HStack, Skeleton, Text, VStack } from "@chakra-ui/react";
 import { useUser } from "../context/user-context";
-import CreateUserModal from "../components/home/createUserModal";
+import CreateUserForm from "../components/home/createUserForm";
 import JoinRoomModal from "../components/home/joinRoomModal";
 import CreateRoom from "../components/home/createRoom";
 
 export default function Home() {
-  const { user, isUserLoaded } = useUser();
+  const { user, setUser, isUserLoaded } = useUser();
 
   return (
     <>
-      <CreateUserModal />
+      <CreateUserForm isUserLoaded={isUserLoaded} setUser={setUser} />
       <Center h="100vh">
         <VStack>
           <Heading size="4xl">EL SWITCHER</Heading>

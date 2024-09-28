@@ -15,19 +15,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../../services/validation/user-schema";
 import { createUser } from "../../api/user/user-endpoints";
-import { useUser } from "../../context/user-context";
 import { sendToast } from "../../services/utils";
+import { UserContextType } from "../../context/types";
 
-export default function CreateUserModal() {
-  const { isUserLoaded, setUser } = useUser();
+interface CreateUserFormProps {
+  isUserLoaded: boolean;
+  setUser: UserContextType["setUser"];
+}
 
+export default function CreateUserForm(props : CreateUserFormProps) {
+  const { isUserLoaded, setUser } = props;
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } 
-  = 
-  useForm<z.infer<typeof userSchema>>({
+  } = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
   });
 
@@ -43,7 +45,11 @@ export default function CreateUserModal() {
   };
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={!isUserLoaded} onClose={() => null}>
+    <Modal
+      closeOnOverlayClick={false}
+      isOpen={!isUserLoaded}
+      onClose={() => null}
+    >
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
