@@ -7,16 +7,19 @@ import {
   Text,
   VStack,
   Tooltip,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { FaArrowRightToBracket, FaArrowRotateLeft } from "react-icons/fa6";
 import { useUser } from "../context/user-context";
-import CreateUserForm from "../components/home/createUserForm";
+import UserCreationForm from "../components/home/userCreationForm";
+import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
 import { requestRooms } from "../api/room/room-endpoints";
 import { roomDetails } from "../api/room/room-types";
 import { sendToast } from "../services/utils";
 import { useState } from "react";
+import { isErrorData } from "../api/types";
 
 export default function Home() {
   const { user, setUser, isUserLoaded } = useUser();
@@ -25,24 +28,24 @@ export default function Home() {
   );
   const [rooms, setRooms] = useState<roomDetails[] | undefined>(undefined);
 
-  const refreshRoomList = () => {
+  const modalDisclosure = useDisclosure();
+
+  const refreshRoomList = async () => {
     setSelectedRoom(undefined);
     setRooms(undefined);
 
-    requestRooms()
-      .then((rooms) => {
-        setRooms(rooms);
-      })
-      .catch((error: unknown) => {
-        sendToast("Error al cargar las salas", JSON.stringify(error), "error");
-        setRooms([]);
-      });
+    const data = await requestRooms();
+    if (isErrorData(data)) {
+      sendToast("Error al obtener la lista de salas", data.detail, "error");
+    } else {
+      setRooms(data);
+    }
   };
 
   return (
     <Center h="100vh">
-      <CreateUserForm isUserLoaded={isUserLoaded} setUser={setUser} />
-
+      <UserCreationForm isUserLoaded={isUserLoaded} setUser={setUser} />
+      <RoomCreationForm isUserLoaded={isUserLoaded} user={user} modalDisclosure={modalDisclosure} />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -64,6 +67,7 @@ export default function Home() {
               aria-label="Create Room"
               colorScheme="teal"
               isLoading={!isUserLoaded}
+              onClick={modalDisclosure.onOpen}
             />
           </Tooltip>
           <Tooltip
@@ -89,6 +93,7 @@ export default function Home() {
               aria-label="Refresh"
               colorScheme="teal"
               isLoading={!isUserLoaded}
+              onClick={refreshRoomList}
             />
           </Tooltip>
         </HStack>

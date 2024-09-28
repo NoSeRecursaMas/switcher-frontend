@@ -17,13 +17,14 @@ import { userSchema } from "../../services/validation/user-schema";
 import { createUser } from "../../api/user/user-endpoints";
 import { sendToast } from "../../services/utils";
 import { UserContextType } from "../../context/types";
+import { isErrorData } from "../../api/types";
 
-interface CreateUserFormProps {
+interface UserCreationFormProps {
   isUserLoaded: boolean;
   setUser: UserContextType["setUser"];
 }
 
-export default function CreateUserForm(props : CreateUserFormProps) {
+export default function UserCreationForm(props: UserCreationFormProps) {
   const { isUserLoaded, setUser } = props;
   const {
     register,
@@ -33,13 +34,12 @@ export default function CreateUserForm(props : CreateUserFormProps) {
     resolver: zodResolver(userSchema),
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
-    const response = await createUser(data.name);
-    if (response.error) {
-      sendToast("Error al seleccionar nombre", response.detail, "error");
-    }
-    if (response.id && response.username) {
-      setUser({ id: response.id, username: response.username });
+  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (input) => {
+    const data = await createUser({ username: input.name });
+    if (isErrorData(data)) {
+      sendToast("Error al seleccionar nombre", data.detail, "error");
+    } else {
+      setUser({ id: data.playerID, username: input.name });
       sendToast("¡Nombre seleccionado con éxito!", null, "success");
     }
   };

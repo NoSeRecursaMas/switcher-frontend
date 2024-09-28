@@ -1,13 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import {
-  render,
-  screen,
-  cleanup,
-  waitFor,
-} from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import CreateUserForm from "./createUserForm";
+import UserCreationForm from "./userCreationForm";
 import * as userEndpoints from "../../api/user/user-endpoints";
 import * as utils from "../../services/utils";
 
@@ -19,14 +14,14 @@ afterEach(() => {
   cleanup();
 });
 
-describe("CreateUserForm", () => {
+describe("UserCreationForm", () => {
   it("El modal es visible cuando el usuario no está cargado", () => {
-    render(<CreateUserForm isUserLoaded={false} setUser={() => null} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={() => null} />);
     expect(screen.getByText("Elige tu nombre")).toBeInTheDocument();
   });
 
   it("El modal no es visible cuando el usuario está cargado", () => {
-    render(<CreateUserForm isUserLoaded={true} setUser={() => null} />);
+    render(<UserCreationForm isUserLoaded={true} setUser={() => null} />);
     expect(screen.queryByText("Elige tu nombre")).not.toBeInTheDocument();
   });
 
@@ -35,7 +30,7 @@ describe("CreateUserForm", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "Usuario de test");
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -55,7 +50,7 @@ describe("CreateUserForm", () => {
     const createUser = vi.spyOn(userEndpoints, "createUser");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "a".repeat(33));
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -73,7 +68,7 @@ describe("CreateUserForm", () => {
     const createUser = vi.spyOn(userEndpoints, "createUser");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
@@ -90,7 +85,7 @@ describe("CreateUserForm", () => {
     const createUser = vi.spyOn(userEndpoints, "createUser");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "😀");
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -108,7 +103,7 @@ describe("CreateUserForm", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "error");
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -127,7 +122,7 @@ describe("CreateUserForm", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "a");
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -147,7 +142,7 @@ describe("CreateUserForm", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={setUser} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
 
     await user.type(screen.getByRole("textbox"), "a".repeat(32));
     await user.click(screen.getByRole("button", { name: "Crear" }));
@@ -167,7 +162,7 @@ describe("CreateUserForm", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
 
-    render(<CreateUserForm isUserLoaded={false} setUser={() => null} />);
+    render(<UserCreationForm isUserLoaded={false} setUser={() => null} />);
 
     await user.type(
       screen.getByRole("textbox"),

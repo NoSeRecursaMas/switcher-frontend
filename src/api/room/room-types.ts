@@ -1,8 +1,19 @@
-export interface roomResponse {
+export interface createRoomResponseSuccess {
     status: number;
     data: {
         roomID: number;
     };
+}
+
+export interface createRoomRequest {
+    playerID: number;
+    roomName: string;
+    minPlayers: number;
+    maxPlayers: number;
+}
+export interface GetRoomsListResponseSuccess {
+    status: number;
+    data: roomData[];
 }
 
 export interface roomDetails {
@@ -15,13 +26,6 @@ export interface roomDetails {
     private: boolean;
 }
 
-export interface roomRequest {
-    playerID: number;
-    roomName: string;
-    minPlayers: number;
-    maxPlayers: number;
-}
-
 export interface roomData {
     roomID: number;
     roomName: string;
@@ -30,9 +34,4 @@ export interface roomData {
     currentPlayers: number;
     started: boolean;
     private: boolean;
-}
-
-export interface roomListResponse {
-    status: number;
-    data: roomData[];
 }

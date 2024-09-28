@@ -24,9 +24,13 @@ interface RoomListProps {
 }
 
 export default function RoomList(props: RoomListProps) {
-
-  const { isUserLoaded, selectedRoom, setSelectedRoom, refreshRoomList, rooms } =
-    props;
+  const {
+    isUserLoaded,
+    selectedRoom,
+    setSelectedRoom,
+    refreshRoomList,
+    rooms,
+  } = props;
 
   const handleSelectRoom = (
     roomID: number,
@@ -46,6 +50,7 @@ export default function RoomList(props: RoomListProps) {
 
   useEffect(() => {
     refreshRoomList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserLoaded]);
 
   return (
@@ -91,7 +96,10 @@ export default function RoomList(props: RoomListProps) {
                 );
               }}
               _hover={{
-                bg: room.currentPlayers === room.maxPlayers ? "white" : "gray.100",
+                bg:
+                  room.currentPlayers === room.maxPlayers
+                    ? "white"
+                    : "gray.100",
               }}
               cursor={
                 room.currentPlayers === room.maxPlayers
