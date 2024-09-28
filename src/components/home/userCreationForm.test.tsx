@@ -63,23 +63,6 @@ describe("UserCreationForm", () => {
     });
   });
 
-  it("No se puede seleccionar un nombre vacío y se muestra un mensaje de error", async () => {
-    const setUser = vi.fn();
-    const createUser = vi.spyOn(userEndpoints, "createUser");
-    const user = userEvent.setup();
-
-    render(<UserCreationForm isUserLoaded={false} setUser={setUser} />);
-
-    await user.click(screen.getByRole("button", { name: "Crear" }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByText("El nombre no puede estar vacío")
-      ).toBeInTheDocument();
-      expect(createUser).not.toHaveBeenCalled();
-    });
-  });
-
   it("No se puede seleccionar un nombre con caracteres no ASCII y se muestra un mensaje de error", async () => {
     const setUser = vi.fn();
     const createUser = vi.spyOn(userEndpoints, "createUser");
@@ -171,7 +154,7 @@ describe("UserCreationForm", () => {
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
     await waitFor(() => {
-      expect(createUser).toHaveBeenCalledWith("Usuario de test");
+      expect(createUser).toHaveBeenCalledWith({ username: "Usuario de test" });
       expect(sendToast).toHaveBeenCalledWith(
         "¡Nombre seleccionado con éxito!",
         null,

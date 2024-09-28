@@ -61,6 +61,7 @@ export default function UserCreationForm(props: UserCreationFormProps) {
                 {...register("name")}
                 type="text"
                 focusBorderColor="teal.400"
+                isRequired
               />
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>

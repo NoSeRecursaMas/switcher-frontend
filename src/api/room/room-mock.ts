@@ -1,9 +1,9 @@
 import mockAdapter from "../mock-adapter";
-import { roomRequest } from "./room-types";
+import { createRoomRequest } from "./room-types";
 
 const roomMock = () => {
   mockAdapter.onPost("mock/rooms").reply((config) => {
-    const data = JSON.parse(config.data as string) as roomRequest;
+    const data = JSON.parse(config.data as string) as createRoomRequest;
     const roomName = data.roomName;
     if (roomName === "error") {
       return [400, { detail: "Ejemplo de error en el backend" }];

@@ -28,7 +28,7 @@ export default function Home() {
   );
   const [rooms, setRooms] = useState<roomDetails[] | undefined>(undefined);
 
-  const modalDisclosure = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const refreshRoomList = async () => {
     setSelectedRoom(undefined);
@@ -45,7 +45,7 @@ export default function Home() {
   return (
     <Center h="100vh">
       <UserCreationForm isUserLoaded={isUserLoaded} setUser={setUser} />
-      <RoomCreationForm isUserLoaded={isUserLoaded} user={user} modalDisclosure={modalDisclosure} />
+      <RoomCreationForm isUserLoaded={isUserLoaded} user={user} isOpen={isOpen} onClose={onClose} />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -67,7 +67,7 @@ export default function Home() {
               aria-label="Create Room"
               colorScheme="teal"
               isLoading={!isUserLoaded}
-              onClick={modalDisclosure.onOpen}
+              onClick={onOpen}
             />
           </Tooltip>
           <Tooltip

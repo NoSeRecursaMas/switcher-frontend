@@ -1,75 +1,79 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Skeleton, Box, Text, VStack, CardBody, HStack, Heading, Card, Center, Button } from "@chakra-ui/react";
-import { roomData } from '../api/room/room-types';
-
-// Las líneas comentadas se usarán cuando se puedan recibir datos de la sala
+import { useParams } from "react-router-dom";
+import {
+  Skeleton,
+  Text,
+  VStack,
+  HStack,
+  Heading,
+  Card,
+  Center,
+  Button,
+  Tooltip,
+} from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
+import { useUser } from "../context/user-context";
 
 export default function Room() {
-    const id = useParams().ID;
-    // const [roomInfo, setRoomInfo] = useState<roomData>;
-    const [loading, setLoading] = useState(false);
+  const { roomID } = useParams<{ roomID: string }>();
+  const { user } = useUser();
 
-    // const isMinReached = roomInfo.currentPlayers >= roomInfo.minPlayers; 
-    const isMinReached = true;
+  const room = undefined; // Harcodeado
+  const isRoomDataLoaded = 2 + 2 < 3; // Harcodeado
 
-    // Lista de jugadores de ejemplo
-    const players = [
-        { id: 1, username: "Jugador 1" },
-        { id: 2, username: "Jugador 2" },
-        { id: 3, username: "Jugador 3" },
-        { id: 4, username: "Jugador 4" },
-    ];
+  return (
+    <>
+      <Center h="100vh">
+        <VStack>
+          <Skeleton isLoaded={isRoomDataLoaded}>
+            <Heading size="3xl" as="b">
+              {isRoomDataLoaded ? "Sala sin nombre" : "Sala sin nombre"}
+            </Heading>
+          </Skeleton>
+          <Skeleton isLoaded={isRoomDataLoaded}>
+            <Text fontSize="lg" as="i">
+              Mínimo de jugadores: {isRoomDataLoaded ? room?.minPlayers : 0}-
+              Máximo de jugadores: {isRoomDataLoaded ? room?.maxPlayers : 0}
+            </Text>
+          </Skeleton>
 
-    return (
-        <>
-            <Center h="100vh">
-                <Card w="25em">
-                    <CardBody>
-                        <Skeleton isLoaded={!loading}>
-                            <VStack>
-                                {/* <Heading size="4xl">{roomInfo ? roomInfo.name : "Sala"}</Heading> */}
+          <VStack p={2} w="lg">
+            {room?.players.map((player) => (
+              <Card key={player.id} w="100%" m={1} p={2}>
+                <HStack justifyContent="space-between">
+                  <Text fontSize="lg">{player.username}</Text>
+                  {player.id === room?.creator_id && (
+                    <Tooltip label="Creador de la sala">
+                      {/* Cambiar la posición del icono porque se ve mal tan lejos del nombre */}
+                      <StarIcon color="yellow.500" />
+                    </Tooltip>
+                  )}
+                </HStack>
+              </Card>
+            ))}
+          </VStack>
 
-                                {/* Ejemplo hardcodeado*/}
-                                <Heading size="3xl" as="b" >Sala</Heading>
-                            </VStack>
-                            <Center>
-                                {/* <Text mt={2} color={isMinReached ? "green.500" : "red.500"}>
-                            {currentPlayers}/{maxPlayers}
-                            </Text> */}
-
-                                {/* Ejemplo hardcodeado*/}
-                                <Text mt={2} mb={2} color={isMinReached ? "green.500" : "red.500"}>
-                                    4/4
-                                </Text>
-                            </Center>
-                            <VStack spacing={4} align="start" w="100%">
-                                {players.map((player) => (
-                                    <Box
-                                        key={player.id}
-                                        p={4}
-                                        w="100%"
-                                        borderWidth="1px"
-                                        borderRadius="md"
-                                    >
-                                        <Text fontSize="lg">{player.username}</Text>
-                                    </Box>
-                                ))}
-                            </VStack>
-                        </Skeleton>
-                        <HStack justifyContent="space-between">
-                            <Button colorScheme="red" mt={5}>
-                                Abandonar sala
-                            </Button>
-
-                            {/*Falta chequeo para mostrar este botón solamente al administrador*/}
-                            <Button colorScheme="teal" mt={5}>
-                                Iniciar partida
-                            </Button>
-                        </HStack>
-                    </CardBody>
-                </Card >
-            </Center>
-        </>
-    );
+          <HStack justifyContent="space-between" mt={4} spacing={4}>
+            {room?.creator_id !== user?.id ? (
+              <Button colorScheme="red">Abandonar sala</Button>
+            ) : (
+              <Tooltip label="No puedes abandonar la sala si eres el creador">
+                <Button colorScheme="red" disabled>
+                  Abandonar sala
+                </Button>
+              </Tooltip>
+            )}
+            {room?.minPlayers <= room?.players.length ? (
+              <Button colorScheme="teal">Iniciar partida</Button>
+            ) : (
+              <Tooltip label="Esperando a que se unan más jugadores">
+                <Button colorScheme="teal" isDisabled>
+                  Iniciar partida
+                </Button>
+              </Tooltip>
+            )}
+          </HStack>
+        </VStack>
+      </Center>
+    </>
+  );
 }

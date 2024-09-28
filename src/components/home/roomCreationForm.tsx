@@ -15,7 +15,6 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   FormErrorMessage,
-  useDisclosure,
   ModalHeader,
   HStack,
 } from "@chakra-ui/react";
@@ -32,12 +31,12 @@ import { useNavigate } from "react-router-dom";
 interface roomCreationFormProps {
   isUserLoaded: boolean;
   user: UserState | undefined;
-  modalDisclosure: ReturnType<typeof useDisclosure>;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function RoomCreationForm(props: roomCreationFormProps) {
-  const { isUserLoaded, user, modalDisclosure } = props;
-  const { isOpen, onOpen, onClose } = modalDisclosure;
+  const { isUserLoaded, user, isOpen, onClose } = props;
   const navigate = useNavigate();
 
   const {
@@ -142,12 +141,14 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
             </HStack>
           </ModalBody>
           <ModalFooter>
+            <HStack spacing={2}>
             <Button colorScheme="gray" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
               Crear
             </Button>
+            </HStack>
           </ModalFooter>
         </form>
       </ModalContent>
