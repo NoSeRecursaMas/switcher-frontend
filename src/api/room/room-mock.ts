@@ -27,7 +27,7 @@ const roomMock = () => {
         maxPlayers: 4,
         currentPlayers: 2,
         started: false,
-        private: true,
+        private: false,
       },
       {
         roomID: 2,
@@ -36,7 +36,7 @@ const roomMock = () => {
         maxPlayers: 4,
         currentPlayers: 3,
         started: false,
-        private: false,
+        private: true,
       },
       {
         roomID: 3,
@@ -63,7 +63,7 @@ const roomMock = () => {
         maxPlayers: 4,
         currentPlayers: 3,
         started: false,
-        private: false,
+        private: true,
       },
       {
         roomID: 6,

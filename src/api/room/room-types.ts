@@ -5,6 +5,16 @@ export interface roomResponse {
     };
 }
 
+export interface roomDetails {
+    roomID: number;
+    roomName: string;
+    minPlayers: number;
+    maxPlayers: number;
+    currentPlayers: number;
+    started: boolean;
+    private: boolean;
+}
+
 export interface roomRequest {
     playerID: number;
     roomName: string;
