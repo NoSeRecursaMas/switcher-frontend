@@ -4,19 +4,12 @@ import {
   screen,
   cleanup,
   waitFor,
-  waitForElementToBeRemoved,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import CreateUserForm from "./createUserForm";
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
-import userMock from "../../api/user/user-mock";
 import * as userEndpoints from "../../api/user/user-endpoints";
 import * as utils from "../../services/utils";
-import UserProvider from "../../context/userContextProvider";
-import { UserContext } from "../../context/user-context";
-import { wait } from "@testing-library/user-event/dist/cjs/utils/index.js";
 
 beforeEach(() => {
   import.meta.env.VITE_MOCK = "true";

@@ -28,7 +28,7 @@ export default function RoomList(props: RoomListProps) {
   const { isUserLoaded, selectedRoom, setSelectedRoom, refreshRoomList, rooms } =
     props;
 
-  const handle_selectRoom = (
+  const handleSelectRoom = (
     roomID: number,
     currentPlayers: number,
     maxPlayers: number
@@ -84,18 +84,21 @@ export default function RoomList(props: RoomListProps) {
               m={1}
               p={2}
               onClick={() => {
-                handle_selectRoom(
+                handleSelectRoom(
                   room.roomID,
                   room.currentPlayers,
                   room.maxPlayers
                 );
+              }}
+              _hover={{
+                bg: room.currentPlayers === room.maxPlayers ? "white" : "gray.100",
               }}
               cursor={
                 room.currentPlayers === room.maxPlayers
                   ? "not-allowed"
                   : "pointer"
               }
-              bg={selectedRoom === room.roomID ? "gray.100" : "white"}
+              bg={selectedRoom === room.roomID ? "teal.50" : "white"}
             >
               <HStack justifyContent="space-between" h="50px">
                 <Heading size="md" w="50%">
