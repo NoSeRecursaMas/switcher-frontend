@@ -1,59 +1,54 @@
 import { isAxiosError } from "axios";
 import axiosClient from "../http-client";
-import { sendToast } from "../../services/utils";
-import { NavigateFunction } from "react-router-dom";
-import { roomResponse, roomListResponse } from "./room-types";
+import {
+  GetRoomsListResponseSuccess,
+  createRoomResponseSuccess,
+  createRoomRequest,
+} from "./room-types";
 import { responseError } from "../types";
 import roomMock from "./room-mock";
 
 roomMock();
 
-export const setRoomEndpoint = async (playerID: number, roomName: string, minPlayers: number, maxPlayers: number, navigate: NavigateFunction) => {
+export const setRoomEndpoint = async (data: createRoomRequest) => {
   try {
     const mock_prefix = import.meta.env.VITE_MOCK === "true" ? "mock/" : "";
-    const response: roomResponse = await axiosClient.post(
+    const response: createRoomResponseSuccess = await axiosClient.post(
       `${mock_prefix}rooms`,
-       { playerID, roomName, minPlayers, maxPlayers });
+      data
+    );
     if (response.status === 201) {
-      navigate(`/room/${response.data.roomID.toString()}`);
-      sendToast("Sala creada exitosamente", null, "success");
+      return response.data;
     } else {
-      sendToast(
-        "Error al crear sala",
-        JSON.stringify(response),
-        "error"
-      );
+      return { detail: JSON.stringify(response), error: true };
     }
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       const response = error.response as responseError;
-      sendToast("Error al crear sala", response.data.detail, "error");
+      return { detail: response.data.detail, error: true };
     } else {
-      sendToast("Error al crear sala", JSON.stringify(error), "error");
+      return { detail: JSON.stringify(error), error: true };
     }
   }
 };
 
 export const requestRooms = async () => {
   try {
-      const mock_prefix = import.meta.env.VITE_MOCK === "true" ? "mock/" : "";
-      const response: roomListResponse = await axiosClient.get(`${mock_prefix}rooms`);
-      if (response.status === 200) {
-          if (response.data.length === 0) {
-              sendToast("No hay salas disponibles", null, "info");
-              return [];
-          }
-          else {
-              return response.data;
-          }
-      }
+    const mock_prefix = import.meta.env.VITE_MOCK === "true" ? "mock/" : "";
+    const response: GetRoomsListResponseSuccess = await axiosClient.get(
+      `${mock_prefix}rooms`
+    );
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { detail: JSON.stringify(response), error: true };
+    }
   } catch (error: unknown) {
-      if (isAxiosError(error)) {
-          const response = error.response as responseError;
-          sendToast("Error al obtener salas", response.data.detail, "error");
-      } else {
-          sendToast("Error al obtener salas", JSON.stringify(error), "error");
-      }
-      return [];
+    if (isAxiosError(error)) {
+      const response = error.response as responseError;
+      return { detail: response.data.detail, error: true };
+    } else {
+      return { detail: JSON.stringify(error), error: true };
+    }
   }
-}
+};

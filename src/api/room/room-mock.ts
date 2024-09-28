@@ -1,9 +1,9 @@
 import mockAdapter from "../mock-adapter";
-import { roomRequest } from "./room-types";
+import { createRoomRequest } from "./room-types";
 
 const roomMock = () => {
   mockAdapter.onPost("mock/rooms").reply((config) => {
-    const data = JSON.parse(config.data as string) as roomRequest;
+    const data = JSON.parse(config.data as string) as createRoomRequest;
     const roomName = data.roomName;
     if (roomName === "error") {
       return [400, { detail: "Ejemplo de error en el backend" }];
@@ -23,81 +23,72 @@ const roomMock = () => {
       {
         roomID: 1,
         roomName: "Sala 1",
-        minPlayers: 2,
         maxPlayers: 4,
-        currentPlayers: 2,
-        started: false,
-        private: true,
-      },
-      {
-        roomID: 2,
-        roomName: "Sala 2",
-        minPlayers: 3,
-        maxPlayers: 4,
-        currentPlayers: 3,
+        actualPlayers: 2,
         started: false,
         private: false,
       },
       {
+        roomID: 2,
+        roomName: "Sala 2",
+        maxPlayers: 4,
+        actualPlayers: 3,
+        started: false,
+        private: true,
+      },
+      {
         roomID: 3,
         roomName: "Somebody once told me",
-        minPlayers: 2,
         maxPlayers: 2,
-        currentPlayers: 2,
+        actualPlayers: 2,
         started: false,
         private: false,
       },
       {
         roomID: 4,
         roomName: "the world is gonna roll me",
-        minPlayers: 2,
         maxPlayers: 4,
-        currentPlayers: 2,
+        actualPlayers: 2,
         started: false,
         private: false,
       },
       {
         roomID: 5,
         roomName: ".",
-        minPlayers: 3,
         maxPlayers: 4,
-        currentPlayers: 3,
+        actualPlayers: 3,
         started: false,
-        private: false,
+        private: true,
       },
       {
         roomID: 6,
         roomName: "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-        minPlayers: 2,
         maxPlayers: 4,
-        currentPlayers: 2,
+        actualPlayers: 2,
         started: false,
         private: false,
       },
       {
         roomID: 7,
         roomName: "SALA EMPEZADA",
-        minPlayers: 2,
         maxPlayers: 4,
-        currentPlayers: 2,
+        actualPlayers: 2,
         started: true,
         private: false,
       },
       {
         roomID: 8,
         roomName: "Sala llena",
-        minPlayers: 3,
         maxPlayers: 4,
-        currentPlayers: 4,
+        actualPlayers: 4,
         started: false,
         private: false,
       },
       {
         roomID: 9,
         roomName: "OwO",
-        minPlayers: 2,
         maxPlayers: 3,
-        currentPlayers: 2,
+        actualPlayers: 2,
         started: false,
         private: false,
       },

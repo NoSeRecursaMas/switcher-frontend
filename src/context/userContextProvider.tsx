@@ -3,9 +3,9 @@ import { UserContext } from "./user-context";
 import { UserState } from "./types";
 
 export default function UserProvider({ children }: { children: ReactNode }){
-    const [state, setState] = useState<UserState>({ id: 0, username: "" });
+    const [state, setState] = useState<UserState | undefined>(undefined);
 
-    const isUserLoaded = state.username !== "";
+    const isUserLoaded = typeof state !== "undefined";
   
     return (
       <UserContext.Provider value={{ user: state, setUser: setState, isUserLoaded }}>

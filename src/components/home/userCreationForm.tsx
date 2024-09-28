@@ -15,35 +15,41 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../../services/validation/user-schema";
 import { createUser } from "../../api/user/user-endpoints";
-import { useUser } from "../../context/user-context";
 import { sendToast } from "../../services/utils";
+import { UserContextType } from "../../context/types";
+import { isErrorData } from "../../api/types";
 
-export default function CreateUserModal() {
-  const { isUserLoaded, setUser } = useUser();
+interface UserCreationFormProps {
+  isUserLoaded: boolean;
+  setUser: UserContextType["setUser"];
+}
 
+export default function UserCreationForm(props: UserCreationFormProps) {
+  const { isUserLoaded, setUser } = props;
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } 
-  = 
-  useForm<z.infer<typeof userSchema>>({
+  } = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
-    const response = await createUser(data.name);
-    if (response.error) {
-      sendToast("Error al seleccionar nombre", response.detail, "error");
-    }
-    if (response.id && response.username) {
-      setUser({ id: response.id, username: response.username });
+  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (input) => {
+    const data = await createUser({ username: input.name });
+    if (isErrorData(data)) {
+      sendToast("Error al seleccionar nombre", data.detail, "error");
+    } else {
+      setUser({ id: data.playerID, username: input.name });
       sendToast("¡Nombre seleccionado con éxito!", null, "success");
     }
   };
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={!isUserLoaded} onClose={() => null}>
+    <Modal
+      closeOnOverlayClick={false}
+      isOpen={!isUserLoaded}
+      onClose={() => null}
+    >
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -55,6 +61,7 @@ export default function CreateUserModal() {
                 {...register("name")}
                 type="text"
                 focusBorderColor="teal.400"
+                isRequired
               />
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>

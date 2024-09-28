@@ -1,4 +1,4 @@
-interface loadUserResponseSuccess {
+export interface loadUserResponseSuccess {
     status: number;
     data: {
         playerID: number;
@@ -6,8 +6,6 @@ interface loadUserResponseSuccess {
     };
 }
 
-interface loadUserRequest {
+export interface loadUserRequest {
     username: string;
 }
-
-export type { loadUserResponseSuccess, loadUserRequest };

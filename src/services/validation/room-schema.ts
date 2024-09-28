@@ -10,12 +10,18 @@ export const roomSchema = z.object({
       message: "El nombre solo puede contener caracteres ASCII",
     }),
   minPlayers: z
+    .coerce 
     .number()
-    .int(),
+    .int()
+    .min(2, { message: "El mínimo de jugadores debe ser al menos 2" })
+    .max(4, { message: "El mínimo de jugadores debe ser como máximo 4" }),
   maxPlayers: z
+    .coerce 
     .number()
-    .int(),
+    .int()
+    .min(2, { message: "El máximo de jugadores debe ser al menos 2" })
+    .max(4, { message: "El máximo de jugadores debe ser como máximo 4" }),
 }).refine(data => data.minPlayers <= data.maxPlayers, {
   message: "El mínimo de jugadores debe ser menor o igual al máximo",
-  path: ["maxPlayers"],
+  path: ["minPlayers"],
 });
