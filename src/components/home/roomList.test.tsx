@@ -14,7 +14,7 @@ beforeEach(() => {
     {
       roomID: 1,
       roomName: "Sala de test",
-      currentPlayers: 3,
+      actualPlayers: 3,
       minPlayers: 2,
       maxPlayers: 4,
       private: false,
@@ -23,7 +23,7 @@ beforeEach(() => {
     {
       roomID: 2,
       roomName: "Sala llena",
-      currentPlayers: 4,
+      actualPlayers: 4,
       minPlayers: 3,
       maxPlayers: 4,
       private: false,
@@ -32,7 +32,7 @@ beforeEach(() => {
     {
       roomID: 3,
       roomName: "Sala privada",
-      currentPlayers: 2,
+      actualPlayers: 2,
       minPlayers: 2,
       maxPlayers: 4,
       private: true,
@@ -41,7 +41,7 @@ beforeEach(() => {
     {
       roomID: 4,
       roomName: "Sala empezada",
-      currentPlayers: 2,
+      actualPlayers: 2,
       minPlayers: 2,
       maxPlayers: 4,
       private: false,

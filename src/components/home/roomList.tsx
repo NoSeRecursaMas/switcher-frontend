@@ -34,10 +34,10 @@ export default function RoomList(props: RoomListProps) {
 
   const handleSelectRoom = (
     roomID: number,
-    currentPlayers: number,
+    actualPlayers: number,
     maxPlayers: number
   ) => {
-    if (currentPlayers < maxPlayers) {
+    if (actualPlayers < maxPlayers) {
       setSelectedRoom(roomID);
     } else {
       sendToast(
@@ -91,18 +91,18 @@ export default function RoomList(props: RoomListProps) {
               onClick={() => {
                 handleSelectRoom(
                   room.roomID,
-                  room.currentPlayers,
+                  room.actualPlayers,
                   room.maxPlayers
                 );
               }}
               _hover={{
                 bg:
-                  room.currentPlayers === room.maxPlayers
+                  room.actualPlayers === room.maxPlayers
                     ? "white"
                     : "gray.100",
               }}
               cursor={
-                room.currentPlayers === room.maxPlayers
+                room.actualPlayers === room.maxPlayers
                   ? "not-allowed"
                   : "pointer"
               }
@@ -113,9 +113,9 @@ export default function RoomList(props: RoomListProps) {
                   {room.roomName}
                 </Heading>
                 <Text
-                  as={room.currentPlayers === room.maxPlayers ? "s" : undefined}
+                  as={room.actualPlayers === room.maxPlayers ? "s" : undefined}
                 >
-                  {room.currentPlayers}/{room.maxPlayers} jugadores
+                  {room.actualPlayers}/{room.maxPlayers} jugadores
                 </Text>
                 {room.private ? (
                   <Tag size="sm" variant="outline" colorScheme="red">

@@ -19,9 +19,8 @@ export interface GetRoomsListResponseSuccess {
 export interface roomDetails {
     roomID: number;
     roomName: string;
-    minPlayers: number;
     maxPlayers: number;
-    currentPlayers: number;
+    actualPlayers: number;
     started: boolean;
     private: boolean;
 }
@@ -31,7 +30,7 @@ export interface roomData {
     roomName: string;
     minPlayers: number;
     maxPlayers: number;
-    currentPlayers: number;
+    actualPlayers: number;
     started: boolean;
     private: boolean;
 }
