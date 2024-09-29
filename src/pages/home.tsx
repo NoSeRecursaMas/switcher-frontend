@@ -18,8 +18,9 @@ import RoomList from "../components/home/roomList";
 import { requestRooms } from "../api/room/room-endpoints";
 import { roomDetails } from "../api/room/room-types";
 import { sendToast } from "../services/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { isErrorData } from "../api/types";
+import { J } from "vitest/dist/chunks/reporters.WnPwkmgA.js";
 
 export default function Home() {
   const { user, setUser, isUserLoaded } = useUser();
@@ -42,10 +43,28 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await refreshRoomList();
+    };
+    fetchData().catch((err: unknown) => {
+      sendToast(
+        "Error al obtener la lista de salas",
+        JSON.stringify(err),
+        "error"
+      );
+    });
+  }, []);
+
   return (
     <Center h="100vh">
       <UserCreationForm isUserLoaded={isUserLoaded} setUser={setUser} />
-      <RoomCreationForm isUserLoaded={isUserLoaded} user={user} isOpen={isOpen} onClose={onClose} />
+      <RoomCreationForm
+        isUserLoaded={isUserLoaded}
+        user={user}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -102,7 +121,6 @@ export default function Home() {
           isUserLoaded={isUserLoaded}
           selectedRoom={selectedRoom}
           setSelectedRoom={setSelectedRoom}
-          refreshRoomList={refreshRoomList}
           rooms={rooms}
         />
       </VStack>

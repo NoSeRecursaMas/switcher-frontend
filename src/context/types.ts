@@ -1,5 +1,3 @@
-import { Socket } from "socket.io-client";
-
 export interface UserState {
   id: number;
   username: string;
@@ -13,7 +11,7 @@ isUserLoaded: boolean;
 
 export interface RoomState {
   id: number;
-  creator_id: number;
+  creatorID: number;
   name: string;
   maxPlayers: number;
   minPlayers: number;
@@ -29,18 +27,4 @@ export interface RoomContextType {
 export interface SocketData {
   type: "update";
   payload: {msg: string, status: RoomState};
-}
-
-interface ServerToClientEvents {
-  getMessage: (data: SocketData) => void;
-}
-
-interface ClientToServerEvents {
-  sendMessage: (data: { type: string; payload: object }) => void;
-}
-
-export interface SocketContextType {
-  socket: Socket<ServerToClientEvents, ClientToServerEvents> | undefined;
-  isSocketLoaded: boolean;
-  setSocket: (socket: Socket) => void;
 }

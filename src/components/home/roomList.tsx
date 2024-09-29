@@ -19,7 +19,6 @@ interface RoomListProps {
   isUserLoaded: boolean;
   selectedRoom: number | undefined;
   setSelectedRoom: (room: number) => void;
-  refreshRoomList: () => void;
   rooms: roomDetails[] | undefined;
 }
 
@@ -28,7 +27,6 @@ export default function RoomList(props: RoomListProps) {
     isUserLoaded,
     selectedRoom,
     setSelectedRoom,
-    refreshRoomList,
     rooms,
   } = props;
 
@@ -47,11 +45,6 @@ export default function RoomList(props: RoomListProps) {
       );
     }
   };
-
-  useEffect(() => {
-    refreshRoomList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserLoaded]);
 
   return (
     <VStack
