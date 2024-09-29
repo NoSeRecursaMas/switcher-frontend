@@ -13,33 +13,33 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema } from "../../services/validation/user-schema";
-import { createUser } from "../../api/user/user-endpoints";
+import { playerSchema } from "../../services/validation/playerSchema";
+import { createPlayer } from "../../api/player/playerEndpoints";
 import { sendToast } from "../../services/utils";
-import { UserContextType } from "../../context/types";
-import { isErrorData } from "../../api/types";
+import { isErrorDetail } from "../../api/types";
+import { usePlayerStore } from "../../store/playerStore";
 
-interface UserCreationFormProps {
-  isUserLoaded: boolean;
-  setUser: UserContextType["setUser"];
+interface PlayerCreationFormProps {
+  isPlayerLoaded: boolean;
 }
 
-export default function UserCreationForm(props: UserCreationFormProps) {
-  const { isUserLoaded, setUser } = props;
+export default function PlayerCreationForm(props: PlayerCreationFormProps) {
+  const { isPlayerLoaded } = props;
+  const { setPlayer } = usePlayerStore();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof userSchema>>({
-    resolver: zodResolver(userSchema),
+  } = useForm<z.infer<typeof playerSchema>>({
+    resolver: zodResolver(playerSchema),
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (input) => {
-    const data = await createUser({ username: input.name });
-    if (isErrorData(data)) {
-      sendToast("Error al seleccionar nombre", data.detail, "error");
+  const onSubmit: SubmitHandler<z.infer<typeof playerSchema>> = async (input) => {
+    const data = await createPlayer({ username: input.name });
+    if (isErrorDetail(data)) {
+      sendToast("Error al crear el usuario", data.detail, "error");
     } else {
-      setUser({ id: data.playerID, username: input.name });
+      setPlayer(data);
       sendToast("¡Nombre seleccionado con éxito!", null, "success");
     }
   };
@@ -47,7 +47,7 @@ export default function UserCreationForm(props: UserCreationFormProps) {
   return (
     <Modal
       closeOnOverlayClick={false}
-      isOpen={!isUserLoaded}
+      isOpen={!isPlayerLoaded}
       onClose={() => null}
     >
       <ModalOverlay />
