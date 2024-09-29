@@ -1,4 +1,5 @@
 import { createStandaloneToast } from "@chakra-ui/react";
+import { ErrorResponse } from "../api/types";
 const { toast } = createStandaloneToast();
 
 export const sendToast = (
@@ -14,4 +15,14 @@ export const sendToast = (
     isClosable: true,
     position: "bottom-right",
   });
+};
+
+export const sendErrorToast = (error: ErrorResponse, title: string) => {
+  if (error.status === 422 && Array.isArray(error.detail)) {
+    error.detail.forEach((errorItem) => {
+      sendToast(title, errorItem.msg, "error");
+    });
+  } else {
+    sendToast(title, error.detail as string, "error");
+  }
 };

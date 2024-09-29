@@ -1,4 +1,4 @@
-import axiosClient from "./http-client";
+import { axiosClient } from "./httpClient";
 import MockAdapter from "axios-mock-adapter";
 
 const mockAdapter = new MockAdapter(axiosClient, {

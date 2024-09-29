@@ -1,9 +1,23 @@
-import mockAdapter from "../mock-adapter";
+import mockAdapter from "../mockAdapter";
 import { CreateRoomRequest } from "../../types/roomTypes";
 
 const roomMock = () => {
   mockAdapter.onPost("mock/rooms").reply((config) => {
     const data = JSON.parse(config.data as string) as CreateRoomRequest;
+    if (data.roomName === "error") {
+      return [
+        422,
+        {
+          detail: [
+            {
+              type: "error",
+              msg: "Ejemplo de error en el backend",
+              input: "roomName",
+            },
+          ]
+        },
+      ];
+    }
     const mockResponse = {
       roomID: Math.floor(Math.random() * 100),
     };

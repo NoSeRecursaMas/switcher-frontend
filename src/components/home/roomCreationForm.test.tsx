@@ -7,9 +7,8 @@ import * as roomEndpoints from "../../api/room/roomEndpoints";
 import { MemoryRouter as Router } from "react-router-dom";
 import * as utils from "../../services/utils";
 import { useNavigate } from "react-router-dom";
-import { isErrorDetail } from "../../api/types";
+import { ErrorResponse, isErrorDetail } from "../../api/types";
 import { RoomID } from "../../types/roomTypes";
-import { ErrorDetail } from "../../api/types";
 
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = await importOriginal();
@@ -50,7 +49,6 @@ describe("RoomCreationForm", () => {
     render(
       <Router>
         <RoomCreationForm
-          
           player={{ playerID: 1, username: "test" }}
           isOpen={false}
           onClose={() => null}
@@ -67,7 +65,6 @@ describe("RoomCreationForm", () => {
     render(
       <Router>
         <RoomCreationForm
-          
           player={{ playerID: 1, username: "test" }}
           isOpen={true}
           onClose={onClose}
@@ -82,7 +79,7 @@ describe("RoomCreationForm", () => {
 
   it("Se puede crear una sala y se muestra un mensaje de éxito", async () => {
     const sendToast = vi.spyOn(utils, "sendToast");
-    const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
     const navigateMock = vi.fn();
     useNavigateMock.mockReturnValue(navigateMock);
 
@@ -91,7 +88,6 @@ describe("RoomCreationForm", () => {
     render(
       <Router>
         <RoomCreationForm
-          
           player={{ playerID: 1, username: "test" }}
           isOpen={true}
           onClose={() => null}
@@ -114,7 +110,7 @@ describe("RoomCreationForm", () => {
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
     await waitFor(async () => {
-      expect(setRoomEndpoint).toHaveBeenCalledWith({
+      expect(createRoomEndpoint).toHaveBeenCalledWith({
         playerID: 1,
         roomName: "Sala de test",
         minPlayers: 2,
@@ -126,9 +122,9 @@ describe("RoomCreationForm", () => {
         "success"
       );
 
-      const data = (await setRoomEndpoint.mock.results[0].value) as
+      const data = (await createRoomEndpoint.mock.results[0].value) as
         | RoomID
-        | ErrorDetail;
+        | ErrorResponse;
 
       if (isErrorDetail(data)) {
         // Nunca debería pasar por aquí
@@ -142,7 +138,7 @@ describe("RoomCreationForm", () => {
   });
 
   it("No se puede crear una sala con un nombre con más de 32 caracteres y se muestra un mensaje de error", async () => {
-    const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
     const user = userEvent.setup();
 
     render(
@@ -172,11 +168,11 @@ describe("RoomCreationForm", () => {
     expect(
       screen.getByText("El nombre no puede tener más de 32 caracteres")
     ).toBeInTheDocument();
-    expect(setRoomEndpoint).not.toHaveBeenCalled();
+    expect(createRoomEndpoint).not.toHaveBeenCalled();
   });
 
   it("No se puede crear una sala con un nombre con caracteres no ASCII y se muestra un mensaje de error", async () => {
-    const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
     const user = userEvent.setup();
 
     render(
@@ -206,11 +202,11 @@ describe("RoomCreationForm", () => {
     expect(
       screen.getByText("El nombre solo puede contener caracteres ASCII")
     ).toBeInTheDocument();
-    expect(setRoomEndpoint).not.toHaveBeenCalled();
+    expect(createRoomEndpoint).not.toHaveBeenCalled();
   });
 
   it("No se puede crear una sala con un número de jugadores mínimos mayor que el de jugadores máximos y se muestra un mensaje de error", async () => {
-    const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
     const user = userEvent.setup();
 
     render(
@@ -242,100 +238,63 @@ describe("RoomCreationForm", () => {
         "El mínimo de jugadores debe ser menor o igual al máximo"
       )
     ).toBeInTheDocument();
-    expect(setRoomEndpoint).not.toHaveBeenCalled();
+    expect(createRoomEndpoint).not.toHaveBeenCalled();
   });
 
-  // it("Se muestra un mensaje de error si el servidor devuelve un error", async () => {
-  //   const sendToast = vi.spyOn(utils, "sendToast");
-  //   const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
-  //   const navigateMock = vi.fn();
-  //   useNavigateMock.mockReturnValue(navigateMock);
+  it("Se muestra un mensaje de error si el servidor devuelve un error", async () => {
+    const sendErrorToast = vi.spyOn(utils, "sendErrorToast");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
+    const navigateMock = vi.fn();
+    useNavigateMock.mockReturnValue(navigateMock);
 
-  //   const user = userEvent.setup();
+    const user = userEvent.setup();
 
-  //   render(
-  //     <Router>
-  //       <RoomCreationForm
-          
-  //         player={{ playerID: 1, username: "test" }}
-  //         isOpen={true}
-  //         onClose={() => null}
-  //       />
-  //     </Router>
-  //   );
+    render(
+      <Router>
+        <RoomCreationForm
+          player={{ playerID: 1, username: "test" }}
+          isOpen={true}
+          onClose={() => null}
+        />
+      </Router>
+    );
 
-  //   await user.type(
-  //     screen.getByRole("textbox", { name: "Nombre de la partida" }),
-  //     "error"
-  //   );
-  //   await user.type(
-  //     screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
-  //     "2"
-  //   );
-  //   await user.type(
-  //     screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
-  //     "4"
-  //   );
-  //   await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.type(
+      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      "error"
+    );
+    await user.type(
+      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      "2"
+    );
+    await user.type(
+      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      "4"
+    );
+    await user.click(screen.getByRole("button", { name: "Crear" }));
 
-  //   await waitFor(() => {
-  //     expect(setRoomEndpoint).toHaveBeenCalled();
-  //     expect(sendToast).toHaveBeenCalledWith(
-  //       "Error al crear partida",
-  //       "Ejemplo de error en el backend",
-  //       "error"
-  //     );
-  //     expect(navigateMock).not.toHaveBeenCalled();
-  //   });
-  // });
-
-  // it("Se muestra un mensaje de error si el servidor devuelve un error de id_inválida", async () => {
-  //   const sendToast = vi.spyOn(utils, "sendToast");
-  //   const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
-  //   const navigateMock = vi.fn();
-  //   useNavigateMock.mockReturnValue(navigateMock);
-
-  //   const user = userEvent.setup();
-
-  //   render(
-  //     <Router>
-  //       <RoomCreationForm
-          
-  //         player={{ playerID: 1, username: "test" }}
-  //         isOpen={true}
-  //         onClose={() => null}
-  //       />
-  //     </Router>
-  //   );
-
-  //   await user.type(
-  //     screen.getByRole("textbox", { name: "Nombre de la partida" }),
-  //     "id_invalida"
-  //   );
-  //   await user.type(
-  //     screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
-  //     "2"
-  //   );
-  //   await user.type(
-  //     screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
-  //     "4"
-  //   );
-  //   await user.click(screen.getByRole("button", { name: "Crear" }));
-
-  //   await waitFor(() => {
-  //     expect(setRoomEndpoint).toHaveBeenCalled();
-  //     expect(sendToast).toHaveBeenCalledWith(
-  //       "Error al crear partida",
-  //       "No existe jugador con esa ID",
-  //       "error"
-  //     );
-  //     expect(navigateMock).not.toHaveBeenCalled();
-  //   });
-  // });
+    await waitFor(() => {
+      expect(createRoomEndpoint).toHaveBeenCalled();
+      expect(sendErrorToast).toHaveBeenCalledWith(
+        {
+          status: 422,
+          detail: [
+            {
+              msg: "Ejemplo de error en el backend",
+              type: "error",
+              input: "roomName",
+            },
+          ],
+        },
+        "Error al crear partida"
+      );
+      expect(navigateMock).not.toHaveBeenCalled();
+    });
+  });
 
   it("Se muestra un mensaje de error si el usuario no está cargado", async () => {
     const sendToast = vi.spyOn(utils, "sendToast");
-    const setRoomEndpoint = vi.spyOn(roomEndpoints, "setRoomEndpoint");
+    const createRoomEndpoint = vi.spyOn(roomEndpoints, "createRoomEndpoint");
     const navigateMock = vi.fn();
     useNavigateMock.mockReturnValue(navigateMock);
 
@@ -365,7 +324,7 @@ describe("RoomCreationForm", () => {
     );
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    expect(setRoomEndpoint).not.toHaveBeenCalledWith();
+    expect(createRoomEndpoint).not.toHaveBeenCalledWith();
     expect(sendToast).toHaveBeenCalledWith(
       "Error al crear partida",
       "No se pudo obtener tu usuario",
