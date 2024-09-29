@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { getRooms } from "../api/room/roomEndpoints";
 import { isErrorDetail } from "../api/types";
-import { sendToast } from "../services/utils";
-import { roomDetails } from "../types/roomTypes";
+import { sendErrorToast, sendToast } from "../services/utils";
+import { RoomDetails } from "../types/roomTypes";
 
 export default function useRoomList() {
-    const [rooms, setRooms] = useState<roomDetails[] | undefined>(undefined);
-    const [selectedRoom, setSelectedRoom] = useState<number | undefined>(undefined);
+    const [rooms, setRooms] = useState<RoomDetails[] | undefined>(undefined);
+    const [selectedRoomID, setSelectedRoomID] = useState<number | undefined>(undefined);
     const refreshRoomList = async () => {
-        setSelectedRoom(undefined);
+        setSelectedRoomID(undefined);
         setRooms(undefined);
         const data = await getRooms();
         if (isErrorDetail(data)) {
-            sendToast("Error al obtener la lista de salas", data.detail, "error");
+            sendErrorToast(data, "Error al obtener la lista de salas");
         } else {
             setRooms(data);
         }
@@ -25,5 +25,5 @@ export default function useRoomList() {
             sendToast("Error al obtener la lista de salas", JSON.stringify(err), "error");
         });
     }, []);
-    return { rooms, selectedRoom, setSelectedRoom, refreshRoomList };
+    return { rooms, selectedRoomID, setSelectedRoomID, refreshRoomList };
 }

@@ -16,20 +16,33 @@ import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
 import { usePlayerStore } from "../store/playerStore";
 import useRoomList from "../hooks/useRoomList";
+import { joinRoom } from "../api/room/roomEndpoints";
+import { isErrorDetail } from "../api/types";
+import { sendErrorToast, sendToast } from "../services/utils";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const player = usePlayerStore((state) => state.player);
-  const { rooms, selectedRoom, setSelectedRoom, refreshRoomList } = useRoomList();
+  const { rooms, selectedRoomID, setSelectedRoomID, refreshRoomList } =
+    useRoomList();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+
+  const handleJoinRoom = async () => {
+    if (!selectedRoomID || !player) return;
+    const data = await joinRoom(selectedRoomID, { playerID: player.playerID });
+    if (isErrorDetail(data)) {
+      sendErrorToast(data, "Error al crear partida");
+    } else {
+      sendToast("Partida creada con éxito", null, "success");
+      navigate(`/room/${selectedRoomID.toString()}`);
+    }
+  };
 
   return (
     <Center h="100vh">
       <PlayerCreationForm isPlayerLoaded={!!player} />
-      <RoomCreationForm
-        player={player}
-        isOpen={isOpen}
-        onClose={onClose}
-      />
+      <RoomCreationForm player={player} isOpen={isOpen} onClose={onClose} />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -56,7 +69,7 @@ export default function Home() {
           </Tooltip>
           <Tooltip
             label={
-              selectedRoom
+              selectedRoomID
                 ? "Unirse a la sala"
                 : "Selecciona una sala para unirte"
             }
@@ -67,7 +80,8 @@ export default function Home() {
               aria-label="Join Room"
               colorScheme="teal"
               isLoading={!player}
-              isDisabled={selectedRoom === undefined}
+              isDisabled={selectedRoomID === undefined}
+              onClick={handleJoinRoom}
             />
           </Tooltip>
           <Tooltip label="Actualizar lista de salas">
@@ -84,8 +98,8 @@ export default function Home() {
 
         <RoomList
           isPlayerLoaded={!!player}
-          selectedRoom={selectedRoom}
-          setSelectedRoom={setSelectedRoom}
+          selectedRoomID={selectedRoomID}
+          setSelectedRoomID={setSelectedRoomID}
           rooms={rooms}
         />
       </VStack>
