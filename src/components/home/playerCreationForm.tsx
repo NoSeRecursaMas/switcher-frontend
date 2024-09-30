@@ -15,7 +15,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { playerSchema } from "../../services/validation/playerSchema";
 import { createPlayer } from "../../api/player/playerEndpoints";
-import { sendToast } from "../../services/utils";
+import { sendErrorToast, sendToast } from "../../services/utils";
 import { isErrorDetail } from "../../api/types";
 import { usePlayerStore } from "../../store/playerStore";
 
@@ -37,7 +37,7 @@ export default function PlayerCreationForm(props: PlayerCreationFormProps) {
   const onSubmit: SubmitHandler<z.infer<typeof playerSchema>> = async (input) => {
     const data = await createPlayer({ username: input.name });
     if (isErrorDetail(data)) {
-      sendToast("Error al crear el usuario", data.detail, "error");
+      sendErrorToast(data, "Error al seleccionar nombre");
     } else {
       setPlayer(data);
       sendToast("¡Nombre seleccionado con éxito!", null, "success");

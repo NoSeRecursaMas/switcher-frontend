@@ -22,8 +22,8 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { roomSchema } from "../../services/validation/roomSchema";
-import { setRoomEndpoint } from "../../api/room/roomEndpoints";
-import { sendToast } from "../../services/utils";
+import { createRoomEndpoint } from "../../api/room/roomEndpoints";
+import { sendErrorToast, sendToast } from "../../services/utils";
 import Player from "../../types/playerTypes";
 import { isErrorDetail } from "../../api/types";
 import { useNavigate } from "react-router-dom";
@@ -55,14 +55,14 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
         "error"
       );
     } else {
-      const data = await setRoomEndpoint({
+      const data = await createRoomEndpoint({
         playerID: player.playerID,
         roomName: input.name,
         minPlayers: input.minPlayers,
         maxPlayers: input.maxPlayers,
       });
       if (isErrorDetail(data)) {
-        sendToast("Error al crear partida", data.detail, "error");
+        sendErrorToast(data, "Error al crear partida");
       } else {
         sendToast("Partida creada con éxito", null, "success");
         navigate(`/room/${data.roomID.toString()}`);
@@ -141,12 +141,12 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={2}>
-            <Button colorScheme="gray" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
-              Crear
-            </Button>
+              <Button colorScheme="gray" onClick={onClose}>
+                Cancelar
+              </Button>
+              <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
+                Crear
+              </Button>
             </HStack>
           </ModalFooter>
         </form>

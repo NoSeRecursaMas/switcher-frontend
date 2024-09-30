@@ -7,13 +7,14 @@ import * as playerEndpoints from "../../api/player/playerEndpoints";
 import * as utils from "../../services/utils";
 import { usePlayerStore } from "../../store/playerStore";
 
-
 beforeEach(() => {
   import.meta.env.VITE_MOCK = "true";
 });
 
 afterEach(() => {
-  act(() => {usePlayerStore.setState({ player: undefined })});
+  act(() => {
+    usePlayerStore.setState({ player: undefined });
+  });
   cleanup();
 });
 
@@ -38,15 +39,18 @@ describe("PlayerCreationForm", () => {
     await user.type(screen.getByRole("textbox"), "Usuario de test");
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-
     await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({ username: "Usuario de test" });
+      expect(createPlayer).toHaveBeenCalledWith({
+        username: "Usuario de test",
+      });
       expect(sendToast).toHaveBeenCalledWith(
         "¡Nombre seleccionado con éxito!",
         null,
         "success"
       );
-      expect(usePlayerStore.getState().player?.username).toEqual("Usuario de test");
+      expect(usePlayerStore.getState().player?.username).toEqual(
+        "Usuario de test"
+      );
     });
   });
 
@@ -86,23 +90,30 @@ describe("PlayerCreationForm", () => {
     });
   });
 
-  // it("Se muestra un mensaje de error si el servidor devuelve un error", async () => {
-  //   const sendToast = vi.spyOn(utils, "sendToast");
-  //   const user = userEvent.setup();
+  it("Se muestra un mensaje de error si el servidor devuelve un error", async () => {
+    const sendErrorToast = vi.spyOn(utils, "sendErrorToast");
+    const user = userEvent.setup();
 
-  //   render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-  //   await user.type(screen.getByRole("textbox"), "error");
-  //   await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.type(screen.getByRole("textbox"), "error");
+    await user.click(screen.getByRole("button", { name: "Crear" }));
 
-  //   await waitFor(() => {
-  //     expect(sendToast).toHaveBeenCalledWith(
-  //       "Error al seleccionar nombre",
-  //       "Ejemplo de error en el backend",
-  //       "error"
-  //     );
-  //   });
-  // });
+    await waitFor(() => {
+      expect(sendErrorToast).toHaveBeenCalledWith(
+        {
+          status: 422,
+          detail: [{
+            msg: "Ejemplo de error en el backend",
+            type: "error",
+            input: "username",
+          }],
+        },
+        "Error al seleccionar nombre"
+      );
+      expect(usePlayerStore.getState().player).toBeUndefined();
+    });
+  });
 
   it("Se puede seleccionar un nombre de usuario con 1 solo caracter", async () => {
     const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
@@ -142,7 +153,9 @@ describe("PlayerCreationForm", () => {
         null,
         "success"
       );
-      expect(usePlayerStore.getState().player?.username).toEqual("a".repeat(32));
+      expect(usePlayerStore.getState().player?.username).toEqual(
+        "a".repeat(32)
+      );
     });
   });
 
@@ -160,13 +173,17 @@ describe("PlayerCreationForm", () => {
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
     await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({ username: "Usuario de test" });
+      expect(createPlayer).toHaveBeenCalledWith({
+        username: "Usuario de test",
+      });
       expect(sendToast).toHaveBeenCalledWith(
         "¡Nombre seleccionado con éxito!",
         null,
         "success"
       );
-      expect(usePlayerStore.getState().player?.username).toEqual("Usuario de test");
+      expect(usePlayerStore.getState().player?.username).toEqual(
+        "Usuario de test"
+      );
     });
   });
 });
