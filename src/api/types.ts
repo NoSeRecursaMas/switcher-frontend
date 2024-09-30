@@ -3,21 +3,21 @@ export interface Response<T> {
   data: T;
 }
 
-export interface ErrorResponse {
-  status: number;
-  detail: {
-    type: string;
-    msg: string;
-    input?: string;
-  }[] | string;
+export interface ErrorDetail {
+  type: string;
+  msg: string;
+  input?: string;
 }
 
-export function isErrorDetail(obj: unknown): obj is ErrorResponse {
+export interface ErrorType {
+  detail: ErrorDetail[]| string;
+}
+
+export function isError(obj: unknown): obj is ErrorType {
   return (
     typeof obj === "object" &&
     obj !== null &&
-    "status" in obj &&
     "detail" in obj &&
-    Array.isArray((obj as ErrorResponse).detail)
+    (Array.isArray((obj as ErrorType).detail) || typeof (obj as ErrorType).detail === "string")
   );
 }

@@ -1,8 +1,6 @@
 import axios from "axios";
-import { Response } from "./types";
-import { ErrorResponse } from "./types";
+import { Response, ErrorType, isError } from "./types";
 import { isAxiosError } from "axios";
-
 
 const axiosClient = axios.create({
   baseURL: `http://localhost:8000`,
@@ -12,51 +10,45 @@ const axiosClient = axios.create({
   },
 });
 
-
-const handleRequest = async <T>(method: "GET" | "POST" | "PUT" | "DELETE", data: unknown, path: string, statusExpected: number): Promise<T | ErrorResponse> => {
+const handleRequest = async <T>(
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  data: unknown,
+  path: string,
+  statusExpected: number
+): Promise<T | ErrorType> => {
   try {
     let response: Response<T>;
-    const mockPrefix = import.meta.env.VITE_MOCK === "true" ? "mock/" : "";
     if (method === "GET") {
-      response = await axiosClient.get(`${mockPrefix}${path}`);
+      response = await axiosClient.get(path);
+    } else if (method === "POST") {
+      response = await axiosClient.post(path, data);
+    } else if (method === "PUT") {
+      response = await axiosClient.put(path, data);
+    } else {
+      response = await axiosClient.delete(path);
     }
-    else if (method === "POST") {
-      response = await axiosClient.post(`${mockPrefix}${path}`, data);
-    }
-    else if (method === "PUT") {
-      response = await axiosClient.put(`${mockPrefix}${path}`, data);
-    }
-    else {
-      response = await axiosClient.delete(`${mockPrefix}${path}`);
-    }
-    
     return handleResponseSuccess<T>(response, statusExpected);
-  }
-  catch (error: unknown) {
+  } catch (error: unknown) {
     return handleResponseError(error);
   }
-}
+};
 
-function handleResponseSuccess<T>(response: Response<T>, statusExpected: number): T | ErrorResponse {
+function handleResponseSuccess<T>(
+  response: Response<T>,
+  statusExpected: number
+): T {
   if (response.status === statusExpected) {
     return response.data;
   } else {
-    return {
-      status: response.status,
-      detail: [{ type: "unknown", msg: JSON.stringify(response) }],
-    };
+    throw new Error(`Unexpected status code: ${response.status.toString()}`);
   }
 }
 
-function handleResponseError(error: unknown): ErrorResponse {
-  if (isAxiosError(error) && error.response?.data) {
-    return {
-      status: error.response.status,
-      ...error.response.data,
-    } as ErrorResponse;
+function handleResponseError(error: unknown): ErrorType {
+  if (isAxiosError(error) && isError(error.response?.data)) {
+    return error.response.data;
   } else {
     return {
-      status: 500,
       detail: [{ type: "unknown", msg: JSON.stringify(error) }],
     };
   }

@@ -3,10 +3,24 @@ import { createRoot } from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import App from "./appRoutes";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
-  </StrictMode>
-);
+async function enableMocking() {
+  if (import.meta.env.VITE_MOCK !== "true") {
+    return;
+  }
+  const { worker } = await import("./mocks/browser");
+  return worker.start();
+}
+
+enableMocking()
+  .then(() => {
+    createRoot(document.getElementById("root")!).render(
+      <StrictMode>
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
+      </StrictMode>
+    );
+  })
+  .catch((error: unknown) => {
+    console.error("Error during initialization:", error);
+  });
