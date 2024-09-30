@@ -1,24 +1,26 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, cleanup, waitFor, act } from "@testing-library/react";
+import { describe, it, expect, afterEach, vi, beforeEach, Mock } from "vitest";
+import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import PlayerCreationForm from "./playerCreationForm";
-import * as playerEndpoints from "../../api/player/playerEndpoints";
-import * as utils from "../../services/utils";
-import { usePlayerStore } from "../../stores/playerStore";
+import { usePlayer } from "../../hooks/usePlayer";
 
-beforeEach(() => {
-  import.meta.env.VITE_MOCK = "true";
-});
-
-afterEach(() => {
-  act(() => {
-    usePlayerStore.setState({ player: undefined });
-  });
-  cleanup();
-});
+vi.mock("../../hooks/usePlayer");
 
 describe("PlayerCreationForm", () => {
+  const mockCreatePlayer = vi.fn();
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    (usePlayer as Mock).mockReturnValue({
+      createPlayer: mockCreatePlayer,
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
   it("El modal es visible cuando el usuario no está cargado", () => {
     render(<PlayerCreationForm isPlayerLoaded={false} />);
     expect(screen.getByText("Elige tu nombre")).toBeInTheDocument();
@@ -30,50 +32,33 @@ describe("PlayerCreationForm", () => {
   });
 
   it("Se puede seleccionar un nombre de usuario y se muestra un mensaje de éxito", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
-    const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
+    const username = "Usuario de test";
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-    await user.type(screen.getByRole("textbox"), "Usuario de test");
+    await user.type(screen.getByRole("textbox"), username);
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({
-        username: "Usuario de test",
-      });
-      expect(sendToast).toHaveBeenCalledWith(
-        "¡Nombre seleccionado con éxito!",
-        null,
-        "success"
-      );
-      expect(usePlayerStore.getState().player?.username).toEqual(
-        "Usuario de test"
-      );
-    });
+    expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
 
   it("No se puede seleccionar un nombre con más de 32 caracteres y se muestra un mensaje de error", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
     const user = userEvent.setup();
+    const username = "a".repeat(33);
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-    await user.type(screen.getByRole("textbox"), "a".repeat(33));
+    await user.type(screen.getByRole("textbox"), username);
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("El nombre no puede tener más de 32 caracteres")
-      ).toBeInTheDocument();
-      expect(createPlayer).not.toHaveBeenCalled();
-      expect(usePlayerStore.getState().player).toBeUndefined();
-    });
+    expect(
+      screen.getByText("El nombre no puede tener más de 32 caracteres")
+    ).toBeInTheDocument();
+    expect(mockCreatePlayer).not.toHaveBeenCalled();
   });
 
   it("No se puede seleccionar un nombre con caracteres no ASCII y se muestra un mensaje de error", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
     const user = userEvent.setup();
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
@@ -81,109 +66,45 @@ describe("PlayerCreationForm", () => {
     await user.type(screen.getByRole("textbox"), "😀");
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("El nombre solo puede contener caracteres ASCII")
-      ).toBeInTheDocument();
-      expect(createPlayer).not.toHaveBeenCalled();
-      expect(usePlayerStore.getState().player).toBeUndefined();
-    });
-  });
-
-  it("Se muestra un mensaje de error si el servidor devuelve un error", async () => {
-    const sendErrorToast = vi.spyOn(utils, "sendErrorToast");
-    const user = userEvent.setup();
-
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
-
-    await user.type(screen.getByRole("textbox"), "error");
-    await user.click(screen.getByRole("button", { name: "Crear" }));
-
-    await waitFor(() => {
-      expect(sendErrorToast).toHaveBeenCalledWith(
-        {
-          status: 422,
-          detail: [{
-            msg: "Ejemplo de error en el backend",
-            type: "error",
-            input: "username",
-          }],
-        },
-        "Error al seleccionar nombre"
-      );
-      expect(usePlayerStore.getState().player).toBeUndefined();
-    });
+    expect(
+      screen.getByText("El nombre solo puede contener caracteres ASCII")
+    ).toBeInTheDocument();
+    expect(mockCreatePlayer).not.toHaveBeenCalled();
   });
 
   it("Se puede seleccionar un nombre de usuario con 1 solo caracter", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
-    const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
+    const username = "a";
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-    await user.type(screen.getByRole("textbox"), "a");
+    await user.type(screen.getByRole("textbox"), username);
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({ username: "a" });
-      expect(sendToast).toHaveBeenCalledWith(
-        "¡Nombre seleccionado con éxito!",
-        null,
-        "success"
-      );
-      expect(usePlayerStore.getState().player?.username).toEqual("a");
-    });
+    expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
 
   it("Se puede seleccionar un nombre de usuario con 32 caracteres", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
-    const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
+    const username = "a".repeat(32);
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-    await user.type(screen.getByRole("textbox"), "a".repeat(32));
+    await user.type(screen.getByRole("textbox"), username);
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({ username: "a".repeat(32) });
-      expect(sendToast).toHaveBeenCalledWith(
-        "¡Nombre seleccionado con éxito!",
-        null,
-        "success"
-      );
-      expect(usePlayerStore.getState().player?.username).toEqual(
-        "a".repeat(32)
-      );
-    });
+    expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
 
   it("Se puede seleccionar un nombre de usuario con muchos espacios al inicio/final y se remueven", async () => {
-    const createPlayer = vi.spyOn(playerEndpoints, "createPlayer");
-    const sendToast = vi.spyOn(utils, "sendToast");
     const user = userEvent.setup();
+    const username = "                  Usuario de test              ";
 
     render(<PlayerCreationForm isPlayerLoaded={false} />);
 
-    await user.type(
-      screen.getByRole("textbox"),
-      "                  Usuario de test              "
-    );
+    await user.type(screen.getByRole("textbox"), username);
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
-    await waitFor(() => {
-      expect(createPlayer).toHaveBeenCalledWith({
-        username: "Usuario de test",
-      });
-      expect(sendToast).toHaveBeenCalledWith(
-        "¡Nombre seleccionado con éxito!",
-        null,
-        "success"
-      );
-      expect(usePlayerStore.getState().player?.username).toEqual(
-        "Usuario de test"
-      );
-    });
+    expect(mockCreatePlayer).toHaveBeenCalledWith(username.trim());
   });
 });

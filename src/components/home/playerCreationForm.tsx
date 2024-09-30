@@ -10,22 +10,15 @@ import {
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { playerSchema } from "../../services/validation/playerSchema";
-import { createPlayer } from "../../api/player/playerEndpoints";
-import { sendErrorToast, sendToast } from "../../services/utils";
-import { isErrorDetail } from "../../api/types";
-import { usePlayerStore } from "../../stores/playerStore";
+import { usePlayer } from "../../hooks/usePlayer";
 
-interface PlayerCreationFormProps {
-  isPlayerLoaded: boolean;
-}
-
-export default function PlayerCreationForm(props: PlayerCreationFormProps) {
+export default function PlayerCreationForm(props: { isPlayerLoaded: boolean }) {
   const { isPlayerLoaded } = props;
-  const { setPlayer } = usePlayerStore();
+  const { createPlayer } = usePlayer();
   const {
     register,
     handleSubmit,
@@ -33,16 +26,6 @@ export default function PlayerCreationForm(props: PlayerCreationFormProps) {
   } = useForm<z.infer<typeof playerSchema>>({
     resolver: zodResolver(playerSchema),
   });
-
-  const onSubmit: SubmitHandler<z.infer<typeof playerSchema>> = async (input) => {
-    const data = await createPlayer({ username: input.name });
-    if (isErrorDetail(data)) {
-      sendErrorToast(data, "Error al seleccionar nombre");
-    } else {
-      setPlayer(data);
-      sendToast("¡Nombre seleccionado con éxito!", null, "success");
-    }
-  };
 
   return (
     <Modal
@@ -52,7 +35,7 @@ export default function PlayerCreationForm(props: PlayerCreationFormProps) {
     >
       <ModalOverlay />
       <ModalContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit((input) => createPlayer(input.name))}>
           <ModalHeader>Elige tu nombre</ModalHeader>
           <ModalBody>
             <FormControl isInvalid={!!errors.name}>
