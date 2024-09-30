@@ -17,7 +17,7 @@ import { playerSchema } from "../../services/validation/playerSchema";
 import { createPlayer } from "../../api/player/playerEndpoints";
 import { sendErrorToast, sendToast } from "../../services/utils";
 import { isErrorDetail } from "../../api/types";
-import { usePlayerStore } from "../../store/playerStore";
+import { usePlayerStore } from "../../stores/playerStore";
 
 interface PlayerCreationFormProps {
   isPlayerLoaded: boolean;

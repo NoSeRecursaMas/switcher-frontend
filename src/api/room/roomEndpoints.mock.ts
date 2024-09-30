@@ -1,5 +1,6 @@
 import mockAdapter from "../mockAdapter";
 import { CreateRoomRequest } from "../../types/roomTypes";
+import { PlayerID } from "../../types/playerTypes";
 
 const roomMock = () => {
   mockAdapter.onPost("mock/rooms").reply((config) => {
@@ -14,7 +15,7 @@ const roomMock = () => {
               msg: "Ejemplo de error en el backend",
               input: "roomName",
             },
-          ]
+          ],
         },
       ];
     }
@@ -23,6 +24,15 @@ const roomMock = () => {
     };
 
     return [201, mockResponse];
+  });
+
+  mockAdapter.onPut("mock/rooms/:roomID/join").reply((config) => {
+    const data = JSON.parse(config.data as string) as PlayerID;
+    if (data.playerID === -1) {
+      return [404, { detail: "No existe usuario con ese ID" }];
+    }
+
+    return [200, {}];
   });
 
   mockAdapter.onGet("mock/rooms").reply(() => {

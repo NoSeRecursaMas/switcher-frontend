@@ -3,9 +3,13 @@ interface Player {
   username: string;
 }
 
+interface PlayerID {
+  playerID: number;
+}
+
 interface CreatePlayerRequest {
   username: string;
 }
 
-export type { Player, CreatePlayerRequest};
+export type { Player, PlayerID, CreatePlayerRequest};
 export default Player;

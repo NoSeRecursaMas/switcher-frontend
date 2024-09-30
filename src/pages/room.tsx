@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { VStack, HStack, Center, Button, Tooltip } from "@chakra-ui/react";
-import { usePlayerStore } from "../store/playerStore";
+import { usePlayerStore } from "../stores/playerStore";
 import useSocket from "../hooks/useSocket";
 import RoomData from "../components/room/roomData";
 

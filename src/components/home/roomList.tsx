@@ -16,16 +16,16 @@ import { RoomDetails } from "../../types/roomTypes";
 
 interface RoomListProps {
   isPlayerLoaded: boolean;
-  selectedRoom: number | undefined;
-  setSelectedRoom: (room: number) => void;
+  selectedRoomID: number | undefined;
+  setSelectedRoomID: (room: number) => void;
   rooms: RoomDetails[] | undefined;
 }
 
 export default function RoomList(props: RoomListProps) {
   const {
     isPlayerLoaded,
-    selectedRoom,
-    setSelectedRoom,
+    selectedRoomID,
+    setSelectedRoomID,
     rooms,
   } = props;
 
@@ -35,7 +35,7 @@ export default function RoomList(props: RoomListProps) {
     maxPlayers: number
   ) => {
     if (actualPlayers < maxPlayers) {
-      setSelectedRoom(roomID);
+      setSelectedRoomID(roomID);
     } else {
       sendToast(
         "La sala está llena",
@@ -98,7 +98,7 @@ export default function RoomList(props: RoomListProps) {
                   ? "not-allowed"
                   : "pointer"
               }
-              bg={selectedRoom === room.roomID ? "teal.50" : "white"}
+              bg={selectedRoomID === room.roomID ? "teal.50" : "white"}
             >
               <HStack justifyContent="space-between" h="50px">
                 <Heading size="md" w="50%">

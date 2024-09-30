@@ -14,22 +14,24 @@ import { FaArrowRightToBracket, FaArrowRotateLeft } from "react-icons/fa6";
 import PlayerCreationForm from "../components/home/playerCreationForm";
 import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
-import { usePlayerStore } from "../store/playerStore";
+import { usePlayerStore } from "../stores/playerStore";
 import useRoomList from "../hooks/useRoomList";
 
 export default function Home() {
   const player = usePlayerStore((state) => state.player);
-  const { rooms, selectedRoom, setSelectedRoom, refreshRoomList } = useRoomList();
+  const {
+    rooms,
+    selectedRoomID,
+    setSelectedRoomID,
+    refreshRoomList,
+    handleJoinRoom,
+  } = useRoomList();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Center h="100vh">
       <PlayerCreationForm isPlayerLoaded={!!player} />
-      <RoomCreationForm
-        player={player}
-        isOpen={isOpen}
-        onClose={onClose}
-      />
+      <RoomCreationForm player={player} isOpen={isOpen} onClose={onClose} />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -56,7 +58,7 @@ export default function Home() {
           </Tooltip>
           <Tooltip
             label={
-              selectedRoom
+              selectedRoomID
                 ? "Unirse a la sala"
                 : "Selecciona una sala para unirte"
             }
@@ -67,7 +69,8 @@ export default function Home() {
               aria-label="Join Room"
               colorScheme="teal"
               isLoading={!player}
-              isDisabled={selectedRoom === undefined}
+              isDisabled={selectedRoomID === undefined}
+              onClick={handleJoinRoom}
             />
           </Tooltip>
           <Tooltip label="Actualizar lista de salas">
@@ -84,8 +87,8 @@ export default function Home() {
 
         <RoomList
           isPlayerLoaded={!!player}
-          selectedRoom={selectedRoom}
-          setSelectedRoom={setSelectedRoom}
+          selectedRoomID={selectedRoomID}
+          setSelectedRoomID={setSelectedRoomID}
           rooms={rooms}
         />
       </VStack>
