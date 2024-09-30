@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import RoomList from "./roomList";
 import * as utils from "../../services/utils";
-import { roomDetails } from "../../api/room/room-types";
+import { RoomDetails } from "../../types/roomTypes";
 
-let rooms: roomDetails[];
+let rooms: RoomDetails[];
 
 beforeEach(() => {
   import.meta.env.VITE_MOCK = "true";
@@ -15,7 +15,6 @@ beforeEach(() => {
       roomID: 1,
       roomName: "Sala de test",
       actualPlayers: 3,
-      minPlayers: 2,
       maxPlayers: 4,
       private: false,
       started: false,
@@ -24,7 +23,6 @@ beforeEach(() => {
       roomID: 2,
       roomName: "Sala llena",
       actualPlayers: 4,
-      minPlayers: 3,
       maxPlayers: 4,
       private: false,
       started: false,
@@ -33,7 +31,6 @@ beforeEach(() => {
       roomID: 3,
       roomName: "Sala privada",
       actualPlayers: 2,
-      minPlayers: 2,
       maxPlayers: 4,
       private: true,
       started: false,
@@ -42,7 +39,6 @@ beforeEach(() => {
       roomID: 4,
       roomName: "Sala empezada",
       actualPlayers: 2,
-      minPlayers: 2,
       maxPlayers: 4,
       private: false,
       started: true,
@@ -55,27 +51,12 @@ afterEach(() => {
 });
 
 describe("RoomList", () => {
-  it("Al cargar el componente se refresca la lista de salas", () => {
-    const refreshRoomList = vi.fn();
-    render(
-      <RoomList
-        isUserLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
-        refreshRoomList={refreshRoomList}
-        rooms={[]}
-      />
-    );
-    expect(refreshRoomList).toHaveBeenCalled();
-  });
-
   it("Se muestra un mensaje personalizado si no hay salas", () => {
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={[]}
       />
     );
@@ -85,10 +66,9 @@ describe("RoomList", () => {
   it("Se muestra un mensaje de carga si no se ha cargado el usuario", () => {
     render(
       <RoomList
-        isUserLoaded={false}
+        isPlayerLoaded={false}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={[]}
       />
     );
@@ -98,10 +78,9 @@ describe("RoomList", () => {
   it("Se muestra un mensaje de carga si no se han cargado las salas", () => {
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={undefined}
       />
     );
@@ -111,10 +90,9 @@ describe("RoomList", () => {
   it("Se muestran las salas disponibles", () => {
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={rooms}
       />
     );
@@ -126,10 +104,9 @@ describe("RoomList", () => {
   it("No se muestran las salas empezadas", () => {
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={rooms}
       />
     );
@@ -139,10 +116,9 @@ describe("RoomList", () => {
   it("Se muestra el tag de sala privada/publica correctamente", () => {
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={() => null}
-        refreshRoomList={() => null}
         rooms={rooms}
       />
     );
@@ -162,10 +138,9 @@ describe("RoomList", () => {
 
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={1}
         setSelectedRoom={setSelectedRoom}
-        refreshRoomList={() => null}
         rooms={rooms}
       />
     );
@@ -184,10 +159,9 @@ describe("RoomList", () => {
 
     render(
       <RoomList
-        isUserLoaded={true}
+        isPlayerLoaded={true}
         selectedRoom={3}
         setSelectedRoom={setSelectedRoom}
-        refreshRoomList={() => null}
         rooms={rooms}
       />
     );

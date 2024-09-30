@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import UserProvider from "./context/userContextProvider";
 import Home from "./pages/home";
 import Room from "./pages/room";
 import Game from "./pages/game";
@@ -13,7 +12,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/room/:ID",
-    element: <Room />,
+    element: (
+        <Room />
+    ),
     errorElement: <NotFound />,
   },
   {
@@ -23,11 +24,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 export default function App() {
   return (
-    <UserProvider>
       <RouterProvider router={router} />
-    </UserProvider>
   );
 }

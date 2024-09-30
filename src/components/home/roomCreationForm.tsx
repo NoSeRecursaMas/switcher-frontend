@@ -21,22 +21,21 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { roomSchema } from "../../services/validation/room-schema";
-import { setRoomEndpoint } from "../../api/room/room-endpoints";
+import { roomSchema } from "../../services/validation/roomSchema";
+import { setRoomEndpoint } from "../../api/room/roomEndpoints";
 import { sendToast } from "../../services/utils";
-import { UserState } from "../../context/types";
-import { isErrorData } from "../../api/types";
+import Player from "../../types/playerTypes";
+import { isErrorDetail } from "../../api/types";
 import { useNavigate } from "react-router-dom";
 
 interface roomCreationFormProps {
-  isUserLoaded: boolean;
-  user: UserState | undefined;
+  player: Player | undefined;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function RoomCreationForm(props: roomCreationFormProps) {
-  const { isUserLoaded, user, isOpen, onClose } = props;
+  const { player, isOpen, onClose } = props;
   const navigate = useNavigate();
 
   const {
@@ -49,7 +48,7 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof roomSchema>> = async (input) => {
-    if (!isUserLoaded || typeof user === "undefined") {
+    if (!player) {
       sendToast(
         "Error al crear partida",
         "No se pudo obtener tu usuario",
@@ -57,12 +56,12 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
       );
     } else {
       const data = await setRoomEndpoint({
+        playerID: player.playerID,
         roomName: input.name,
         minPlayers: input.minPlayers,
         maxPlayers: input.maxPlayers,
-        playerID: user.id,
       });
-      if (isErrorData(data)) {
+      if (isErrorDetail(data)) {
         sendToast("Error al crear partida", data.detail, "error");
       } else {
         sendToast("Partida creada con éxito", null, "success");

@@ -1,10 +1,12 @@
-export interface responseError {
+export interface Response<T> {
   status: number;
-  data: {
-    detail: string;
-  };
+  data: T;
 }
 
-export function isErrorData(data: unknown): data is { error: boolean } {
-  return typeof data === 'object' && data !== null && 'error' in data;
+export interface ErrorDetail {
+    detail: string;
+}
+
+export function isErrorDetail(obj: unknown): obj is ErrorDetail {
+    return typeof obj === "object" && obj !== null && "detail" in obj;
 }

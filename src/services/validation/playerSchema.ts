@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const userSchema = z.object({
+export const playerSchema = z.object({
     name: z
       .string()
       .trim()

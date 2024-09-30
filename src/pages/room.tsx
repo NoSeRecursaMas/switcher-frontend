@@ -1,77 +1,51 @@
 import { useParams } from "react-router-dom";
-import {
-  Skeleton,
-  Text,
-  VStack,
-  HStack,
-  Heading,
-  Card,
-  Center,
-  Button,
-  Tooltip,
-} from "@chakra-ui/react";
-import { StarIcon } from "@chakra-ui/icons";
-import { useUser } from "../context/user-context";
+import { VStack, HStack, Center, Button, Tooltip } from "@chakra-ui/react";
+import { usePlayerStore } from "../store/playerStore";
+import useSocket from "../hooks/useSocket";
+import RoomData from "../components/room/roomData";
 
 export default function Room() {
-  const { roomID } = useParams<{ roomID: string }>();
-  const { user } = useUser();
-
-  const room = undefined; // Harcodeado
-  const isRoomDataLoaded = 2 + 2 < 3; // Harcodeado
+  const { ID } = useParams();
+  const { player } = usePlayerStore();
+  const { room } = useSocket(parseInt(ID ?? ""), player?.playerID);
 
   return (
     <>
       <Center h="100vh">
         <VStack>
-          <Skeleton isLoaded={isRoomDataLoaded}>
-            <Heading size="3xl" as="b">
-              {isRoomDataLoaded ? "Sala sin nombre" : "Sala sin nombre"}
-            </Heading>
-          </Skeleton>
-          <Skeleton isLoaded={isRoomDataLoaded}>
-            <Text fontSize="lg" as="i">
-              Mínimo de jugadores: {isRoomDataLoaded ? room?.minPlayers : 0}-
-              Máximo de jugadores: {isRoomDataLoaded ? room?.maxPlayers : 0}
-            </Text>
-          </Skeleton>
+          <RoomData room={room} />
 
-          <VStack p={2} w="lg">
-            {room?.players.map((player) => (
-              <Card key={player.id} w="100%" m={1} p={2}>
-                <HStack justifyContent="space-between">
-                  <Text fontSize="lg">{player.username}</Text>
-                  {player.id === room?.creator_id && (
-                    <Tooltip label="Creador de la sala">
-                      {/* Cambiar la posición del icono porque se ve mal tan lejos del nombre */}
-                      <StarIcon color="yellow.500" />
+          {room && (
+            <HStack justifyContent="space-between" mt={4} spacing={4}>
+              {room.hostID !== player?.playerID ? (
+                <>
+                  <Button colorScheme="red">Abandonar sala</Button>
+                  <Tooltip label="Solo el creador de la sala puede iniciar la partida">
+                    <Button colorScheme="teal" isDisabled>
+                      Iniciar partida
+                    </Button>
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <Tooltip label="No puedes abandonar la sala si eres el creador">
+                    <Button colorScheme="red" isDisabled>
+                      Abandonar sala
+                    </Button>
+                  </Tooltip>
+                  {room.players.length >= room.minPlayers ? (
+                    <Button colorScheme="teal">Iniciar partida</Button>
+                  ) : (
+                    <Tooltip label="Esperando a que se unan más jugadores">
+                      <Button colorScheme="teal" isDisabled>
+                        Iniciar partida
+                      </Button>
                     </Tooltip>
                   )}
-                </HStack>
-              </Card>
-            ))}
-          </VStack>
-
-          <HStack justifyContent="space-between" mt={4} spacing={4}>
-            {room?.creator_id !== user?.id ? (
-              <Button colorScheme="red">Abandonar sala</Button>
-            ) : (
-              <Tooltip label="No puedes abandonar la sala si eres el creador">
-                <Button colorScheme="red" disabled>
-                  Abandonar sala
-                </Button>
-              </Tooltip>
-            )}
-            {room?.minPlayers <= room?.players.length ? (
-              <Button colorScheme="teal">Iniciar partida</Button>
-            ) : (
-              <Tooltip label="Esperando a que se unan más jugadores">
-                <Button colorScheme="teal" isDisabled>
-                  Iniciar partida
-                </Button>
-              </Tooltip>
-            )}
-          </HStack>
+                </>
+              )}
+            </HStack>
+          )}
         </VStack>
       </Center>
     </>

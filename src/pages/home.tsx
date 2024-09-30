@@ -11,50 +11,34 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { FaArrowRightToBracket, FaArrowRotateLeft } from "react-icons/fa6";
-import { useUser } from "../context/user-context";
-import UserCreationForm from "../components/home/userCreationForm";
+import PlayerCreationForm from "../components/home/playerCreationForm";
 import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
-import { requestRooms } from "../api/room/room-endpoints";
-import { roomDetails } from "../api/room/room-types";
-import { sendToast } from "../services/utils";
-import { useState } from "react";
-import { isErrorData } from "../api/types";
+import { usePlayerStore } from "../store/playerStore";
+import useRoomList from "../hooks/useRoomList";
 
 export default function Home() {
-  const { user, setUser, isUserLoaded } = useUser();
-  const [selectedRoom, setSelectedRoom] = useState<number | undefined>(
-    undefined
-  );
-  const [rooms, setRooms] = useState<roomDetails[] | undefined>(undefined);
-
+  const player = usePlayerStore((state) => state.player);
+  const { rooms, selectedRoom, setSelectedRoom, refreshRoomList } = useRoomList();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const refreshRoomList = async () => {
-    setSelectedRoom(undefined);
-    setRooms(undefined);
-
-    const data = await requestRooms();
-    if (isErrorData(data)) {
-      sendToast("Error al obtener la lista de salas", data.detail, "error");
-    } else {
-      setRooms(data);
-    }
-  };
 
   return (
     <Center h="100vh">
-      <UserCreationForm isUserLoaded={isUserLoaded} setUser={setUser} />
-      <RoomCreationForm isUserLoaded={isUserLoaded} user={user} isOpen={isOpen} onClose={onClose} />
+      <PlayerCreationForm isPlayerLoaded={!!player} />
+      <RoomCreationForm
+        player={player}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
           <Text fontSize="xl" as="i">
             Bienvenido,
           </Text>
-          <Skeleton isLoaded={isUserLoaded}>
+          <Skeleton isLoaded={!!player}>
             <Text fontSize="xl" as="b">
-              {isUserLoaded ? user?.username : "invitado sin nombre"}
+              {player ? player.username : "invitado sin nombre"}
             </Text>
           </Skeleton>
         </HStack>
@@ -66,7 +50,7 @@ export default function Home() {
               size="lg"
               aria-label="Create Room"
               colorScheme="teal"
-              isLoading={!isUserLoaded}
+              isLoading={!player}
               onClick={onOpen}
             />
           </Tooltip>
@@ -82,7 +66,7 @@ export default function Home() {
               size="lg"
               aria-label="Join Room"
               colorScheme="teal"
-              isLoading={!isUserLoaded}
+              isLoading={!player}
               isDisabled={selectedRoom === undefined}
             />
           </Tooltip>
@@ -92,17 +76,16 @@ export default function Home() {
               size="lg"
               aria-label="Refresh"
               colorScheme="teal"
-              isLoading={!isUserLoaded}
+              isLoading={!player}
               onClick={refreshRoomList}
             />
           </Tooltip>
         </HStack>
 
         <RoomList
-          isUserLoaded={isUserLoaded}
+          isPlayerLoaded={!!player}
           selectedRoom={selectedRoom}
           setSelectedRoom={setSelectedRoom}
-          refreshRoomList={refreshRoomList}
           rooms={rooms}
         />
       </VStack>

@@ -1,16 +1,9 @@
 import mockAdapter from "../mock-adapter";
-import { createRoomRequest } from "./room-types";
+import { CreateRoomRequest } from "../../types/roomTypes";
 
 const roomMock = () => {
   mockAdapter.onPost("mock/rooms").reply((config) => {
-    const data = JSON.parse(config.data as string) as createRoomRequest;
-    const roomName = data.roomName;
-    if (roomName === "error") {
-      return [400, { detail: "Ejemplo de error en el backend" }];
-    }
-    if (roomName === "id_invalida") {
-      return [404, { detail: "No existe jugador con esa ID" }];
-    }
+    const data = JSON.parse(config.data as string) as CreateRoomRequest;
     const mockResponse = {
       roomID: Math.floor(Math.random() * 100),
     };

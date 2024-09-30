@@ -11,24 +11,21 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
-import { useEffect } from "react";
 import { sendToast } from "../../services/utils";
-import { roomDetails } from "../../api/room/room-types";
+import { RoomDetails } from "../../types/roomTypes";
 
 interface RoomListProps {
-  isUserLoaded: boolean;
+  isPlayerLoaded: boolean;
   selectedRoom: number | undefined;
   setSelectedRoom: (room: number) => void;
-  refreshRoomList: () => void;
-  rooms: roomDetails[] | undefined;
+  rooms: RoomDetails[] | undefined;
 }
 
 export default function RoomList(props: RoomListProps) {
   const {
-    isUserLoaded,
+    isPlayerLoaded,
     selectedRoom,
     setSelectedRoom,
-    refreshRoomList,
     rooms,
   } = props;
 
@@ -48,11 +45,6 @@ export default function RoomList(props: RoomListProps) {
     }
   };
 
-  useEffect(() => {
-    refreshRoomList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserLoaded]);
-
   return (
     <VStack
       w="xl"
@@ -63,17 +55,17 @@ export default function RoomList(props: RoomListProps) {
       overflowX="hidden"
       boxShadow="base"
       justifyContent={
-        typeof rooms === "undefined" || !isUserLoaded || rooms.length === 0
+        typeof rooms === "undefined" || !isPlayerLoaded || rooms.length === 0
           ? "center"
           : "flex-start"
       }
     >
-      {typeof rooms === "undefined" || !isUserLoaded ? (
-        <VStack mb={8}>
+      {!rooms || !isPlayerLoaded ? (
+        <VStack>
           <Heading size="md" mb={2}>
             Cargando salas...
           </Heading>
-          <Spinner emptyColor="gray.100" color="teal.500" size="xl" />
+          <Spinner emptyColor="gray.100" color="teal.500" size="xl" mb={8} />
         </VStack>
       ) : rooms.length === 0 ? (
         <Box>
