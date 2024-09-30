@@ -1,52 +1,59 @@
 import { useEffect, useState } from "react";
-import { getRooms, joinRoom } from "../api/room/roomEndpoints";
-import { isErrorDetail } from "../api/types";
+import { getRooms } from "../api/roomEndpoints";
+import { isError } from "../api/types";
 import { sendErrorToast, sendToast } from "../services/utils";
 import { RoomDetails } from "../types/roomTypes";
-import { useNavigate } from "react-router-dom";
-import { usePlayerStore } from "../stores/playerStore";
 
-export default function useRoomList() {
+export const useRoomList = () => {
   const [rooms, setRooms] = useState<RoomDetails[] | undefined>(undefined);
-  const [selectedRoomID, setSelectedRoomID] = useState<number | undefined>(
+  const [selectedRoomID, selectRoomID] = useState<number | undefined>(
     undefined
   );
-  const navigate  = useNavigate();
-const player = usePlayerStore((state) => state.player);
+  const deleteSelectedRoom = () => {
+    selectRoomID(undefined);
+  };
 
   const refreshRoomList = async () => {
-    setSelectedRoomID(undefined);
+    selectRoomID(undefined);
     setRooms(undefined);
     const data = await getRooms();
-    if (isErrorDetail(data)) {
+    if (isError(data)) {
       sendErrorToast(data, "Error al obtener la lista de salas");
     } else {
       setRooms(data);
     }
   };
 
-  const handleJoinRoom = async () => {
-    if (!selectedRoomID || !player) return;
-    const data = await joinRoom(selectedRoomID, { playerID: player.playerID });
-    if (isErrorDetail(data)) {
-      sendErrorToast(data, "Error al crear partida");
+  useEffect(() => {
+    refreshRoomList().catch((error: unknown) => {
+      console.error("Failed to refresh room list:", error);
+    });
+  }, []);
+
+  const handleSelectRoomID = (
+    roomID: number,
+    actualPlayers: number,
+    maxPlayers: number
+  ) => {
+    if (actualPlayers < maxPlayers) {
+      if (selectedRoomID === roomID) {
+        deleteSelectedRoom();
+      } else {
+        selectRoomID(roomID);
+      }
     } else {
-      sendToast("Partida creada con éxito", null, "success");
-      navigate(`/room/${selectedRoomID.toString()}`);
+      sendToast(
+        "La sala está llena",
+        "No puedes unirte a una que ya alcanzó su límite de jugadores",
+        "warning"
+      );
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await refreshRoomList();
-    };
-    fetchData().catch((err: unknown) => {
-      sendToast(
-        "Error al obtener la lista de salas",
-        JSON.stringify(err),
-        "error"
-      );
-    });
-  }, []);
-  return { rooms, selectedRoomID, setSelectedRoomID, refreshRoomList, handleJoinRoom };
-}
+  return {
+    rooms,
+    selectedRoomID,
+    handleSelectRoomID,
+    refreshRoomList,
+  };
+};

@@ -11,39 +11,21 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
-import { sendToast } from "../../services/utils";
 import { RoomDetails } from "../../types/roomTypes";
 
 interface RoomListProps {
   isPlayerLoaded: boolean;
   selectedRoomID: number | undefined;
-  setSelectedRoomID: (room: number) => void;
+  handleSelectRoomID: (
+    roomID: number,
+    actualPlayers: number,
+    maxPlayers: number
+  ) => void;
   rooms: RoomDetails[] | undefined;
 }
 
 export default function RoomList(props: RoomListProps) {
-  const {
-    isPlayerLoaded,
-    selectedRoomID,
-    setSelectedRoomID,
-    rooms,
-  } = props;
-
-  const handleSelectRoom = (
-    roomID: number,
-    actualPlayers: number,
-    maxPlayers: number
-  ) => {
-    if (actualPlayers < maxPlayers) {
-      setSelectedRoomID(roomID);
-    } else {
-      sendToast(
-        "La sala está llena",
-        "No puedes unirte a una que ya alcanzó su límite de jugadores",
-        "warning"
-      );
-    }
-  };
+  const { isPlayerLoaded, selectedRoomID, handleSelectRoomID, rooms } = props;
 
   return (
     <VStack
@@ -81,7 +63,7 @@ export default function RoomList(props: RoomListProps) {
               m={1}
               p={2}
               onClick={() => {
-                handleSelectRoom(
+                handleSelectRoomID(
                   room.roomID,
                   room.actualPlayers,
                   room.maxPlayers
@@ -89,9 +71,7 @@ export default function RoomList(props: RoomListProps) {
               }}
               _hover={{
                 bg:
-                  room.actualPlayers === room.maxPlayers
-                    ? "white"
-                    : "gray.100",
+                  room.actualPlayers === room.maxPlayers ? "white" : "gray.100",
               }}
               cursor={
                 room.actualPlayers === room.maxPlayers
