@@ -14,30 +14,19 @@ import { FaArrowRightToBracket, FaArrowRotateLeft } from "react-icons/fa6";
 import PlayerCreationForm from "../components/home/playerCreationForm";
 import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
-import { usePlayerStore } from "../store/playerStore";
+import { usePlayerStore } from "../stores/playerStore";
 import useRoomList from "../hooks/useRoomList";
-import { joinRoom } from "../api/room/roomEndpoints";
-import { isErrorDetail } from "../api/types";
-import { sendErrorToast, sendToast } from "../services/utils";
-import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const player = usePlayerStore((state) => state.player);
-  const { rooms, selectedRoomID, setSelectedRoomID, refreshRoomList } =
-    useRoomList();
+  const {
+    rooms,
+    selectedRoomID,
+    setSelectedRoomID,
+    refreshRoomList,
+    handleJoinRoom,
+  } = useRoomList();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const navigate = useNavigate();
-
-  const handleJoinRoom = async () => {
-    if (!selectedRoomID || !player) return;
-    const data = await joinRoom(selectedRoomID, { playerID: player.playerID });
-    if (isErrorDetail(data)) {
-      sendErrorToast(data, "Error al crear partida");
-    } else {
-      sendToast("Partida creada con éxito", null, "success");
-      navigate(`/room/${selectedRoomID.toString()}`);
-    }
-  };
 
   return (
     <Center h="100vh">

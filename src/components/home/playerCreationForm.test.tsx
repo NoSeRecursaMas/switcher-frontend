@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import PlayerCreationForm from "./playerCreationForm";
 import * as playerEndpoints from "../../api/player/playerEndpoints";
 import * as utils from "../../services/utils";
-import { usePlayerStore } from "../../store/playerStore";
+import { usePlayerStore } from "../../stores/playerStore";
 
 beforeEach(() => {
   import.meta.env.VITE_MOCK = "true";

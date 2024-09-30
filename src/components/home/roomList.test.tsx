@@ -55,8 +55,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={[]}
       />
     );
@@ -67,8 +67,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={false}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={[]}
       />
     );
@@ -79,8 +79,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={undefined}
       />
     );
@@ -91,8 +91,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -105,8 +105,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -117,8 +117,8 @@ describe("RoomList", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={() => null}
+        selectedRoomID={1}
+        setSelectedRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -132,15 +132,15 @@ describe("RoomList", () => {
   });
 
   it("El usuario no puede seleccionar una sala llena", async () => {
-    const setSelectedRoom = vi.fn();
+    const setSelectedRoomID = vi.fn();
     const user = userEvent.setup();
     const sendToast = vi.spyOn(utils, "sendToast");
 
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={1}
-        setSelectedRoom={setSelectedRoom}
+        selectedRoomID={1}
+        setSelectedRoomID={setSelectedRoomID}
         rooms={rooms}
       />
     );
@@ -150,23 +150,23 @@ describe("RoomList", () => {
       "No puedes unirte a una que ya alcanzó su límite de jugadores",
       "warning"
     );
-    expect(setSelectedRoom).not.toHaveBeenCalled();
+    expect(setSelectedRoomID).not.toHaveBeenCalled();
   });
 
   it("El usuario puede seleccionar una sala no llena", async () => {
-    const setSelectedRoom = vi.fn();
+    const setSelectedRoomID = vi.fn();
     const user = userEvent.setup();
 
     render(
       <RoomList
         isPlayerLoaded={true}
-        selectedRoom={3}
-        setSelectedRoom={setSelectedRoom}
+        selectedRoomID={3}
+        setSelectedRoomID={setSelectedRoomID}
         rooms={rooms}
       />
     );
 
     await user.click(screen.getByText("Sala de test"));
-    expect(setSelectedRoom).toHaveBeenCalledWith(1);
+    expect(setSelectedRoomID).toHaveBeenCalledWith(1);
   });
 });

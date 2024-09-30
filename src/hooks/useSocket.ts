@@ -3,7 +3,7 @@ import { sendToast } from "../services/utils";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SocketMessage from "../types/socketTypes";
-import { useRoomStore } from "../store/roomStore";
+import { useRoomStore } from "../stores/roomStore";
 
 export default function useSocket(
   roomID: number | undefined,
