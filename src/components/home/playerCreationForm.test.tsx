@@ -31,7 +31,7 @@ describe("PlayerCreationForm", () => {
     expect(screen.queryByText("Elige tu nombre")).not.toBeInTheDocument();
   });
 
-  it("Se puede seleccionar un nombre de usuario y se muestra un mensaje de éxito", async () => {
+  it("Se puede seleccionar un nombre de usuario y se llama a la función de creación", async () => {
     const user = userEvent.setup();
     const username = "Usuario de test";
 
@@ -106,5 +106,20 @@ describe("PlayerCreationForm", () => {
     await user.click(screen.getByRole("button", { name: "Crear" }));
 
     expect(mockCreatePlayer).toHaveBeenCalledWith(username.trim());
+  });
+
+  it("No se puede seleccionar un nombre de usuario con solo espacios y se muestra un mensaje de error", async () => {
+    const user = userEvent.setup();
+    const username = "                  ";
+
+    render(<PlayerCreationForm isPlayerLoaded={false} />);
+
+    await user.type(screen.getByRole("textbox"), username);
+    await user.click(screen.getByRole("button", { name: "Crear" }));
+
+    expect(
+      screen.getByText("El nombre no puede estar vacío")
+    ).toBeInTheDocument();
+    expect(mockCreatePlayer).not.toHaveBeenCalled();
   });
 });
