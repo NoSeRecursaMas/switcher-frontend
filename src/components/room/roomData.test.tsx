@@ -1,14 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, afterEach, beforeAll, afterAll } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import RoomData from "./roomData";
-import Room from "../../types/roomTypes";
+import { server } from "../../mocks/node";
 
-let room: Room;
 
-beforeEach(() => {
-  import.meta.env.VITE_MOCK = "true";
-  room = {
+
+describe("RoomData", () => {
+  const room = {
     roomID: 1,
     roomName: "Sala de test",
     hostID: 1,
@@ -25,13 +24,19 @@ beforeEach(() => {
       },
     ],
   };
-});
 
-afterEach(() => {
-  cleanup();
-});
+  beforeAll(() => {
+    server.listen();
+  });
 
-describe("RoomData", () => {
+  afterAll(() => {
+    server.close();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
   it("Muestra el nombre de la sala", () => {
     render(<RoomData room={room} />);
     expect(screen.getByText("Sala de test")).toBeInTheDocument();

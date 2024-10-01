@@ -1,14 +1,23 @@
-import { describe, it, expect, afterEach, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, afterEach, vi, beforeEach, Mock, beforeAll, afterAll } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import RoomCreationForm from "./roomCreationForm";
 import { useRoom } from "../../hooks/useRoom";
+import { server } from "../../mocks/node";
 
 vi.mock("../../hooks/useRoom");
 
 describe("RoomCreationForm", () => {
   const mockCreateRoom = vi.fn();
+
+  beforeAll(() => {
+    server.listen();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
 
   beforeEach(() => {
     vi.resetAllMocks();

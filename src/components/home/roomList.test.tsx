@@ -1,8 +1,9 @@
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, vi, beforeAll, afterAll } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import RoomList from "./roomList";
+import { server } from "../../mocks/node";
 
 const rooms = [
     {
@@ -42,6 +43,14 @@ const rooms = [
 
 
 describe("RoomList", () => {
+
+  beforeAll(() => {
+    server.listen();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
 
   afterEach(() => {
     cleanup();
