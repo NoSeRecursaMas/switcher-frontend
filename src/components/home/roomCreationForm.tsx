@@ -18,25 +18,20 @@ import {
   ModalHeader,
   HStack,
 } from "@chakra-ui/react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { roomSchema } from "../../services/validation/roomSchema";
-import { createRoomEndpoint } from "../../api/room/roomEndpoints";
-import { sendErrorToast, sendToast } from "../../services/utils";
-import Player from "../../types/playerTypes";
-import { isErrorDetail } from "../../api/types";
-import { useNavigate } from "react-router-dom";
+import { useRoom } from "../../hooks/useRoom";
 
 interface roomCreationFormProps {
-  player: Player | undefined;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function RoomCreationForm(props: roomCreationFormProps) {
-  const { player, isOpen, onClose } = props;
-  const navigate = useNavigate();
+  const { isOpen, onClose } = props;
+  const { createRoom } = useRoom();
 
   const {
     register,
@@ -47,34 +42,11 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
     resolver: zodResolver(roomSchema),
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof roomSchema>> = async (input) => {
-    if (!player) {
-      sendToast(
-        "Error al crear partida",
-        "No se pudo obtener tu usuario",
-        "error"
-      );
-    } else {
-      const data = await createRoomEndpoint({
-        playerID: player.playerID,
-        roomName: input.name,
-        minPlayers: input.minPlayers,
-        maxPlayers: input.maxPlayers,
-      });
-      if (isErrorDetail(data)) {
-        sendErrorToast(data, "Error al crear partida");
-      } else {
-        sendToast("Partida creada con éxito", null, "success");
-        navigate(`/room/${data.roomID.toString()}`);
-      }
-    }
-  };
-
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent maxW="xl">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit((input) => createRoom(input.name, input.maxPlayers, input.minPlayers))}>
           <ModalCloseButton />
           <ModalHeader>Crear partida</ModalHeader>
           <ModalBody>

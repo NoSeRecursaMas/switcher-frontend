@@ -14,24 +14,25 @@ import { FaArrowRightToBracket, FaArrowRotateLeft } from "react-icons/fa6";
 import PlayerCreationForm from "../components/home/playerCreationForm";
 import RoomCreationForm from "../components/home/roomCreationForm";
 import RoomList from "../components/home/roomList";
-import { usePlayerStore } from "../stores/playerStore";
-import useRoomList from "../hooks/useRoomList";
+import { useRoomList } from "../hooks/useRoomList";
+import { usePlayer } from "../hooks/usePlayer";
+import { useRoom } from "../hooks/useRoom";
 
 export default function Home() {
-  const player = usePlayerStore((state) => state.player);
+  const { player } = usePlayer();
   const {
     rooms,
     selectedRoomID,
-    setSelectedRoomID,
+    handleSelectRoomID,
     refreshRoomList,
-    handleJoinRoom,
   } = useRoomList();
+  const { joinRoom } = useRoom(selectedRoomID);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Center h="100vh">
       <PlayerCreationForm isPlayerLoaded={!!player} />
-      <RoomCreationForm player={player} isOpen={isOpen} onClose={onClose} />
+      <RoomCreationForm isOpen={isOpen} onClose={onClose} />
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -45,7 +46,7 @@ export default function Home() {
           </Skeleton>
         </HStack>
 
-        <HStack spacing={4} mt={8}>
+        <HStack spacing={4} mt={8} mb={2}>
           <Tooltip label="Crear una sala">
             <IconButton
               icon={<AddIcon />}
@@ -70,7 +71,7 @@ export default function Home() {
               colorScheme="teal"
               isLoading={!player}
               isDisabled={selectedRoomID === undefined}
-              onClick={handleJoinRoom}
+              onClick={joinRoom}
             />
           </Tooltip>
           <Tooltip label="Actualizar lista de salas">
@@ -88,7 +89,7 @@ export default function Home() {
         <RoomList
           isPlayerLoaded={!!player}
           selectedRoomID={selectedRoomID}
-          setSelectedRoomID={setSelectedRoomID}
+          handleSelectRoomID={handleSelectRoomID}
           rooms={rooms}
         />
       </VStack>

@@ -1,16 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import RoomList from "./roomList";
-import * as utils from "../../services/utils";
-import { RoomDetails } from "../../types/roomTypes";
 
-let rooms: RoomDetails[];
-
-beforeEach(() => {
-  import.meta.env.VITE_MOCK = "true";
-  rooms = [
+const rooms = [
     {
       roomID: 1,
       roomName: "Sala de test",
@@ -44,19 +38,21 @@ beforeEach(() => {
       started: true,
     },
   ];
-});
 
-afterEach(() => {
-  cleanup();
-});
+
 
 describe("RoomList", () => {
+
+  afterEach(() => {
+    cleanup();
+  });
+
   it("Se muestra un mensaje personalizado si no hay salas", () => {
     render(
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={[]}
       />
     );
@@ -68,7 +64,7 @@ describe("RoomList", () => {
       <RoomList
         isPlayerLoaded={false}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={[]}
       />
     );
@@ -80,7 +76,7 @@ describe("RoomList", () => {
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={undefined}
       />
     );
@@ -92,7 +88,7 @@ describe("RoomList", () => {
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -106,7 +102,7 @@ describe("RoomList", () => {
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -118,7 +114,7 @@ describe("RoomList", () => {
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={1}
-        setSelectedRoomID={() => null}
+        handleSelectRoomID={() => null}
         rooms={rooms}
       />
     );
@@ -131,42 +127,20 @@ describe("RoomList", () => {
     ).toHaveTextContent("Privada");
   });
 
-  it("El usuario no puede seleccionar una sala llena", async () => {
-    const setSelectedRoomID = vi.fn();
-    const user = userEvent.setup();
-    const sendToast = vi.spyOn(utils, "sendToast");
-
-    render(
-      <RoomList
-        isPlayerLoaded={true}
-        selectedRoomID={1}
-        setSelectedRoomID={setSelectedRoomID}
-        rooms={rooms}
-      />
-    );
-    await user.click(screen.getByText("Sala llena"));
-    expect(sendToast).toHaveBeenCalledWith(
-      "La sala está llena",
-      "No puedes unirte a una que ya alcanzó su límite de jugadores",
-      "warning"
-    );
-    expect(setSelectedRoomID).not.toHaveBeenCalled();
-  });
-
-  it("El usuario puede seleccionar una sala no llena", async () => {
-    const setSelectedRoomID = vi.fn();
+  it("Al hacer click sobre una sala, se llama a la función de selección de sala", async () => {
+    const handleSelectRoomID = vi.fn();
     const user = userEvent.setup();
 
     render(
       <RoomList
         isPlayerLoaded={true}
         selectedRoomID={3}
-        setSelectedRoomID={setSelectedRoomID}
+        handleSelectRoomID={handleSelectRoomID}
         rooms={rooms}
       />
     );
 
     await user.click(screen.getByText("Sala de test"));
-    expect(setSelectedRoomID).toHaveBeenCalledWith(1);
+    expect(handleSelectRoomID).toHaveBeenCalledWith(1, 3, 4);
   });
 });
