@@ -9,6 +9,7 @@ import {
   VStack,
   Card,
   Box,
+  useColorMode,
 } from "@chakra-ui/react";
 import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
 import { RoomDetails } from "../../types/roomTypes";
@@ -26,21 +27,27 @@ interface RoomListProps {
 
 export default function RoomList(props: RoomListProps) {
   const { isPlayerLoaded, selectedRoomID, handleSelectRoomID, rooms } = props;
+  const { colorMode } = useColorMode();
+  const colorHover = colorMode === "light" ? "gray.300" : "gray.600";
+  const colorSelected = colorMode === "light" ? "teal.100" : "teal.800";
+  const colorBackground = colorMode === "light" ? "gray.200" : "#242C3A";
 
   return (
     <VStack
-      w="xl"
+      w="2xl"
       maxH="md"
       minH="xs"
-      p={4}
+      py={2}
+      px={3}
       overflowY="auto"
       overflowX="hidden"
-      boxShadow="base"
       justifyContent={
         typeof rooms === "undefined" || !isPlayerLoaded || rooms.length === 0
           ? "center"
           : "flex-start"
       }
+      borderRadius={16}
+      bg={colorBackground}
     >
       {!rooms || !isPlayerLoaded ? (
         <VStack>
@@ -71,14 +78,14 @@ export default function RoomList(props: RoomListProps) {
               }}
               _hover={{
                 bg:
-                  room.actualPlayers === room.maxPlayers ? "white" : "gray.100",
+                  room.actualPlayers === room.maxPlayers ? undefined : colorHover,
               }}
               cursor={
                 room.actualPlayers === room.maxPlayers
                   ? "not-allowed"
                   : "pointer"
               }
-              bg={selectedRoomID === room.roomID ? "teal.50" : "white"}
+              bg={selectedRoomID === room.roomID ? colorSelected : undefined}
             >
               <HStack justifyContent="space-between" h="50px">
                 <Heading size="md" w="50%">

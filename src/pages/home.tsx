@@ -46,7 +46,7 @@ export default function Home() {
           </Skeleton>
         </HStack>
 
-        <HStack spacing={4} mt={8}>
+        <HStack spacing={4} mt={8} mb={2}>
           <Tooltip label="Crear una sala">
             <IconButton
               icon={<AddIcon />}

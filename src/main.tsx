@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import App from "./appRoutes";
 
 async function enableMocking() {
@@ -11,11 +11,19 @@ async function enableMocking() {
   return worker.start();
 }
 
+const config = {
+  initialColorMode: 'night',
+  useSystemColorMode: true,
+}
+
+// 3. extend the theme
+const theme = extendTheme({ config })
+
 enableMocking()
   .then(() => {
     createRoot(document.getElementById("root")!).render(
       <StrictMode>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <App />
         </ChakraProvider>
       </StrictMode>
