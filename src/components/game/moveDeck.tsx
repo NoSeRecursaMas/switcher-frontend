@@ -1,11 +1,11 @@
 import { Box, HStack, Button } from "@chakra-ui/react";
-import L1 from "/L1.png";
-import L2 from "/L2.png";
-import Lineal1 from "/Lineal1.png";
-import Lineal2 from "/Lineal2.png";
-import Diagonal1 from "/Diagonal1.png";
-import Diagonal2 from "/Diagonal2.png";
-import LineaLateral from "/LineaLateral.png";
+import L1 from "/movementCards/L1.png";
+import L2 from "/movementCards/L2.png";
+import Lineal1 from "/movementCards/Lineal1.png";
+import Lineal2 from "/movementCards/Lineal2.png";
+import Diagonal1 from "/movementCards/Diagonal1.png";
+import Diagonal2 from "/movementCards/Diagonal2.png";
+import LineaLateral from "/movementCards/LineaLateral.png";
 
 function MoveCard({ value }: { value: number }) {
     let img;

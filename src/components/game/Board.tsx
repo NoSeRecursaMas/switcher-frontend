@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button, HStack, VStack, Box } from '@chakra-ui/react';
 import Ficha1 from "/Ficha1.png";
 import Ficha2 from "/Ficha2.png";

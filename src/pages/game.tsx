@@ -4,7 +4,7 @@ import { Box, Text, VStack, HStack, Button, Flex } from "@chakra-ui/react";
 import Board from '../components/game/board';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
-import { useUser } from "../context/user-context";
+import { usePlayer } from "../hooks/usePlayer";
 import { SlArrowUp, SlArrowDown, SlArrowLeft, SlArrowRight } from "react-icons/sl";
 
 // Mocks de datos para pruebas
@@ -20,10 +20,10 @@ const roomMock = {
 };
 
 const playersMock = [
-    { playerID: 1, name: 'Jugador 1', figureHand: [1, 2, 2], figureLeft: 7 },
-    { playerID: 2, name: 'Jugador de Arriba', figureHand: [1, 2, 2], figureLeft: 3 },
-    { playerID: 3, name: 'Jugador Izquierdo', figureHand: [1, 2, 2], figureLeft: 2 },
-    { playerID: 4, name: 'Jugador Derecho', figureHand: [1, 2, 2], figureLeft: 0 },
+    { playerID: 1, name: 'Jugador 1', figureHand: [14, 21, 2], figureLeft: 7 },
+    { playerID: 2, name: 'Jugador de Arriba', figureHand: [1, 22, 6], figureLeft: 3 },
+    { playerID: 3, name: 'Jugador Izquierdo', figureHand: [4, 12, 7], figureLeft: 2 },
+    { playerID: 4, name: 'Jugador Derecho', figureHand: [23, 13, 10], figureLeft: 0 },
 ];
 
 const randomBoard = (Array(36).fill(0).map(() => Math.floor(Math.random() * 4) + 1));
@@ -37,7 +37,7 @@ const statusMock = {
 };
 
 export default function Game() {
-    const { user } = useUser();
+    const { player } = usePlayer();
     const id = useParams().ID;
 
     // Reemplazar por llamada a API para obtener información de la sala

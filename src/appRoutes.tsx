@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import UserProvider from "./context/userContextProvider";
+import { useColorMode, IconButton } from "@chakra-ui/react";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import Home from "./pages/home";
 import Room from "./pages/room";
 import Game from "./pages/game";
@@ -13,7 +14,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/room/:ID",
-    element: <Room />,
+    element: (
+        <Room />
+    ),
     errorElement: <NotFound />,
   },
   {
@@ -23,11 +26,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 export default function App() {
+  const { colorMode, toggleColorMode } = useColorMode()
   return (
-    <UserProvider>
+    <>
+      <IconButton onClick={toggleColorMode} aria-label="Toggle Color Mode" icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />} style={{ position: "absolute", top: "1rem", right: "1rem" }} />
       <RouterProvider router={router} />
-    </UserProvider>
+      </>
   );
 }

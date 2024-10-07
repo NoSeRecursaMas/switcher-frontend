@@ -1,104 +1,79 @@
-import { useParams } from 'react-router-dom';
-import { useState } from 'react';
-import { Skeleton, Box, Text, VStack, CardBody, HStack, Heading, Card, Center, Button } from "@chakra-ui/react";
-import { roomData } from '../api/room/room-types';
-import { useUser } from "../context/user-context";
-import { FaCrown } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { startGameEndpoint } from "../api/room/room-startGame-endpoints";
-
-// Lista de jugadores de ejemplo
-const playersMock = [
-    { id: 1, name: "Jugador 1" },
-    { id: 2, name: "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" },
-    { id: 3, name: "Jugador 3" },
-    { id: 4, name: "Jugador 4" },
-];
-
-const roomMock = {
-    roomID: 11,
-    roomName: 'Sala de Pruebas',
-    minPlayers: 3,
-    maxPlayers: 4,
-    currentPlayers: 4,
-    started: false,
-    private: false,
-    hostID: 3
-};
+import { useParams } from "react-router-dom";
+import { VStack, HStack, Center, Button, Tooltip } from "@chakra-ui/react";
+import { usePlayerStore } from "../stores/playerStore";
+import { useRoom } from "../hooks/useRoom";
+import RoomData from "../components/room/roomData";
+import useWebSocket from "react-use-websocket";
+import { useEffect } from "react";
+import SocketMessage from "../types/socketTypes";
+import { sendToast } from "../services/utils";
 
 export default function Room() {
-    const { user } = useUser();
-    const id = useParams().ID; // Quizás no sea necesaria, ya accedemos a la info de la sala de otra forma
-    const navigate = useNavigate();
+  const { ID } = useParams();
+  const { player } = usePlayerStore();
+  const { room, leaveRoom, updateRoom } = useRoom(parseInt(ID ?? ""));
 
-    // Mock de ID de usuario, reemplazar más adelante todas sus instancias por user.id
-    const userID_Mock = 1;
+  const roomID = ID ?? "0";
+  const playerID = player?.playerID.toString() ?? "0";
 
-    // Reemplazar por llamada a API para obtener información de la sala
-    const [roomInfo, setRoomInfo] = useState(roomMock);
-    const [players, setPlayers] = useState(playersMock);
-    const [loading, setLoading] = useState(false);
 
-    const isMinReached = roomInfo.currentPlayers >= roomInfo.minPlayers;
+  const socketUrl = `ws://localhost:8000/ws/${roomID}/${playerID}`;
+  const { lastMessage, getWebSocket } = useWebSocket(socketUrl);
+  console.log("Intenando conectarse a: ", socketUrl);
 
-    const startGame = async () => {
-        await startGameEndpoint(roomInfo.hostID, roomInfo.roomID, navigate);
-    };
+  useEffect(() => {
+    if (lastMessage !== null) {
+      const message = JSON.parse(lastMessage.data as string) as SocketMessage;
+      if (message.type === "UPDATE_ROOM") {
+        sendToast(message.payload.msg, null, "info");
+        updateRoom(message.payload.status);
+        console.log(message.payload.status);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastMessage]);
 
-    return (
-        <>
-            <Center h="100vh">
-                <Card w="25em">
-                    <CardBody>
-                        <Skeleton isLoaded={!loading}>
-                            <VStack>
-                                <Heading
-                                    size="lg"
-                                    textAlign="center"
-                                    wordBreak="break-word"
-                                    whiteSpace="normal"
-                                    overflowWrap="break-word">
-                                    {roomInfo.roomName}
-                                </Heading>
-                            </VStack>
-                            <Center>
-                                <Text mt={2} color={isMinReached ? "green.500" : "red.500"}>
-                                    {roomInfo.currentPlayers}/{roomInfo.maxPlayers}
-                                </Text>
-                            </Center>
-                            <VStack spacing={4} align="start" w="100%">
-                                {players.map((player) => (
-                                    <Box
-                                        key={player.id}
-                                        p={4}
-                                        w="100%"
-                                        borderWidth="1px"
-                                        borderRadius="md"
-                                    >
-                                        <HStack>
-                                            <Text fontSize="lg"
-                                                textAlign="left"
-                                                wordBreak="break-word"
-                                                whiteSpace="normal"
-                                                overflowWrap="break-word">{player.name}</Text> {roomInfo.hostID === player.id && <FaCrown color="gold" />}
-                                        </HStack>
-                                    </Box>
-                                ))}
-                            </VStack>
-                        </Skeleton>
-                        <HStack justifyContent="space-between">
-                            <Button colorScheme="red" mt={5}>
-                                Abandonar sala
-                            </Button>
-                            {roomInfo.hostID === userID_Mock && (
-                                <Button colorScheme="teal" mt={5} onClick={startGame}>
-                                    Iniciar partida
-                                </Button>)
-                            }
-                        </HStack>
-                    </CardBody>
-                </Card >
-            </Center>
-        </>
-    );
+  return (
+    <>
+      <Center h="100vh">
+        <VStack>
+          <RoomData room={room} />
+
+          {room && (
+            <HStack justifyContent="space-between" mt={4} spacing={4}>
+              {room.hostID !== player?.playerID ? (
+                <>
+                  <Button colorScheme="red" onClick={() => leaveRoom(getWebSocket())}>
+                    Abandonar sala
+                  </Button>
+                  {/* <Tooltip label="Solo el creador de la sala puede iniciar la partida">
+                    <Button colorScheme="teal" isDisabled>
+                      Iniciar partida
+                    </Button>
+                  </Tooltip> */}
+                </>
+              ) : (
+                <>
+                  <Tooltip label="No puedes abandonar la sala si eres el creador">
+                    <Button colorScheme="red" isDisabled>
+                      Abandonar sala
+                    </Button>
+                  </Tooltip>
+                  {/* {room.players.length >= room.minPlayers ? (
+                    <Button colorScheme="teal">Iniciar partida</Button>
+                  ) : (
+                    <Tooltip label="Esperando a que se unan más jugadores">
+                      <Button colorScheme="teal" isDisabled>
+                        Iniciar partida
+                      </Button>
+                    </Tooltip>
+                  )} */}
+                </>
+              )}
+            </HStack>
+          )}
+        </VStack>
+      </Center>
+    </>
+  );
 }

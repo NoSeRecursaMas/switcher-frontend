@@ -10,43 +10,32 @@ import {
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema } from "../../services/validation/user-schema";
-import { createUser } from "../../api/user/user-endpoints";
-import { useUser } from "../../context/user-context";
-import { sendToast } from "../../services/utils";
+import { playerSchema } from "../../services/validation/playerSchema";
+import { usePlayer } from "../../hooks/usePlayer";
 
-export default function CreateUserModal() {
-  const { isUserLoaded, setUser } = useUser();
-
+export default function PlayerCreationForm(props: { isPlayerLoaded: boolean }) {
+  const { isPlayerLoaded } = props;
+  const { createPlayer } = usePlayer();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } 
-  = 
-  useForm<z.infer<typeof userSchema>>({
-    resolver: zodResolver(userSchema),
+  } = useForm<z.infer<typeof playerSchema>>({
+    resolver: zodResolver(playerSchema),
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
-    const response = await createUser(data.name);
-    if (response.error) {
-      sendToast("Error al seleccionar nombre", response.detail, "error");
-    }
-    if (response.id && response.username) {
-      setUser({ id: response.id, username: response.username });
-      sendToast("¡Nombre seleccionado con éxito!", null, "success");
-    }
-  };
-
   return (
-    <Modal closeOnOverlayClick={false} isOpen={!isUserLoaded} onClose={() => null}>
+    <Modal
+      closeOnOverlayClick={false}
+      isOpen={!isPlayerLoaded}
+      onClose={() => null}
+    >
       <ModalOverlay />
       <ModalContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit((input) => createPlayer(input.name))}>
           <ModalHeader>Elige tu nombre</ModalHeader>
           <ModalBody>
             <FormControl isInvalid={!!errors.name}>
@@ -55,6 +44,7 @@ export default function CreateUserModal() {
                 {...register("name")}
                 type="text"
                 focusBorderColor="teal.400"
+                isRequired
               />
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>

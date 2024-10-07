@@ -1,8 +1,23 @@
-interface responseError {
+export interface Response<T> {
   status: number;
-  data: {
-    detail: string;
-  };
+  data: T;
 }
 
-export type { responseError };
+export interface ErrorDetail {
+  type: string;
+  msg: string;
+  input?: string;
+}
+
+export interface ErrorType {
+  detail: ErrorDetail[]| string;
+}
+
+export function isError(obj: unknown): obj is ErrorType {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "detail" in obj &&
+    (Array.isArray((obj as ErrorType).detail) || typeof (obj as ErrorType).detail === "string")
+  );
+}
