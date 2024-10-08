@@ -6,36 +6,37 @@ import Lineal2 from "/movementCards/Lineal2.png";
 import Diagonal1 from "/movementCards/Diagonal1.png";
 import Diagonal2 from "/movementCards/Diagonal2.png";
 import LineaLateral from "/movementCards/LineaLateral.png";
+import { Movement } from "../../types/gameTypes";
+import type { LocalMovementCard } from "../../types/gameTypes";
 
-function MoveCard({ value }: { value: number }) {
+function MoveCard(cardData: LocalMovementCard) {
     let img;
-    switch (value) {
-        case 1:
-            img = L1;
-            break;
-        case 2:
-            img = L2;
-            break;
-        case 3:
-            img = Lineal1;
-            break;
-        case 4:
-            img = Lineal2;
-            break;
-        case 5:
-            img = Diagonal1;
-            break;
-        case 6:
+    switch (cardData.data.type) {
+        case Movement.mov1:
             img = Diagonal2;
             break;
-        case 7:
+        case Movement.mov2:
+            img = Lineal2;
+            break;
+        case Movement.mov3:
+            img = Lineal1;
+            break;
+        case Movement.mov4:
+            img = Diagonal1;
+            break;
+        case Movement.mov5:
+            img = L2;
+            break;
+        case Movement.mov6:
+            img = L1;
+            break;
+        case Movement.mov7:
             img = LineaLateral;
             break;
     }
 
-
     const handleClick = () => {
-        console.log(value);
+        console.log(cardData.data.type);
     }
 
     return (
@@ -52,11 +53,13 @@ function MoveCard({ value }: { value: number }) {
                 transform: "scale(1.1)"
             }}
         >
+            {/* Temporal */}
+            {cardData.isSelected ? <Box top="0" right="0" color="red">X</Box> : null}
         </Button>
     );
 }
 
-export default function MoveDeck({ move }: { move: number[] }) {
+export default function MoveDeck({cards} : {cards: LocalMovementCard[]}) {
     return (
         <>
             <Box
@@ -66,8 +69,8 @@ export default function MoveDeck({ move }: { move: number[] }) {
                 padding="10px"
             >
                 <HStack>
-                    {move.map((value, index) => (
-                        <MoveCard key={index} value={value} />
+                    {cards.map((card, index) => (
+                        <MoveCard key={index} {...card} />
                     ))}
                 </HStack>
             </Box>
