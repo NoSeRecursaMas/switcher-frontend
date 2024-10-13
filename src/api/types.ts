@@ -1,6 +1,11 @@
-export interface Response<T> {
+import { Player } from "../types/playerTypes";
+import { RoomID } from "../types/roomTypes";
+
+export type ResponseModel = Player | RoomID;
+
+export interface Response {
   status: number;
-  data: T;
+  data: ResponseModel | ErrorType;
 }
 
 export interface ErrorDetail {

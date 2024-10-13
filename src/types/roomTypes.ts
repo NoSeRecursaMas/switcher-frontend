@@ -30,5 +30,15 @@ interface CreateRoomRequest {
     password?: string;
 }
 
-export type { Room, RoomID, RoomDetails, CreateRoomRequest };
+interface RoomListStatusMessage {
+    type: string;
+    payload: RoomDetails[];
+}
+
+interface RoomStatusMessage {
+    type: string;
+    payload: Room;
+}
+
+export type { Room, RoomID, RoomDetails, CreateRoomRequest, RoomListStatusMessage, RoomStatusMessage };
 export default Room;

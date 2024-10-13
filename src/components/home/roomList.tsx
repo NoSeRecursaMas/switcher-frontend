@@ -12,25 +12,18 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
-import { RoomDetails } from "../../types/roomTypes";
+import { useRoomList } from "../../hooks/useRoomList";
+import { useRoomListWebSocket } from "../../hooks/useRoomListWebSocket";
 
-interface RoomListProps {
-  isPlayerLoaded: boolean;
-  selectedRoomID: number | undefined;
-  handleSelectRoomID: (
-    roomID: number,
-    actualPlayers: number,
-    maxPlayers: number
-  ) => void;
-  rooms: RoomDetails[] | undefined;
-}
 
-export default function RoomList(props: RoomListProps) {
-  const { isPlayerLoaded, selectedRoomID, handleSelectRoomID, rooms } = props;
+export default function RoomList() {
+  const { roomList, selectedRoomID, handleSelectRoomID } = useRoomList();
   const { colorMode } = useColorMode();
   const colorHover = colorMode === "light" ? "gray.300" : "gray.600";
   const colorSelected = colorMode === "light" ? "teal.100" : "teal.800";
   const colorBackground = colorMode === "light" ? "gray.200" : "#242C3A";
+
+  useRoomListWebSocket();
 
   return (
     <VStack
@@ -42,43 +35,38 @@ export default function RoomList(props: RoomListProps) {
       overflowY="auto"
       overflowX="hidden"
       justifyContent={
-        typeof rooms === "undefined" || !isPlayerLoaded || rooms.length === 0
-          ? "center"
-          : "flex-start"
+        !roomList || roomList.length === 0 ? "center" : "flex-start"
       }
       borderRadius={16}
       bg={colorBackground}
     >
-      {!rooms || !isPlayerLoaded ? (
+      {!roomList ? (
         <VStack>
           <Heading size="md" mb={2}>
             Cargando salas...
           </Heading>
           <Spinner emptyColor="gray.100" color="teal.500" size="xl" mb={8} />
         </VStack>
-      ) : rooms.length === 0 ? (
+      ) : roomList.length === 0 ? (
         <Box>
           <Heading size="md">No hay salas disponibles</Heading>
         </Box>
       ) : (
-        rooms
+        roomList
           .filter((room) => !room.started)
+          .reverse()
           .map((room) => (
             <Card
               key={room.roomID}
               w="100%"
               m={1}
               p={2}
-              onClick={() => {
-                handleSelectRoomID(
-                  room.roomID,
-                  room.actualPlayers,
-                  room.maxPlayers
-                );
-              }}
+              onClick={() => {handleSelectRoomID(room.roomID)}}
               _hover={{
                 bg:
-                  room.actualPlayers === room.maxPlayers ? undefined : colorHover,
+                  room.actualPlayers === room.maxPlayers
+                    ? undefined
+                    : colorHover,
               }}
               cursor={
                 room.actualPlayers === room.maxPlayers

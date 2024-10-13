@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import Player from "../types/playerTypes";
+import { redirect } from "react-router-dom";
 
 interface PlayerState {
   player: Player | undefined;
@@ -7,12 +9,20 @@ interface PlayerState {
   deletePlayer: () => void;
 }
 
-export const usePlayerStore = create<PlayerState>((set) => ({
-  player: undefined,
-  setPlayer: (player: Player) => {
-    set({ player });
-  },
-  deletePlayer: () => {
-    set({ player: undefined });
-  },
-}));
+export const usePlayerStore = create(
+  persist<PlayerState>(
+    (set) => ({
+      player: undefined,
+      setPlayer: (player: Player) => {
+        set({ player });
+      },
+      deletePlayer: () => {
+        set({ player: undefined });
+        redirect("/signup");
+      },
+    }),
+    {
+      name: "player-storage",
+    }
+  )
+);
