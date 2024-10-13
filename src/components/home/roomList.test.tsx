@@ -135,4 +135,15 @@ describe("RoomList", () => {
     await user.click(screen.getByText("Sala de test"));
     expect(mockHandleSelectRoomID).toHaveBeenCalledWith(1);
   });
+
+  it("El color de fondo cambia al ser la sala seleccionada", () => {
+    (useRoomList as Mock).mockReturnValue({
+      roomList: ROOMS,
+      selectedRoomID: 1,
+      handleSelectRoomID: mockHandleSelectRoomID,
+    });
+
+    render(<RoomList />);
+    expect(screen.getByText("Sala de test")).toHaveStyle("background: teal.100");
+  });
 });
