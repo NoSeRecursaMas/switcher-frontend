@@ -1,9 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, Mock, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import WS from "jest-websocket-mock";
 import { useRoomWebSocket } from "./useRoomWebSocket";
 import { usePlayerStore } from "../stores/playerStore";
 import { useRoomStore } from "../stores/roomStore";
+
+
+const mockNavigate = vi.fn();
+
+vi.mock(`react-router-dom`, async (): Promise<unknown> => {
+  const actual: Record<string, unknown> = await vi.importActual(`react-router-dom`);
+
+  return {
+    ...actual,
+    useNavigate: (): Mock => mockNavigate,
+  };
+});
 
 describe("useRoomWebSocket", () => {
     beforeEach(() => {
@@ -47,7 +59,7 @@ describe("useRoomWebSocket", () => {
 
         const room = useRoomStore.getState().room;
         expect(room).toBeUndefined();
+        expect(mockNavigate).toHaveBeenCalledWith("/");
     });
-
 
 });

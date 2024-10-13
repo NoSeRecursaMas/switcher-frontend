@@ -44,6 +44,10 @@ export const useRoomListWebSocket = () => {
       if (e.code === 4004) {
         console.log("Jugador con este ID no encontrado, borrando jugador");
         deletePlayer();
+      } else if (e.code === 4005) {
+        console.log("Conexión iniciada en otro dispositivo");
+        window.open("about:blank", "_self");
+        window.close();
       }
     };
 

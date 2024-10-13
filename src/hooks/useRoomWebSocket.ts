@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { RoomStatusMessage } from "../types/roomTypes";
 import { usePlayerStore } from "../stores/playerStore";
 import { useRoomStore } from "../stores/roomStore";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { sendToast } from "../services/utils";
 
 export function useRoomWebSocket(roomID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
   const setRoom = useRoomStore((state) => state.setRoom);
   const webSocketUrl = `ws://localhost:8000/rooms/${playerID.toString()}/${roomID.toString()}`;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
@@ -31,7 +33,11 @@ export function useRoomWebSocket(roomID: number) {
       console.log(`Socket con sala ${roomID.toString()} cerrado`);
       if (e.code === 4004) {
         console.log("Jugador o sala no encontradas");
-        redirect("/");
+        navigate("/");
+      } else if (e.code === 4005) {
+        console.log("Conexión iniciada en otro dispositivo");
+        sendToast("Conexión iniciada en otro dispositivo", "Solo puedes tener una conexión a la vez", "warning");
+        navigate("/");
       }
     };
 
