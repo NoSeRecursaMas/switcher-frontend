@@ -6,13 +6,13 @@ enum Color {
 }
 
 enum Movement {
-    mov1 = "mov1",
-    mov2 = "mov2",
-    mov3 = "mov3",
-    mov4 = "mov4",
-    mov5 = "mov5",
-    mov6 = "mov6",
-    mov7 = "mov7",
+    mov1 = "mov01",
+    mov2 = "mov02",
+    mov3 = "mov03",
+    mov4 = "mov04",
+    mov5 = "mov05",
+    mov6 = "mov06",
+    mov7 = "mov07",
 }
 
 enum Figure {
@@ -51,8 +51,7 @@ interface Tile {
 }
 
 // Los tipos locales tienen información que no es necesario mandar al servidor
-interface LocalTile {
-    data: Tile;
+interface LocalTile extends Tile {
     isHighlighted: boolean;
 }
 
@@ -67,8 +66,7 @@ interface MovementCard {
     isUsed: boolean; // Usada en el turno actual
 }
 
-interface LocalMovementCard {
-    data: MovementCard;
+interface LocalMovementCard extends MovementCard {
     isSelected: boolean;
 }
 
@@ -78,29 +76,36 @@ interface FigureCard {
     isBlocked: boolean;
 }
 
-interface LocalFigureCard {
-    data: FigureCard;
+interface LocalFigureCard extends FigureCard {
     isSelected: boolean;
 }
 
-interface Player {
+interface PlayerInGame {
     position: number; // Posición en los turnos
     username: string;
     playerID: number;
-    isActive: number; // Conectado o no (0 o 1)
+    isActive: boolean; // Si abandonó la partida o no
     sizeDeckFigure: number; // Tamaño de la pila de figuras
     cardsFigure: FigureCard[];
 }
 
-interface Game {
+interface GameInfo {
+    gameID: number;
     board: Tile[];
-    figureToUse: FigureTiles[]; // Tiles a resaltar
+    figuresToUse: FigureTiles[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
     prohibitedColor: Color | null;
     cardsMovement: MovementCard[];
     posEnabledToPlay: number; // Turno
-    players: Player[];
+    players: PlayerInGame[];
 }
 
-export type { Game, Tile, LocalTile, FigureTiles, MovementCard, LocalMovementCard, FigureCard, LocalFigureCard, Player };
+interface GameStatusMessage {
+    type: "status";
+    payload: GameInfo;
+}
+
+type GameMessage = GameStatusMessage
+
+export type {  GameInfo, GameMessage, Tile, LocalTile, FigureTiles, MovementCard, LocalMovementCard, FigureCard, LocalFigureCard, PlayerInGame };
 export { Color, Movement, Figure };
-export default Game;
+export default GameInfo;

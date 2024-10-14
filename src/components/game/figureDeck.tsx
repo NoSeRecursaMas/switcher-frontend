@@ -25,138 +25,131 @@ import fige05 from "/figureCards/fige05.png";
 import fige06 from "/figureCards/fige06.png";
 import fige07 from "/figureCards/fige07.png";
 import { Figure } from "../../types/gameTypes";
-import type { LocalFigureCard } from "../../types/gameTypes";
+import type { FigureCard, LocalFigureCard } from "../../types/gameTypes";
 
-function FigureCard(cardData: LocalFigureCard) {
+function RenderFigureCard(cardData: LocalFigureCard) {
+  let img;
+  switch (cardData.type) {
+    case Figure.fig01:
+      img = fig01;
+      break;
+    case Figure.fig02:
+      img = fig02;
+      break;
+    case Figure.fig03:
+      img = fig03;
+      break;
+    case Figure.fig04:
+      img = fig04;
+      break;
+    case Figure.fig05:
+      img = fig05;
+      break;
+    case Figure.fig06:
+      img = fig06;
+      break;
+    case Figure.fig07:
+      img = fig07;
+      break;
+    case Figure.fig08:
+      img = fig08;
+      break;
+    case Figure.fig09:
+      img = fig09;
+      break;
+    case Figure.fig10:
+      img = fig10;
+      break;
+    case Figure.fig11:
+      img = fig11;
+      break;
+    case Figure.fig12:
+      img = fig12;
+      break;
+    case Figure.fig13:
+      img = fig13;
+      break;
+    case Figure.fig14:
+      img = fig14;
+      break;
+    case Figure.fig15:
+      img = fig15;
+      break;
+    case Figure.fig16:
+      img = fig16;
+      break;
+    case Figure.fig17:
+      img = fig17;
+      break;
+    case Figure.fig18:
+      img = fig18;
+      break;
+    case Figure.fige01:
+      img = fige01;
+      break;
+    case Figure.fige02:
+      img = fige02;
+      break;
+    case Figure.fige03:
+      img = fige03;
+      break;
+    case Figure.fige04:
+      img = fige04;
+      break;
+    case Figure.fige05:
+      img = fige05;
+      break;
+    case Figure.fige06:
+      img = fige06;
+      break;
+    case Figure.fige07:
+      img = fige07;
+      break;
+  }
 
-    let img;
-    switch (cardData.data.type) {
-        case Figure.fig01:
-            img = fig01;
-            break;
-        case Figure.fig02:
-            img = fig02;
-            break;
-        case Figure.fig03:
-            img = fig03;
-            break;
-        case Figure.fig04:
-            img = fig04;
-            break;
-        case Figure.fig05:
-            img = fig05;
-            break;
-        case Figure.fig06:
-            img = fig06;
-            break;
-        case Figure.fig07:
-            img = fig07;
-            break;
-        case Figure.fig08:
-            img = fig08;
-            break;
-        case Figure.fig09:
-            img = fig09;
-            break;
-        case Figure.fig10:
-            img = fig10;
-            break;
-        case Figure.fig11:
-            img = fig11;
-            break;
-        case Figure.fig12:
-            img = fig12;
-            break;
-        case Figure.fig13:
-            img = fig13;
-            break;
-        case Figure.fig14:
-            img = fig14;
-            break;
-        case Figure.fig15:
-            img = fig15;
-            break;
-        case Figure.fig16:
-            img = fig16;
-            break;
-        case Figure.fig17:
-            img = fig17;
-            break;
-        case Figure.fig18:
-            img = fig18;
-            break;
-        case Figure.fige01:
-            img = fige01;
-            break;
-        case Figure.fige02:
-            img = fige02;
-            break;
-        case Figure.fige03:
-            img = fige03;
-            break;
-        case Figure.fige04:
-            img = fige04;
-            break;
-        case Figure.fige05:
-            img = fige05;
-            break;
-        case Figure.fige06:
-            img = fige06;
-            break;
-        case Figure.fige07:
-            img = fige07;
-            break;
-    }
-        
+  const handleClick = () => {
+    console.log(cardData.type);
+  };
 
-    const handleClick = () => {
-        console.log(cardData.data.type);
-    }
-
-    return (
-        <Button
-            onClick={handleClick}
-            backgroundImage={img}
-            backgroundSize="cover"
-            variant="unstyled"
-            width="150px"
-            height="150px"
-            ml="3px"
-            mr="3px"
-            _hover={{
-                transform: "scale(1.1)"
-            }}	
-            disabled={cardData.data.isBlocked}
-            borderColor={cardData.isSelected ? "red" : "transparent"}
-        >
-        </Button>
-    );
+  return (
+    <Button
+      onClick={handleClick}
+      backgroundImage={img}
+      backgroundSize="cover"
+      variant="unstyled"
+      width="12vh"
+      height="12vh"
+      _hover={{
+        transform: "scale(1.1)",
+      }}
+      disabled={cardData.isBlocked}
+      borderColor={cardData.isSelected ? "red" : "transparent"}
+    ></Button>
+  );
 }
 
-
-export default function FigureDeck({ figures, vertical }: { figures: LocalFigureCard[], vertical: boolean }) {
-    return (
-        <>
-            <Box
-                height="auto"
-                width="auto"
-                justifyContent="center"
-                padding="10px"
-            >
-                {vertical ?
-                    <VStack>
-                        {figures.map((card, index) => (
-                            <FigureCard key={index} {...card} />
-                        ))}
-                    </VStack>
-                    :
-                    <HStack>
-                        {figures.map((card, index) => (
-                            <FigureCard key={index} {...card} />
-                        ))}
-                    </HStack>
-                }
-            </Box>
-        </>
-    )
+export default function FigureDeck({
+  figures,
+  vertical,
+}: {
+  figures: FigureCard[];
+  vertical: boolean;
+}) {
+  return (
+    <>
+      {vertical ? (
+        <VStack spacing={4}>
+          {figures.map((card, index) => (
+            <RenderFigureCard isSelected={false} key={index} {...card} />
+          ))}
+        </VStack>
+      ) : (
+        <HStack spacing={4}>
+          {figures.map((card, index) => (
+            <RenderFigureCard isSelected={false} key={index} {...card} />
+          ))}
+        </HStack>
+      )}
+    </>
+  );
 }

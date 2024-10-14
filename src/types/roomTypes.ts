@@ -36,9 +36,18 @@ interface RoomListStatusMessage {
 }
 
 interface RoomStatusMessage {
-    type: string;
+    type: "status";
     payload: Room;
 }
 
-export type { Room, RoomID, RoomDetails, CreateRoomRequest, RoomListStatusMessage, RoomStatusMessage };
+interface GameStartMessage {
+    type: "start";
+    payload: {
+        gameID: number;
+    };
+}
+
+type RoomMessage = RoomStatusMessage | GameStartMessage;
+
+export type { Room, RoomID, RoomDetails, CreateRoomRequest, RoomListStatusMessage, RoomMessage };
 export default Room;

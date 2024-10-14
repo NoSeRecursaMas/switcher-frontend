@@ -4,12 +4,14 @@ import { usePlayerStore } from "../stores/playerStore";
 import { useRoom } from "../hooks/useRoom";
 import RoomData from "../components/room/roomData";
 import { useRoomWebSocket } from "../hooks/useRoomWebSocket";
+import { useGame } from "../hooks/useGame";
 
 
 export default function Room() {
   const { ID } = useParams();
   const playerID = usePlayerStore((state) => state.player?.playerID);
   const { room, leaveRoom } = useRoom();
+  const { startGame } = useGame();
 
   useRoomWebSocket(parseInt(ID ?? ""));
 
@@ -34,15 +36,15 @@ export default function Room() {
                       Abandonar sala
                     </Button>
                   </Tooltip>
-                  {/* {room.players.length >= room.minPlayers ? (
-                    <Button colorScheme="teal">Iniciar partida</Button>
+                  {room.players.length >= room.minPlayers ? (
+                    <Button colorScheme="teal"  onClick={() => startGame()}>Iniciar partida</Button>
                   ) : (
                     <Tooltip label="Esperando a que se unan más jugadores">
                       <Button colorScheme="teal" isDisabled>
                         Iniciar partida
                       </Button>
                     </Tooltip>
-                  )} */}
+                  )}
                 </>
               )}
             </HStack>
