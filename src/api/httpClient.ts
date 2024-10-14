@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Response, ErrorType, isError } from "./types";
+import { Response, ErrorType, isError, ResponseModel } from "./types";
 import { isAxiosError } from "axios";
 
 const axiosClient = axios.create({
@@ -10,14 +10,14 @@ const axiosClient = axios.create({
   },
 });
 
-const handleRequest = async <T>(
+const handleRequest = async(
   method: "GET" | "POST" | "PUT" | "DELETE",
   data: unknown,
   path: string,
   statusExpected: number
-): Promise<T | ErrorType> => {
+): Promise<ResponseModel | ErrorType> => {
   try {
-    let response: Response<T>;
+    let response: Response;
     if (method === "GET") {
       response = await axiosClient.get(path);
     } else if (method === "POST") {
@@ -27,16 +27,16 @@ const handleRequest = async <T>(
     } else {
       response = await axiosClient.delete(path);
     }
-    return handleResponseSuccess<T>(response, statusExpected);
+    return handleResponseSuccess(response, statusExpected);
   } catch (error: unknown) {
     return handleResponseError(error);
   }
 };
 
-function handleResponseSuccess<T>(
-  response: Response<T>,
+function handleResponseSuccess(
+  response: Response,
   statusExpected: number
-): T {
+) {
   if (response.status === statusExpected) {
     return response.data;
   } else {
