@@ -1,59 +1,36 @@
-import { useEffect, useState } from "react";
-import { getRooms } from "../api/roomEndpoints";
-import { isError } from "../api/types";
-import { sendErrorToast, sendToast } from "../services/utils";
-import { RoomDetails } from "../types/roomTypes";
+import { sendToast } from "../services/utils";
+import { useRoomListStore } from "../stores/roomListStore";
 
 export const useRoomList = () => {
-  const [rooms, setRooms] = useState<RoomDetails[] | undefined>(undefined);
-  const [selectedRoomID, selectRoomID] = useState<number | undefined>(
-    undefined
-  );
-  const deleteSelectedRoom = () => {
-    selectRoomID(undefined);
-  };
+  const selectedRoomID = useRoomListStore((state) => state.selectedRoomID);
+  const selectRoomID = useRoomListStore((state) => state.selectRoomID);
+  const deselectRoomID = useRoomListStore((state) => state.deselectRoomID);
+  const roomList = useRoomListStore((state) => state.roomList);
 
-  const refreshRoomList = async () => {
-    selectRoomID(undefined);
-    setRooms(undefined);
-    const data = await getRooms();
-    if (isError(data)) {
-      sendErrorToast(data, "Error al obtener la lista de salas");
-    } else {
-      setRooms(data);
-    }
-  };
+  const handleSelectRoomID = (newRoomID: number) => {
+    const roomData = roomList?.find((room) => room.roomID === newRoomID);
+    if (!roomData) return; // No debería pasar
+    if (roomData.started) return; // No debería pasar
 
-  useEffect(() => {
-    refreshRoomList().catch((error: unknown) => {
-      console.error("Failed to refresh room list:", error);
-    });
-  }, []);
-
-  const handleSelectRoomID = (
-    roomID: number,
-    actualPlayers: number,
-    maxPlayers: number
-  ) => {
-    if (actualPlayers < maxPlayers) {
-      if (selectedRoomID === roomID) {
-        deleteSelectedRoom();
-      } else {
-        selectRoomID(roomID);
-      }
-    } else {
+    if (roomData.actualPlayers >= roomData.maxPlayers) {
       sendToast(
         "La sala está llena",
         "No puedes unirte a una que ya alcanzó su límite de jugadores",
         "warning"
       );
+      return;
+    }
+
+    if (selectedRoomID === newRoomID) {
+      deselectRoomID();
+    } else {
+      selectRoomID(newRoomID);
     }
   };
-
+  
   return {
-    rooms,
+    roomList,
     selectedRoomID,
     handleSelectRoomID,
-    refreshRoomList,
   };
 };

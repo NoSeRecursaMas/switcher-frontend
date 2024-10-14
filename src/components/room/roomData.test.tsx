@@ -64,4 +64,15 @@ describe("RoomData", () => {
       screen.getByText("Player1").parentElement?.querySelector("svg")
     ).toBeInTheDocument();
   });
+
+  it("Si la room es undefined, muestra un mensaje de carga", () => {
+    render(<RoomData room={undefined} />);
+    expect(screen.getByText("Sala sin nombre")).toBeInTheDocument();
+    expect(
+      screen.getByText("Mínimo de jugadores: 0", { exact: false })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Máximo de jugadores: 0", { exact: false })
+    ).toBeInTheDocument();
+  });
 });
