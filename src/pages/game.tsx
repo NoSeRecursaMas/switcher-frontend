@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { VStack, HStack, Button, Center } from "@chakra-ui/react";
+import { VStack, HStack, Button, Center, Spacer, Box } from "@chakra-ui/react";
 import Board from "../components/game/board";
 import OtherPlayer from "../components/game/otherPlayer";
 import MoveDeck from "../components/game/moveDeck";
@@ -10,13 +10,14 @@ import { useGameWebSocket } from "../hooks/useGameWebSocket";
 
 export default function Game() {
   const { ID } = useParams();
-  const { game, currentPlayer, getPlayerInPosition, endTurn, leaveGame } = useGame();
+  const { game, currentPlayer, getPlayerInPosition, endTurn, leaveGame } =
+    useGame();
 
   useGameWebSocket(parseInt(ID ?? ""));
 
   return (
-    <Center my={4}>
-      <VStack spacing={4}>
+    <Center>
+      <VStack h="100vh" justifyContent="space-between" py={4}>
         <OtherPlayer player={getPlayerInPosition("up")} pos="up" />
         <HStack spacing={4}>
           <OtherPlayer player={getPlayerInPosition("left")} pos="left" />
@@ -24,21 +25,18 @@ export default function Game() {
           <OtherPlayer player={getPlayerInPosition("right")} pos="right" />
         </HStack>
         {game?.posEnabledToPlay === currentPlayer?.position && (
-          <SlArrowUp size={30} color="white" />
+          <SlArrowUp size="4vh" color="white" />
         )}
-        <HStack spacing={32}>
-          <HStack spacing={8}>
+        <HStack w="90vw" justifyContent="space-between">
+          <Box w="10vw" />
+          <HStack spacing={4}>
             <MoveDeck cards={game?.cardsMovement ?? []} />
             <FigureDeck
               figures={currentPlayer?.cardsFigure ?? []}
               vertical={false}
             />
           </HStack>
-
-          <HStack spacing={4}>
-            <Button colorScheme="red" onClick={leaveGame}>
-              Abandonar partida
-            </Button>
+          <VStack spacing={4}>
             <Button
               colorScheme="teal"
               isDisabled={game?.posEnabledToPlay !== currentPlayer?.position}
@@ -46,7 +44,10 @@ export default function Game() {
             >
               Pasar turno
             </Button>
-          </HStack>
+            <Button colorScheme="red" onClick={leaveGame}>
+              Abandonar partida
+            </Button>
+          </VStack>
         </HStack>
       </VStack>
     </Center>

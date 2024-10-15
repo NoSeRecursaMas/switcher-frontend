@@ -53,14 +53,13 @@ interface Tile {
 // Los tipos locales tienen información que no es necesario mandar al servidor
 interface ExtendedTile extends Tile {
   isHighlighted: boolean;
-  isSelected: boolean;
   markTopBorder: boolean;
   markRightBorder: boolean;
   markBottomBorder: boolean;
   markLeftBorder: boolean;
 }
 
-interface FigureTiles {
+interface CoordsTile {
   posX: number;
   posY: number;
 }
@@ -97,7 +96,7 @@ interface PlayerInGame {
 interface Game {
   gameID: number;
   board: Tile[];
-  figuresToUse: FigureTiles[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
+  figuresToUse: CoordsTile[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
   prohibitedColor: Color | null;
   cardsMovement: MovementCard[];
   posEnabledToPlay: number; // Turno
@@ -145,7 +144,7 @@ export type {
   GameMessage,
   Tile,
   ExtendedTile,
-  FigureTiles,
+  CoordsTile,
   MovementCard,
   LocalMovementCard,
   FigureCard,

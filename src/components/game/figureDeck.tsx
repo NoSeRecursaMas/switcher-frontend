@@ -117,8 +117,8 @@ function RenderFigureCard(cardData: LocalFigureCard) {
       backgroundImage={img}
       backgroundSize="cover"
       variant="unstyled"
-      width="12vh"
-      height="12vh"
+      w="12vh"
+      h="12vh"
       _hover={{
         transform: "scale(1.1)",
       }}

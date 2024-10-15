@@ -20,7 +20,7 @@ export default function OtherPlayer(props: OtherPlayerProps) {
       {pos === "left" || pos === "right" ? (
         <HStack spacing={2}>
           {pos === "right" && posEnabledToPlay === player.position && (
-            <SlArrowLeft size={30} color="white" aria-label="ArrowLeft" />
+            <SlArrowLeft size="4vh" color="white" aria-label="ArrowLeft" />
           )}
           <VStack spacing={4}>
             <HStack>
@@ -30,11 +30,11 @@ export default function OtherPlayer(props: OtherPlayerProps) {
             <FigureDeck figures={player.cardsFigure} vertical={true} />
           </VStack>
           {pos === "left" && posEnabledToPlay === player.position && (
-            <SlArrowRight size={30} color="white" aria-label="ArrowRight" />
+            <SlArrowRight size="4vh" color="white" aria-label="ArrowRight" />
           )}
         </HStack>
       ) : (
-        <VStack spacing={2}>
+        <>
           <HStack spacing={4}>
             <VStack>
               <Avatar size="md" as="b" name={player.username} />
@@ -43,9 +43,9 @@ export default function OtherPlayer(props: OtherPlayerProps) {
             <FigureDeck figures={player.cardsFigure} vertical={false} />
           </HStack>
           {posEnabledToPlay === player.position && (
-            <SlArrowDown size={30} color="white" aria-label="ArrowDown" />
+            <SlArrowDown size="4vh" color="white" aria-label="ArrowDown" />
           )}
-        </VStack>
+        </>
       )}
     </>
   );
