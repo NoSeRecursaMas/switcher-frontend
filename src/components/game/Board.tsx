@@ -16,12 +16,29 @@ export default function Board() {
       aria-label="game-board"
     >
       {board &&
-        Array.from({ length: 6 }).map((_, i) =>
-          Array.from({ length: 6 }).map((_, j) => {
+        Array.from({ length: 6 }).map((_, y) =>
+          Array.from({ length: 6 }).map((_, x) => {
             const tile = board.find(
-              (tile) => tile.posX === j && tile.posY === i
+              (tile) => tile.posX === x && tile.posY === y
             );
-            return <BoardTile key={`${i.toString()}-${j.toString()}`} color={tile?.color} />;
+            if (!tile) return null;
+            const newTile = {
+              ...tile,
+              isPartial: x === 3 && y === 2 || x === 0 && y === 2,
+              isHighlighted: x === 3 && y === 2 || x === 2 && y === 4,
+              isSelected: x === 1 && y === 0,
+              markTopBorder: x === 3 && y === 2 || x === 4 && y === 3 || x === 2 && y === 3,
+              markRightBorder: x === 3 && y === 2 || x === 4 && y === 3 ,
+              markBottomBorder: x === 4 && y === 3 || x === 3 && y === 3 || x === 2 && y === 3,
+              markLeftBorder: x === 2 && y === 3 || x === 3 && y === 2,
+            };
+            
+            return (
+              <BoardTile
+                key={`${x.toString()}-${y.toString()}`}
+                tile={newTile}
+              />
+            );
           })
         )}
     </SimpleGrid>

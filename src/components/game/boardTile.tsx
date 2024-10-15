@@ -1,23 +1,32 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Text } from "@chakra-ui/react";
+import { keyframes } from "@emotion/react";
 import { Color } from "../../types/gameTypes";
-import Ficha1 from "/Ficha1.png";
-import Ficha2 from "/Ficha2.png";
-import Ficha3 from "/Ficha3.png";
-import Ficha4 from "/Ficha4.png";
+import { ExtendedTile } from "../../types/gameTypes";
 
-export default function BoardTile({ color }: { color: Color | undefined }) {
-  const img = (color: Color | undefined) => {
+const breathingKeyframes = keyframes`
+  0% { box-shadow: none; }
+  20% { box-shadow: 0 0 4px 1px currentColor; }
+  40% { box-shadow: 0 0 8px 2px currentColor; }
+  60% { box-shadow: 0 0 8px 2px currentColor; }
+  80% { box-shadow: 0 0 4px 1px currentColor; }
+  100% { box-shadow: none; }
+`;
+
+export default function BoardTile({ tile }: { tile: ExtendedTile }) {
+  const { color, isSelected, isHighlighted, isPartial } = tile;
+  const { markTopBorder, markRightBorder, markBottomBorder, markLeftBorder } = tile;
+  const colorScheme = (color: Color | undefined) => {
     switch (color) {
       case Color.Y:
-        return Ficha1;
+        return "yellow";
       case Color.R:
-        return Ficha2;
+        return "red";
       case Color.B:
-        return Ficha3;
+        return "blue";
       case Color.G:
-        return Ficha4;
+        return "green";
       default:
-        throw new Error("Invalid color");
+        return "gray";
     }
   };
 
@@ -26,16 +35,47 @@ export default function BoardTile({ color }: { color: Color | undefined }) {
       onClick={() => {
         console.log("Color: ", color);
       }}
-      backgroundImage={img(color)}
       backgroundSize="cover"
-      variant="unstyled"
+      colorScheme={colorScheme(color)}
+      variant="outline"
       width="9vh"
       height="9vh"
       borderRadius="20px"
+      bg="color-mix(in srgb, currentColor 5%, transparent)"
+      _before={{
+        content: '""',
+        position: "absolute",
+        height: "111%",
+        width: "111%",
+        borderTop: markTopBorder ? "2px solid currentColor" : "2px solid transparent",
+        borderRight: markRightBorder ? "2px solid currentColor" : "2px solid transparent",
+        borderBottom: markBottomBorder ? "2px solid currentColor" : "2px solid transparent",
+        borderLeft: markLeftBorder ? "2px solid currentColor" : "2px solid transparent",
+        borderTopLeftRadius: markLeftBorder && markTopBorder ? "20px" : "0",
+        borderTopRightRadius: markRightBorder && markTopBorder ? "20px" : "0",
+        borderBottomRightRadius: markRightBorder && markBottomBorder ? "20px" : "0",
+        borderBottomLeftRadius: markLeftBorder && markBottomBorder ? "20px" : "0",
+      }}
+      _after={{
+        content: '""',
+        position: "absolute",
+        top: "5px",
+        right: "5px",
+        borderTop: "1px solid currentColor",
+        borderRight: "1px solid currentColor",
+        borderRadius: "0 60% 0 0",
+        height: "25%",
+        width: "25%",
+      }}
       _hover={{
         transform: "scale(1.1)",
       }}
-      // boxShadow={tileData.isHighlighted ? "0 0 5px 2px gray" : "none"}
-    />
+      isActive={isSelected}
+      transform={isSelected ? "scale(1.1)" : ""}
+      animation={isHighlighted ? `${breathingKeyframes} 1s ease-in-out infinite` : ""}
+    >
+      {isPartial && <Text fontSize="2xl" fontWeight="bold" >P</Text>}
+       
+    </Button>
   );
 }

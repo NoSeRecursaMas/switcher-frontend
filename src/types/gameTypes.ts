@@ -51,8 +51,13 @@ interface Tile {
 }
 
 // Los tipos locales tienen información que no es necesario mandar al servidor
-interface LocalTile extends Tile {
+interface ExtendedTile extends Tile {
   isHighlighted: boolean;
+  isSelected: boolean;
+  markTopBorder: boolean;
+  markRightBorder: boolean;
+  markBottomBorder: boolean;
+  markLeftBorder: boolean;
 }
 
 interface FigureTiles {
@@ -99,6 +104,24 @@ interface Game {
   players: PlayerInGame[];
 }
 
+
+interface GameID {
+  gameID: number;
+}
+
+interface PlayMovementCardRequest {
+  playerID: number;
+  cardID: number;
+  origin: { posX: number; posY: number };
+  destination: { posX: number; posY: number };
+}
+
+interface PlayFigureCardRequest {
+  playerID: number;
+  cardID: number;
+  coords: { posX: number; posY: number }[];
+}
+
 interface GameStatusMessage {
   type: "status";
   payload: Game;
@@ -116,9 +139,12 @@ type GameMessage = GameStatusMessage | GameEndMessage;
 
 export type {
   Game,
+  GameID,
+  PlayMovementCardRequest,
+  PlayFigureCardRequest,
   GameMessage,
   Tile,
-  LocalTile,
+  ExtendedTile,
   FigureTiles,
   MovementCard,
   LocalMovementCard,
