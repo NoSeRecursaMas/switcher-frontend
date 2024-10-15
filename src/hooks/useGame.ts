@@ -20,6 +20,31 @@ export const useGame = () => {
     (playerInGame) => playerInGame.playerID !== player?.playerID
   );
 
+  const posEnabledToPlay = game?.posEnabledToPlay
+  const board = game?.board;
+
+  const getPlayerInPosition = (pos: "up" | "left" | "right") => {
+    if (!otherPlayers) return undefined;
+    if (otherPlayers.length == 1) {
+      if (pos === "up")
+        return otherPlayers[0]
+      else return undefined;
+    } else if (otherPlayers.length == 2) {
+      if (pos === "right")
+        return otherPlayers[0]
+      if (pos === "left")
+        return otherPlayers[1]
+      else return undefined;
+    } else if (otherPlayers.length == 3) {
+      if (pos === "right")
+        return otherPlayers[0]
+      if (pos === "up")
+        return otherPlayers[1]
+      else return otherPlayers[2];
+    }
+    return undefined;
+  };
+
   const startGame = async () => {
     if (!room) {
       sendToast("La información de la sala no es válida", null, "error");
@@ -94,9 +119,11 @@ export const useGame = () => {
 
   return {
     game,
+    board,
+    getPlayerInPosition,
     startGame,
     turn,
     currentPlayer,
-    otherPlayers,
+    posEnabledToPlay,
   };
 };

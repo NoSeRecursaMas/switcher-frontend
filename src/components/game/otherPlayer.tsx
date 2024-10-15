@@ -5,20 +5,22 @@ import { SlArrowDown, SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { useGame } from "../../hooks/useGame";
 
 interface OtherPlayerProps {
-  player: PlayerInGame;
+  player: PlayerInGame | undefined;
   pos: "up" | "left" | "right";
 }
 
 export default function OtherPlayer(props: OtherPlayerProps) {
   const { player, pos } = props;
-  const { game } = useGame();
+  const { posEnabledToPlay } = useGame();
+
+  if (!player) return null;
 
   return (
     <>
       {pos === "left" || pos === "right" ? (
         <HStack spacing={2}>
-          {pos === "right" && game?.posEnabledToPlay === player.position && (
-            <SlArrowLeft size={30} color="white" />
+          {pos === "right" && posEnabledToPlay === player.position && (
+            <SlArrowLeft size={30} color="white" aria-label="ArrowLeft" />
           )}
           <VStack spacing={4}>
             <HStack>
@@ -27,8 +29,8 @@ export default function OtherPlayer(props: OtherPlayerProps) {
             </HStack>
             <FigureDeck figures={player.cardsFigure} vertical={true} />
           </VStack>
-          {pos === "left" && game?.posEnabledToPlay === player.position && (
-            <SlArrowRight size={30} color="white" />
+          {pos === "left" && posEnabledToPlay === player.position && (
+            <SlArrowRight size={30} color="white" aria-label="ArrowRight" />
           )}
         </HStack>
       ) : (
@@ -40,8 +42,8 @@ export default function OtherPlayer(props: OtherPlayerProps) {
             </VStack>
             <FigureDeck figures={player.cardsFigure} vertical={false} />
           </HStack>
-          {game?.posEnabledToPlay === player.position && (
-            <SlArrowDown size={30} color="white" />
+          {posEnabledToPlay === player.position && (
+            <SlArrowDown size={30} color="white" aria-label="ArrowDown" />
           )}
         </VStack>
       )}

@@ -89,7 +89,7 @@ interface PlayerInGame {
     cardsFigure: FigureCard[];
 }
 
-interface GameInfo {
+interface Game {
     gameID: number;
     board: Tile[];
     figuresToUse: FigureTiles[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
@@ -101,11 +101,11 @@ interface GameInfo {
 
 interface GameStatusMessage {
     type: "status";
-    payload: GameInfo;
+    payload: Game;
 }
 
 type GameMessage = GameStatusMessage
 
-export type {  GameInfo, GameMessage, Tile, LocalTile, FigureTiles, MovementCard, LocalMovementCard, FigureCard, LocalFigureCard, PlayerInGame };
+export type {  Game, GameMessage, Tile, LocalTile, FigureTiles, MovementCard, LocalMovementCard, FigureCard, LocalFigureCard, PlayerInGame };
 export { Color, Movement, Figure };
-export default GameInfo;
+export default Game;
