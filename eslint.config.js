@@ -12,10 +12,7 @@ export default tseslint.config(
       js.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
-      'eslint:recommended',
-      'plugin:react/recommended',
-      'plugin:@typescript-eslint/recommended',
-      'plugin:prettier/recommended',
+
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -31,7 +28,6 @@ export default tseslint.config(
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       react,
-      '@typescript-eslint': tseslint,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
