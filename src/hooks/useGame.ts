@@ -77,7 +77,7 @@ export const useGame = () => {
     );
   };
 
-  const turn = async () => {
+  const endTurn = async () => {
     if (!game) {
       sendToast("La información de la partida no es válida", null, "error");
       return;
@@ -111,8 +111,8 @@ export const useGame = () => {
     });
     handleNotificationResponse(
       data,
-      "Turno realizado con éxito",
-      "Error al intentar realizar el turno",
+      "Turno pasado con éxito",
+      "Error al intentar pasar el turno",
       () => null
     );
   };
@@ -122,7 +122,7 @@ export const useGame = () => {
     board,
     getPlayerInPosition,
     startGame,
-    turn,
+    endTurn,
     currentPlayer,
     posEnabledToPlay,
   };

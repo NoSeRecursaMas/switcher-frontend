@@ -23,11 +23,9 @@ import {
 
 export default function Game() {
   const { ID } = useParams();
-  const { game, currentPlayer, getPlayerInPosition } = useGame();
+  const { game, currentPlayer, getPlayerInPosition, endTurn } = useGame();
 
   useGameWebSocket(parseInt(ID ?? ""));
-
-
 
   return (
     <Center my={4}>
@@ -50,10 +48,16 @@ export default function Game() {
             />
           </HStack>
 
-          {/* <HStack spacing={4}>
-            <Button colorScheme="red">Abandonar partida</Button>
-            <Button colorScheme="teal">Pasar turno</Button>
-          </HStack> */}
+          <HStack spacing={4}>
+            {/* <Button colorScheme="red">Abandonar partida</Button> */}
+            <Button
+              colorScheme="teal"
+              isDisabled={game?.posEnabledToPlay !== currentPlayer?.position}
+              onClick={endTurn}
+            >
+              Pasar turno
+            </Button>
+          </HStack>
         </HStack>
       </VStack>
     </Center>
