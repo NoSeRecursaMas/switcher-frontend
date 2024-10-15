@@ -8,6 +8,7 @@ export const createRoom = async (data: CreateRoomRequest) => {
 
 export const joinRoom = async (roomID: number, playerID: PlayerID) => {
   return handleRequest(
+
     "PUT",
     playerID,
     `rooms/${roomID.toString()}/join`,

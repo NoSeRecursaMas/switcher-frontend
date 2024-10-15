@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import handleRequest, { axiosClient } from "./httpClient";
 import MockAdapter from "axios-mock-adapter";
-import { ErrorType, ResponseModel } from "./types";
+import { ResponseModel } from "./types";
 
 let mock: MockAdapter;
 

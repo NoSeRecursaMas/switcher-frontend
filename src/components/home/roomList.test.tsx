@@ -31,30 +31,31 @@ describe("RoomList", () => {
       actualPlayers: 2,
       started: false,
       private: false,
+
     },
     {
       roomID: 2,
       roomName: "Sala llena",
-      maxPlayers: 2,
-      actualPlayers: 2,
-      started: false,
+      actualPlayers: 4,
+      maxPlayers: 4,
       private: false,
+      started: false,
     },
     {
       roomID: 3,
       roomName: "Sala privada",
-      maxPlayers: 4,
       actualPlayers: 2,
-      started: false,
+      maxPlayers: 4,
       private: true,
+      started: false,
     },
     {
       roomID: 4,
       roomName: "Sala empezada",
+      actualPlayers: 2,
       maxPlayers: 4,
-      actualPlayers: 4,
-      started: true,
       private: false,
+      started: true,
     },
   ];
 
@@ -145,5 +146,17 @@ describe("RoomList", () => {
 
     render(<RoomList />);
     expect(screen.getByText("Sala de test")).toHaveStyle("background: teal.100");
+  });
+
+  it("Si todas las salas estan iniciadas, se muestra un mensaje personalizado", () => {
+    const startedRooms = ROOMS.map((room) => ({ ...room, started: true }));
+    (useRoomList as Mock).mockReturnValue({
+      roomList: startedRooms,
+      selectedRoomID: undefined,
+      handleSelectRoomID: mockHandleSelectRoomID,
+    });
+
+    render(<RoomList />);
+    expect(screen.getByText("No hay salas disponibles")).toBeInTheDocument();
   });
 });

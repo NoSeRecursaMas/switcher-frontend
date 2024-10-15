@@ -62,4 +62,16 @@ describe("useRoomWebSocket", () => {
         expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 
+    it("Si se recibe un mensaje de inicio de partida, se redirige a la sala de juego", async () => {
+        const roomID = 1;
+        const webSocketUrl = `ws://localhost:8000/rooms/1/1`;
+        const server = new WS(webSocketUrl);
+        renderHook(() => {useRoomWebSocket(roomID)});
+        await server.connected;
+
+        server.send('{"type":"start","payload":{"gameID":1}}');
+
+        expect(mockNavigate).toHaveBeenCalledWith("/game/1");
+    });
+
 });

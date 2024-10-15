@@ -1,0 +1,84 @@
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  vi,
+  beforeAll,
+  afterAll,
+  Mock,
+} from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { usePlayerStore } from "../stores/playerStore";
+import { useRoomStore } from "../stores/roomStore";
+import { useGameStore } from "../stores/gameStore";
+import { useGame } from "./useGame";
+import * as gameEndpoints from "../api/gameEndpoints";
+import * as utils from "../services/utils";
+import { server } from "../mocks/node";
+
+describe("useGame", () => {
+  beforeAll(() => {
+    server.listen();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
+
+  beforeEach(() => {
+    usePlayerStore.setState({ player: { playerID: 1, username: "test" } });
+    useRoomStore.setState({ room: undefined });
+    useGameStore.setState({ game: undefined });
+  });
+
+  describe("startGame", () => {
+    it("Me devuelve el estado del juego (caso undefined)", () => {
+      const { result } = renderHook(() => useGame());
+      expect(result.current.game).toBeUndefined();
+    });
+
+    it("Me devuelve el estado del juego (caso juego cargado)", () => {
+      const game = {
+        gameID: 1,
+        players: [],
+        posEnabledToPlay: 1,
+        board: [],
+        figuresToUse: [],
+        prohibitedColor: null,
+        cardsMovement: [],
+      };
+      useGameStore.setState({ game });
+      const { result } = renderHook(() => useGame());
+      expect(result.current.game).toEqual(game);
+    });
+
+    it("Al iniciar la partida, si la información de la sala no es válida, muestra un mensaje de error", async () => {
+        const { result } = renderHook(() => useGame());
+        await act(async () => {
+            await result.current.startGame();
+        });
+        expect(utils.sendToast).toHaveBeenCalledWith(
+            "La información de la sala no es válida",
+            null,
+            "error"
+        );
+        }
+    );
+
+    it("Al iniciar la partida, si la información del jugador no es válida, muestra un mensaje de error", async () => {
+        useRoomStore.setState({ room: { roomID: 1, hostID: 2, roomName: "Test Room", maxPlayers: 4, minPlayers: 2, players: [] } });
+        const { result } = renderHook(() => useGame());
+        await act(async () => {
+            await result.current.startGame();
+        });
+        expect(utils.sendToast).toHaveBeenCalledWith(
+            "No se ha podido cargar la información del jugador",
+            null,
+            "error"
+        );
+    });
+
+
+  });
+});
