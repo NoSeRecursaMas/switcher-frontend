@@ -7,9 +7,10 @@ import Diagonal1 from "/movementCards/Diagonal1.png";
 import Diagonal2 from "/movementCards/Diagonal2.png";
 import LineaLateral from "/movementCards/LineaLateral.png";
 import { Movement } from "../../types/gameTypes";
-import { MovementCard, LocalMovementCard } from "../../types/gameTypes";
+import { MovementCard } from "../../types/gameTypes";
+import { useGame } from "../../hooks/useGame";
 
-function MoveCard(cardData: LocalMovementCard) {
+function getImgMoveCard(cardData: MovementCard) {
   let img;
   switch (cardData.type) {
     case Movement.mov1:
@@ -35,14 +36,23 @@ function MoveCard(cardData: LocalMovementCard) {
       break;
   }
 
-  const handleClick = () => {
-    console.log(cardData.type);
-  };
+  return img;
+}
 
-  return (
+export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
+  const { handleClickCard, selectedCard } = useGame();
+  const RenderMovementCard = ({
+    card,
+    isSelected,
+  }: {
+    card: MovementCard;
+    isSelected: boolean;
+  }) => (
     <Button
-      onClick={handleClick}
-      backgroundImage={img}
+      onClick={() => {
+        handleClickCard(card.cardID, "movement");
+      }}
+      backgroundImage={getImgMoveCard(card)}
       backgroundSize="cover"
       variant="unstyled"
       width="8.9vh"
@@ -50,26 +60,27 @@ function MoveCard(cardData: LocalMovementCard) {
       _hover={{
         transform: "scale(1.1)",
       }}
-    >
-      {/* Temporal */}
-      {cardData.isSelected ? (
-        <Box top="0" right="0" color="red">
-          X
-        </Box>
-      ) : null}
-    </Button>
+      transform={isSelected ? "scale(1.1)" : "scale(1)"}
+      filter={selectedCard && !isSelected ? "brightness(0.5)" : ""}
+    />
   );
-}
-
-export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
-    console.log(cards);
   return (
     <>
       <Box height="auto" width="auto" justifyContent="center" padding="10px">
         <HStack spacing={4}>
-          {cards.map((card, index) => (
-            <MoveCard key={index} {...card} isSelected={false} />
-          ))}
+          {cards.map((card, index) => {
+            const isSelected =
+              selectedCard &&
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === "movement";
+            return (
+              <RenderMovementCard
+                key={index}
+                card={card}
+                isSelected={isSelected ?? false}
+              />
+            );
+          })}
         </HStack>
       </Box>
     </>

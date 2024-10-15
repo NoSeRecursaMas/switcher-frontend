@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { VStack, HStack, Button, Center, Spacer, Box } from "@chakra-ui/react";
+import { VStack, HStack, Button, Center, Box } from "@chakra-ui/react";
 import Board from "../components/game/board";
 import OtherPlayer from "../components/game/otherPlayer";
 import MoveDeck from "../components/game/moveDeck";
@@ -10,7 +10,7 @@ import { useGameWebSocket } from "../hooks/useGameWebSocket";
 
 export default function Game() {
   const { ID } = useParams();
-  const { game, currentPlayer, getPlayerInPosition, endTurn, leaveGame } =
+  const { currentPlayer, otherPlayersInPos, endTurn, leaveGame, posEnabledToPlay, cardsMovement } =
     useGame();
 
   useGameWebSocket(parseInt(ID ?? ""));
@@ -18,19 +18,19 @@ export default function Game() {
   return (
     <Center>
       <VStack h="100vh" justifyContent="space-between" py={4}>
-        <OtherPlayer player={getPlayerInPosition("up")} pos="up" />
+        <OtherPlayer player={otherPlayersInPos.top} pos="up" />
         <HStack spacing={4}>
-          <OtherPlayer player={getPlayerInPosition("left")} pos="left" />
+          <OtherPlayer player={otherPlayersInPos.left} pos="left" />
           <Board />
-          <OtherPlayer player={getPlayerInPosition("right")} pos="right" />
+          <OtherPlayer player={otherPlayersInPos.right} pos="right" />
         </HStack>
-        {game?.posEnabledToPlay === currentPlayer?.position && (
+        {posEnabledToPlay === currentPlayer?.position && (
           <SlArrowUp size="4vh" color="white" />
         )}
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
           <HStack spacing={4}>
-            <MoveDeck cards={game?.cardsMovement ?? []} />
+            <MoveDeck cards={cardsMovement ?? []} />
             <FigureDeck
               figures={currentPlayer?.cardsFigure ?? []}
               vertical={false}
@@ -39,7 +39,7 @@ export default function Game() {
           <VStack spacing={4}>
             <Button
               colorScheme="teal"
-              isDisabled={game?.posEnabledToPlay !== currentPlayer?.position}
+              isDisabled={posEnabledToPlay !== currentPlayer?.position}
               onClick={endTurn}
             >
               Pasar turno

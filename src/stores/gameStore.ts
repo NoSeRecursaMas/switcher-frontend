@@ -16,7 +16,7 @@ interface GameState {
 export const useGameStore = create<GameState>((set) => ({
   game: undefined,
   selectedTile: undefined,
-  selectedCard: { cardID: 0, type: "movement" },
+  selectedCard: undefined,
   setGame: (game: Game) => {
     set({ game });
   },

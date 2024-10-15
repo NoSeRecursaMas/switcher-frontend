@@ -4,7 +4,6 @@ import BoardTile from "./boardTile";
 
 export default function Board() {
   const { board } = useGameTile();
-  console.log(board);
 
   return (
     <SimpleGrid

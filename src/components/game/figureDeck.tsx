@@ -1,4 +1,4 @@
-import { Box, HStack, Button, VStack } from "@chakra-ui/react";
+import { HStack, Button, VStack } from "@chakra-ui/react";
 import fig01 from "/figureCards/fig01.png";
 import fig02 from "/figureCards/fig02.png";
 import fig03 from "/figureCards/fig03.png";
@@ -25,11 +25,12 @@ import fige05 from "/figureCards/fige05.png";
 import fige06 from "/figureCards/fige06.png";
 import fige07 from "/figureCards/fige07.png";
 import { Figure } from "../../types/gameTypes";
-import type { FigureCard, LocalFigureCard } from "../../types/gameTypes";
+import type { FigureCard } from "../../types/gameTypes";
+import { useGame } from "../../hooks/useGame";
 
-function RenderFigureCard(cardData: LocalFigureCard) {
+function getImgFigureCard(card: FigureCard) {
   let img;
-  switch (cardData.type) {
+  switch (card.type) {
     case Figure.fig01:
       img = fig01;
       break;
@@ -107,14 +108,24 @@ function RenderFigureCard(cardData: LocalFigureCard) {
       break;
   }
 
-  const handleClick = () => {
-    console.log(cardData.type);
-  };
+  return img;
+}
 
-  return (
+interface FigureDeckProps {
+  figures: FigureCard[];
+  vertical: boolean;
+}
+
+export default function FigureDeck(props: FigureDeckProps) {
+  const { figures, vertical } = props;
+  const { handleClickCard, selectedCard } = useGame();
+
+  const RenderFigureCard = ({card, isSelected}: {card: FigureCard, isSelected: boolean}) => (
     <Button
-      onClick={handleClick}
-      backgroundImage={img}
+      onClick={() => {
+        handleClickCard(card.cardID, "figure");
+      }}
+      backgroundImage={getImgFigureCard(card)}
       backgroundSize="cover"
       variant="unstyled"
       w="12vh"
@@ -122,32 +133,44 @@ function RenderFigureCard(cardData: LocalFigureCard) {
       _hover={{
         transform: "scale(1.1)",
       }}
-      disabled={cardData.isBlocked}
-      borderColor={cardData.isSelected ? "red" : "transparent"}
+      transform={isSelected ? "scale(1.1)" : "scale(1)"}
+      filter={selectedCard && !isSelected ? "brightness(0.5)" : ""}
     ></Button>
   );
-}
 
-export default function FigureDeck({
-  figures,
-  vertical,
-}: {
-  figures: FigureCard[];
-  vertical: boolean;
-}) {
   return (
     <>
       {vertical ? (
         <VStack spacing={4}>
-          {figures.map((card, index) => (
-            <RenderFigureCard isSelected={false} key={index} {...card} />
-          ))}
+          {figures.map((card, index) => {
+            const isSelected =
+              selectedCard &&
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === "figure";
+            return (
+              <RenderFigureCard
+                isSelected={isSelected ?? false}
+                key={index}
+                card={card}
+              />
+            );
+          })}
         </VStack>
       ) : (
         <HStack spacing={4}>
-          {figures.map((card, index) => (
-            <RenderFigureCard isSelected={false} key={index} {...card} />
-          ))}
+          {figures.map((card, index) => {
+            const isSelected =
+              selectedCard &&
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === "figure";
+            return (
+              <RenderFigureCard
+                isSelected={isSelected ?? false}
+                key={index}
+                card={card}
+              />
+            );
+          })}
         </HStack>
       )}
     </>
