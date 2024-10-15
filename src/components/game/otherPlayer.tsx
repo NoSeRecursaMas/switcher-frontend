@@ -25,7 +25,7 @@ export default function OtherPlayer(props: OtherPlayerProps) {
           <VStack spacing={4}>
             <HStack>
               <Avatar size="md" as="b" name={player.username} />
-              <Text>{player.username}</Text>
+              <Text>{player.isActive ? player.username : "Desconectado"}</Text>
             </HStack>
             <FigureDeck figures={player.cardsFigure} vertical={true} />
           </VStack>
@@ -38,7 +38,7 @@ export default function OtherPlayer(props: OtherPlayerProps) {
           <HStack spacing={4}>
             <VStack>
               <Avatar size="md" as="b" name={player.username} />
-              <Text>{player.username}</Text>
+              <Text>{player.isActive ? player.username : "Desconectado"}</Text>
             </VStack>
             <FigureDeck figures={player.cardsFigure} vertical={false} />
           </HStack>

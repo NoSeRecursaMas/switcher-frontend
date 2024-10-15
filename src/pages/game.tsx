@@ -4,26 +4,13 @@ import Board from "../components/game/board";
 import OtherPlayer from "../components/game/otherPlayer";
 import MoveDeck from "../components/game/moveDeck";
 import FigureDeck from "../components/game/figureDeck";
-import { usePlayerStore } from "../stores/playerStore";
 import { SlArrowUp } from "react-icons/sl";
 import { useGame } from "../hooks/useGame";
 import { useGameWebSocket } from "../hooks/useGameWebSocket";
-import {
-  LocalTile,
-  LocalMovementCard,
-  LocalFigureCard,
-  Color,
-  Figure,
-  Movement,
-  FigureTiles,
-  MovementCard,
-  FigureCard,
-  Tile,
-} from "../types/gameTypes";
 
 export default function Game() {
   const { ID } = useParams();
-  const { game, currentPlayer, getPlayerInPosition, endTurn } = useGame();
+  const { game, currentPlayer, getPlayerInPosition, endTurn, leaveGame } = useGame();
 
   useGameWebSocket(parseInt(ID ?? ""));
 
@@ -49,7 +36,9 @@ export default function Game() {
           </HStack>
 
           <HStack spacing={4}>
-            {/* <Button colorScheme="red">Abandonar partida</Button> */}
+            <Button colorScheme="red" onClick={leaveGame}>
+              Abandonar partida
+            </Button>
             <Button
               colorScheme="teal"
               isDisabled={game?.posEnabledToPlay !== currentPlayer?.position}
