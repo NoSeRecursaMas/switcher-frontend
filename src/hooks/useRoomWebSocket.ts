@@ -37,10 +37,15 @@ export function useRoomWebSocket(roomID: number) {
       console.log(`Socket con sala ${roomID.toString()} cerrado`);
       if (e.code === 4004) {
         console.log("Jugador o sala no encontradas");
+        sendToast("No se pudo conectar a la sala", "Sala no encontrada", "error");
         navigate("/");
       } else if (e.code === 4005) {
         console.log("Conexión iniciada en otro dispositivo");
         sendToast("Conexión iniciada en otro dispositivo", "Solo puedes tener una conexión a la vez", "warning");
+        navigate("/");
+      } else if (e.code === 4003) {
+        console.log("Desconexión forzada por el servidor, razón:", e.reason);	
+        sendToast("No se pudo conectar a la sala", e.reason, "error");
         navigate("/");
       }
     };

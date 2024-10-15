@@ -4,14 +4,17 @@ import { useGameStore } from "../stores/gameStore";
 import {
   startGame as startGameEndpoint,
   turn as turnEndpoint,
+  leaveGame as leaveGameEndpoint,
 } from "../api/gameEndpoints";
 
 import { handleNotificationResponse, sendToast } from "../services/utils";
+import { useNavigate } from "react-router-dom";
 
 export const useGame = () => {
   const player = usePlayerStore((state) => state.player);
   const room = useRoomStore((state) => state.room);
   const game = useGameStore((state) => state.game);
+  const navigate = useNavigate();
 
   const currentPlayer = game?.players.find(
     (playerInGame) => playerInGame.playerID === player?.playerID
@@ -117,12 +120,51 @@ export const useGame = () => {
     );
   };
 
+  const leaveGame = async () => {
+    if (!game) {
+      sendToast("La información de la partida no es válida", null, "error");
+      return;
+    }
+    if (!player) {
+      sendToast(
+        "No se ha podido cargar la información del jugador",
+        null,
+        "error"
+      );
+      return;
+    }
+    const playerInfoGame = game.players.find(
+      (playerInGame) => playerInGame.playerID === player.playerID
+    );
+    if (!playerInfoGame) {
+      sendToast(
+        "No se ha podido cargar la información del jugador",
+        null,
+        "error"
+      );
+      return;
+    }
+
+    const data = await leaveGameEndpoint(game.gameID, {
+      playerID: player.playerID,
+    });
+
+    handleNotificationResponse(
+      data,
+      "Abandonado la partida con éxito",
+      "Error al intentar abandonar la partida",
+      () => {navigate("/")}
+    );
+  }
+
+
   return {
     game,
     board,
     getPlayerInPosition,
     startGame,
     endTurn,
+    leaveGame,
     currentPlayer,
     posEnabledToPlay,
   };

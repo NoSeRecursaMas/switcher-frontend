@@ -13,13 +13,17 @@ import { render, screen, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Room from "./room";
 import { useRoom } from "../hooks/useRoom";
+import { useGame } from "../hooks/useGame";
 import { useRoomWebSocket } from "../hooks/useRoomWebSocket";
+
 import RoomData from "../components/room/roomData";
 import { server } from "../mocks/node";
+import { startGame } from "../api/gameEndpoints";
 
 vi.mock("../hooks/useRoom");
 vi.mock("../hooks/useRoomWebSocket");
 vi.mock("../components/room/roomData");
+vi.mock("../hooks/useGame");
 
 describe("Room", () => {
   const mockLeaveRoom = vi.fn();
@@ -50,6 +54,9 @@ describe("Room", () => {
       room: room,
     });
     (RoomData as Mock).mockReturnValue(<div>RoomDataMock</div>);
+    (useGame as Mock).mockReturnValue({
+      startGame: vi.fn(),
+    });
   });
 
   afterEach(() => {
