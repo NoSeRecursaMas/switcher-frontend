@@ -1,15 +1,15 @@
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoomStore } from "../stores/roomStore";
-import { useGameStore } from "../stores/gameStore";
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoomStore } from '../stores/roomStore';
+import { useGameStore } from '../stores/gameStore';
 import {
   startGame as startGameEndpoint,
   turn as turnEndpoint,
   leaveGame as leaveGameEndpoint,
-} from "../api/gameEndpoints";
+} from '../api/gameEndpoints';
 
-import { handleNotificationResponse, sendToast } from "../services/utils";
-import { useNavigate } from "react-router-dom";
-import { getPlayersPositions } from "../services/gameUtils";
+import { handleNotificationResponse, sendToast } from '../services/utils';
+import { useNavigate } from 'react-router-dom';
+import { getPlayersPositions } from '../services/gameUtils';
 
 export const useGame = () => {
   const player = usePlayerStore((state) => state.player);
@@ -21,9 +21,41 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const navigate = useNavigate();
 
-  const handleClickCard = (cardID: number, type: "movement" | "figure") => {
-    console.log("handleClickCard: ", cardID, type);
-    if (selectedCard && selectedCard.cardID === cardID && selectedCard.type === type) {
+  const handleClickCard = (cardID: number, type: 'movement' | 'figure') => {
+    if (!game) {
+      sendToast('La información de la partida no es válida', null, 'error');
+      return;
+    }
+    if (!player) {
+      sendToast(
+        'No se ha podido cargar la información del jugador',
+        null,
+        'error'
+      );
+      return;
+    }
+    const playerInfoGame = game.players.find(
+      (playerInGame) => playerInGame.playerID === player.playerID
+    );
+    if (!playerInfoGame) {
+      sendToast(
+        'No se ha podido cargar la información del jugador',
+        null,
+        'error'
+      );
+      return;
+    }
+
+    if (game.posEnabledToPlay !== playerInfoGame.position) {
+      sendToast('No es tu turno', null, 'error');
+      return;
+    }
+
+    if (
+      selectedCard &&
+      selectedCard.cardID === cardID &&
+      selectedCard.type === type
+    ) {
       unselectCard();
       unselectTile();
     } else {
@@ -31,7 +63,6 @@ export const useGame = () => {
       unselectTile();
     }
   };
-
 
   const currentPlayer = game?.players.find(
     (playerInGame) => playerInGame.playerID === player?.playerID
@@ -48,26 +79,25 @@ export const useGame = () => {
   const posEnabledToPlay = game?.posEnabledToPlay;
 
   const cardsMovement = game?.cardsMovement;
-  
 
   const startGame = async () => {
     if (!room) {
-      sendToast("La información de la sala no es válida", null, "error");
+      sendToast('La información de la sala no es válida', null, 'error');
       return;
     }
     if (!player) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
     if (room.hostID !== player.playerID) {
       sendToast(
-        "Solo el creador de la sala puede iniciar la partida",
+        'Solo el creador de la sala puede iniciar la partida',
         null,
-        "error"
+        'error'
       );
       return;
     }
@@ -76,22 +106,22 @@ export const useGame = () => {
     });
     handleNotificationResponse(
       data,
-      "Partida iniciada con éxito",
-      "Error al intentar iniciar la partida",
+      'Partida iniciada con éxito',
+      'Error al intentar iniciar la partida',
       () => null
     );
   };
 
   const endTurn = async () => {
     if (!game) {
-      sendToast("La información de la partida no es válida", null, "error");
+      sendToast('La información de la partida no es válida', null, 'error');
       return;
     }
     if (!player) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
@@ -100,14 +130,14 @@ export const useGame = () => {
     );
     if (!playerInfoGame) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
     if (game.posEnabledToPlay !== playerInfoGame.position) {
-      sendToast("No es tu turno", null, "error");
+      sendToast('No es tu turno', null, 'error');
       return;
     }
 
@@ -116,22 +146,22 @@ export const useGame = () => {
     });
     handleNotificationResponse(
       data,
-      "Turno pasado con éxito",
-      "Error al intentar pasar el turno",
+      'Turno pasado con éxito',
+      'Error al intentar pasar el turno',
       () => null
     );
   };
 
   const leaveGame = async () => {
     if (!game) {
-      sendToast("La información de la partida no es válida", null, "error");
+      sendToast('La información de la partida no es válida', null, 'error');
       return;
     }
     if (!player) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
@@ -140,9 +170,9 @@ export const useGame = () => {
     );
     if (!playerInfoGame) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
@@ -153,12 +183,13 @@ export const useGame = () => {
 
     handleNotificationResponse(
       data,
-      "Abandonado la partida con éxito",
-      "Error al intentar abandonar la partida",
-      () => {navigate("/")}
+      'Abandonado la partida con éxito',
+      'Error al intentar abandonar la partida',
+      () => {
+        navigate('/');
+      }
     );
-  }
-
+  };
 
   return {
     otherPlayersInPos,

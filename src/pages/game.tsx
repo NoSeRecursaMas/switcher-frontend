@@ -1,19 +1,25 @@
-import { useParams } from "react-router-dom";
-import { VStack, HStack, Button, Center, Box } from "@chakra-ui/react";
-import Board from "../components/game/board";
-import OtherPlayer from "../components/game/otherPlayer";
-import MoveDeck from "../components/game/moveDeck";
-import FigureDeck from "../components/game/figureDeck";
-import { SlArrowUp } from "react-icons/sl";
-import { useGame } from "../hooks/useGame";
-import { useGameWebSocket } from "../hooks/useGameWebSocket";
+import { useParams } from 'react-router-dom';
+import { VStack, HStack, Button, Center, Box } from '@chakra-ui/react';
+import Board from '../components/game/board';
+import OtherPlayer from '../components/game/otherPlayer';
+import MoveDeck from '../components/game/moveDeck';
+import FigureDeck from '../components/game/figureDeck';
+import { SlArrowDown } from 'react-icons/sl';
+import { useGame } from '../hooks/useGame';
+import { useGameWebSocket } from '../hooks/useGameWebSocket';
 
 export default function Game() {
   const { ID } = useParams();
-  const { currentPlayer, otherPlayersInPos, endTurn, leaveGame, posEnabledToPlay, cardsMovement } =
-    useGame();
+  const {
+    currentPlayer,
+    otherPlayersInPos,
+    endTurn,
+    leaveGame,
+    posEnabledToPlay,
+    cardsMovement,
+  } = useGame();
 
-  useGameWebSocket(parseInt(ID ?? ""));
+  useGameWebSocket(parseInt(ID ?? ''));
 
   return (
     <Center>
@@ -25,7 +31,7 @@ export default function Game() {
           <OtherPlayer player={otherPlayersInPos.right} pos="right" />
         </HStack>
         {posEnabledToPlay === currentPlayer?.position && (
-          <SlArrowUp size="4vh" color="white" />
+          <SlArrowDown size="4vh" color="white" />
         )}
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
