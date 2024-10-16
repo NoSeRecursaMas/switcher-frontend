@@ -10,6 +10,7 @@ import {
 import { handleNotificationResponse, sendToast } from '../services/utils';
 import { useNavigate } from 'react-router-dom';
 import { getPlayersPositions } from '../services/gameUtils';
+import { MovementCard, FigureCard } from '../types/gameTypes';
 
 export const useGame = () => {
   const player = usePlayerStore((state) => state.player);
@@ -21,7 +22,10 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const navigate = useNavigate();
 
-  const handleClickCard = (cardID: number, type: 'movement' | 'figure') => {
+  const handleClickCard = (
+    cardData: MovementCard | FigureCard,
+    type: 'movement' | 'figure'
+  ) => {
     if (!game) {
       sendToast('La información de la partida no es válida', null, 'error');
       return;
@@ -53,13 +57,13 @@ export const useGame = () => {
 
     if (
       selectedCard &&
-      selectedCard.cardID === cardID &&
+      selectedCard.cardData.cardID === cardData.cardID &&
       selectedCard.type === type
     ) {
       unselectCard();
       unselectTile();
     } else {
-      selectCard(cardID, type);
+      selectCard(cardData, type);
       unselectTile();
     }
   };
@@ -148,7 +152,10 @@ export const useGame = () => {
       data,
       'Turno pasado con éxito',
       'Error al intentar pasar el turno',
-      () => null
+      () => {
+        unselectCard();
+        unselectTile();
+      }
     );
   };
 
