@@ -1,16 +1,87 @@
-import { describe, it, expect, beforeEach, vi, Mock, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeEach, vi, beforeAll, afterAll } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useRoomList } from "./useRoomList";
 import { usePlayerStore } from "../stores/playerStore";
-import { useNavigate } from "react-router-dom";
-import * as roomEndpoints from "../api/roomEndpoints";
 import * as utils from "../services/utils";
+import { useRoomListStore } from "../stores/roomListStore";
 import { server } from "../mocks/node";
 
-vi.mock("react-router-dom");
 
 describe("useRoomList", () => {
-  const mockNavigate = vi.fn();
+  const ROOMS = [
+    {
+      roomID: 1,
+      roomName: "Sala 1",
+      maxPlayers: 4,
+      actualPlayers: 2,
+      started: false,
+      private: false,
+    },
+    {
+      roomID: 2,
+      roomName: "Sala 2",
+      maxPlayers: 4,
+      actualPlayers: 3,
+      started: false,
+      private: true,
+    },
+    {
+      roomID: 3,
+      roomName: "Somebody once told me",
+      maxPlayers: 2,
+      actualPlayers: 2,
+      started: false,
+      private: false,
+    },
+    {
+      roomID: 4,
+      roomName: "the world is gonna roll me",
+      maxPlayers: 4,
+      actualPlayers: 2,
+      started: false,
+      private: false,
+    },
+    {
+      roomID: 5,
+      roomName: ".",
+      maxPlayers: 4,
+      actualPlayers: 3,
+      started: false,
+      private: true,
+    },
+    {
+      roomID: 6,
+      roomName: "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      maxPlayers: 4,
+      actualPlayers: 2,
+      started: false,
+      private: false,
+    },
+    {
+      roomID: 7,
+      roomName: "SALA EMPEZADA",
+      maxPlayers: 4,
+      actualPlayers: 2,
+      started: true,
+      private: false,
+    },
+    {
+      roomID: 8,
+      roomName: "Sala llena",
+      maxPlayers: 4,
+      actualPlayers: 4,
+      started: false,
+      private: false,
+    },
+    {
+      roomID: 9,
+      roomName: "OwO",
+      maxPlayers: 3,
+      actualPlayers: 2,
+      started: false,
+      private: false,
+    },
+  ];
 
   beforeAll(() => {
     server.listen();
@@ -21,62 +92,62 @@ describe("useRoomList", () => {
   });
 
   beforeEach(() => {
-    usePlayerStore.setState({ player: undefined });
-    vi.resetAllMocks();
-    (useNavigate as Mock).mockReturnValue({
-      navigate: mockNavigate,
-    });
+    usePlayerStore.setState({ player: { playerID: 1, username: "test" } });
+    useRoomListStore.setState({ selectedRoomID: undefined });
+    useRoomListStore.setState({ roomList: undefined });
   });
 
   it("Me devuelve una lista de salas undefined por defecto", () => {
     const { result } = renderHook(() => useRoomList());
-    expect(result.current.rooms).toBeUndefined();
+    expect(result.current.roomList).toBeUndefined();
   });
 
-  it("Me permite refrescar la lista de salas", async () => {
-    const { result } = renderHook(() => useRoomList());
-    expect(result.current.rooms).toBeUndefined();
-    await act(async () => {
-      await result.current.refreshRoomList();
-    });
-    expect(result.current.rooms).toBeDefined();
-  });
-
-  it("Al refrescar la lista de salas, se llama al endpoint de obtener salas", async () => {
-    const getRooms = vi.spyOn(roomEndpoints, "getRooms");
-    const { result } = renderHook(() => useRoomList());
-    await act(async () => {
-      await result.current.refreshRoomList();
-    });
-    expect(getRooms).toHaveBeenCalled();
-  });
-
-  it("La sala seleccionada por defecto es undefined", () => {
+  it("Me devuelve una sala seleccionada undefined por defecto", () => {
     const { result } = renderHook(() => useRoomList());
     expect(result.current.selectedRoomID).toBeUndefined();
   });
 
-  it("Puedo seleccionar una sala", () => {
+  it("Puedo seleccionar una sala al existir salas", () => {
+    useRoomListStore.setState({ roomList: ROOMS });
     const { result } = renderHook(() => useRoomList());
     act(() => {
-      result.current.handleSelectRoomID(1, 2, 4);
+      result.current.handleSelectRoomID(1);
     });
     expect(result.current.selectedRoomID).toBe(1);
+  });
+
+  it("No puedo seleccionar una sala que no existe", () => {
+    useRoomListStore.setState({ roomList: ROOMS });
+    const { result } = renderHook(() => useRoomList());
+    act(() => {
+      result.current.handleSelectRoomID(15);
+    });
+    expect(result.current.selectedRoomID).toBeUndefined();
   });
 
   it("No puedo seleccionar una sala que esta llena", () => {
     const { result } = renderHook(() => useRoomList());
     act(() => {
-      result.current.handleSelectRoomID(1, 2, 2);
+      result.current.handleSelectRoomID(8);
+    });
+    expect(result.current.selectedRoomID).toBeUndefined();
+  });
+
+  it("No puedo seleccionar una sala que ya empezó", () => {
+    useRoomListStore.setState({ roomList: ROOMS });
+    const { result } = renderHook(() => useRoomList());
+    act(() => {
+      result.current.handleSelectRoomID(7);
     });
     expect(result.current.selectedRoomID).toBeUndefined();
   });
 
   it("Al seleccionar una sala llena, muestra un toast de warning", () => {
     const sendToast = vi.spyOn(utils, "sendToast");
+    useRoomListStore.setState({ roomList: ROOMS });
     const { result } = renderHook(() => useRoomList());
     act(() => {
-      result.current.handleSelectRoomID(1, 2, 2);
+      result.current.handleSelectRoomID(8);
     });
     expect(sendToast).toHaveBeenCalledWith(
       "La sala está llena",
@@ -86,13 +157,14 @@ describe("useRoomList", () => {
   });
 
   it("Al seleccionar una sala, si ya estaba seleccionada, la deselecciona", () => {
+    useRoomListStore.setState({ roomList: ROOMS });
     const { result } = renderHook(() => useRoomList());
     act(() => {
-      result.current.handleSelectRoomID(1, 2, 4);
+      result.current.handleSelectRoomID(1);
     });
     expect(result.current.selectedRoomID).toBe(1);
     act(() => {
-      result.current.handleSelectRoomID(1, 2, 4);
+      result.current.handleSelectRoomID(1);
     });
     expect(result.current.selectedRoomID).toBeUndefined();
   });

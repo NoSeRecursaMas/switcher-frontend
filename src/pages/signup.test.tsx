@@ -2,11 +2,13 @@ import { describe, it, expect, afterEach, vi, beforeEach, Mock, beforeAll, after
 import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import PlayerCreationForm from "./playerCreationForm";
-import { usePlayer } from "../../hooks/usePlayer";
-import { server } from "../../mocks/node";
+import Signup from "./signup";
+import { usePlayer } from "../hooks/usePlayer";
+import { server } from "../mocks/node";
+import { Navigate } from "react-router-dom";
 
-vi.mock("../../hooks/usePlayer");
+vi.mock("../hooks/usePlayer");
+vi.mock("react-router-dom");
 
 describe("PlayerCreationForm", () => {
   const mockCreatePlayer = vi.fn();
@@ -23,31 +25,37 @@ describe("PlayerCreationForm", () => {
     vi.resetAllMocks();
     (usePlayer as Mock).mockReturnValue({
       createPlayer: mockCreatePlayer,
+        player: undefined,
     });
+    (Navigate as Mock).mockReturnValue(<div>NavigateMock</div>);
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("El modal es visible cuando el usuario no está cargado", () => {
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
-    expect(screen.getByText("Elige tu nombre")).toBeInTheDocument();
+  it("Render the signup if the player is not loaded", () => {
+    render(<Signup />);
+    expect(screen.getByText("Selecciona tu apodo")).toBeInTheDocument();
   });
 
-  it("El modal no es visible cuando el usuario está cargado", () => {
-    render(<PlayerCreationForm isPlayerLoaded={true} />);
-    expect(screen.queryByText("Elige tu nombre")).not.toBeInTheDocument();
+  it("Render the navigate component if the player is loaded", () => {
+    (usePlayer as Mock).mockReturnValue({
+      createPlayer: mockCreatePlayer,
+      player: { playerID: 1, username: "Username Test" },
+    });
+    render(<Signup />);
+    expect(screen.getByText("NavigateMock")).toBeInTheDocument();
   });
 
   it("Se puede seleccionar un nombre de usuario y se llama a la función de creación", async () => {
     const user = userEvent.setup();
     const username = "Usuario de test";
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
@@ -56,10 +64,10 @@ describe("PlayerCreationForm", () => {
     const user = userEvent.setup();
     const username = "a".repeat(33);
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(
       screen.getByText("El nombre no puede tener más de 32 caracteres")
@@ -70,10 +78,10 @@ describe("PlayerCreationForm", () => {
   it("No se puede seleccionar un nombre con caracteres no ASCII y se muestra un mensaje de error", async () => {
     const user = userEvent.setup();
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), "😀");
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(
       screen.getByText("El nombre solo puede contener caracteres ASCII")
@@ -85,10 +93,10 @@ describe("PlayerCreationForm", () => {
     const user = userEvent.setup();
     const username = "a";
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
@@ -97,10 +105,10 @@ describe("PlayerCreationForm", () => {
     const user = userEvent.setup();
     const username = "a".repeat(32);
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(mockCreatePlayer).toHaveBeenCalledWith(username);
   });
@@ -109,10 +117,10 @@ describe("PlayerCreationForm", () => {
     const user = userEvent.setup();
     const username = "                  Usuario de test              ";
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(mockCreatePlayer).toHaveBeenCalledWith(username.trim());
   });
@@ -121,10 +129,10 @@ describe("PlayerCreationForm", () => {
     const user = userEvent.setup();
     const username = "                  ";
 
-    render(<PlayerCreationForm isPlayerLoaded={false} />);
+    render(<Signup />);
 
     await user.type(screen.getByRole("textbox"), username);
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole("button", { name: "Ingresar" }));
 
     expect(
       screen.getByText("El nombre no puede estar vacío")

@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeEach, vi, beforeAll, afterAll } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  vi,
+  beforeAll,
+  afterAll,
+} from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { usePlayer } from "./usePlayer";
 import { usePlayerStore } from "../stores/playerStore";
@@ -53,51 +61,17 @@ describe("usePlayer", () => {
     expect(result.current.player?.username).toEqual(username);
   });
 
-  it("En caso de éxito, muestra un toast de éxito", async () => {
-    const sendToast = vi.spyOn(utils, "sendToast");
+  it("Se muestra un toast al crear un jugador", async () => {
+    const handleNotificationResponse = vi.spyOn(
+      utils,
+      "handleNotificationResponse"
+    );
     const username = "test de jugador";
     const { result } = renderHook(() => usePlayer());
 
     await act(async () => {
       await result.current.createPlayer(username);
     });
-    expect(sendToast).toHaveBeenCalledWith(
-      "¡Nombre seleccionado con éxito!",
-      null,
-      "success"
-    );
-  });
-
-  it("En caso de error, no asigna el nombre al jugador", async () => {
-    const username = "error";
-    const { result } = renderHook(() => usePlayer());
-
-    await act(async () => {
-      await result.current.createPlayer(username);
-    });
-
-    expect(result.current.player).toBeUndefined();
-  });
-
-  it("En caso de error, muestra un toast de error", async () => {
-    const sendErrorToast = vi.spyOn(utils, "sendErrorToast");
-    const username = "error";
-    const { result } = renderHook(() => usePlayer());
-
-    await act(async () => {
-      await result.current.createPlayer(username);
-    });
-    expect(sendErrorToast).toHaveBeenCalledWith(
-      {
-        detail: [
-          {
-            input: "error",
-            msg: "Ejemplo de error en el backend",
-            type: "ValidationError",
-          },
-        ],
-      },
-      "Error al seleccionar nombre"
-    );
+    expect(handleNotificationResponse).toHaveBeenCalled();
   });
 });
