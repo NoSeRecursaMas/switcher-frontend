@@ -1,11 +1,11 @@
-import { http, HttpResponse } from "msw";
+import { http, HttpResponse } from 'msw';
 import {
   GameID,
   PlayFigureCardRequest,
   PlayMovementCardRequest,
-} from "../../types/gameTypes";
-import { ErrorType } from "../../api/types";
-import { PlayerID } from "../../types/playerTypes";
+} from '../../types/gameTypes';
+import { ErrorType } from '../../api/types';
+import { PlayerID } from '../../types/playerTypes';
 
 interface GameIDPath {
   gameID: string;
@@ -22,7 +22,7 @@ export default function handlers(baseUri: string) {
         if (playerID === -1) {
           return HttpResponse.json(
             {
-              detail: "El jugador no existe",
+              detail: 'El jugador no existe',
             },
             {
               status: 404,
@@ -32,7 +32,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
@@ -55,7 +55,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
@@ -63,7 +63,7 @@ export default function handlers(baseUri: string) {
           );
         }
         return HttpResponse.json(null, {
-          status: 200,
+          status: 201,
         });
       }
     ),
@@ -75,7 +75,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
@@ -83,7 +83,7 @@ export default function handlers(baseUri: string) {
           );
         }
         return HttpResponse.json(null, {
-          status: 200,
+          status: 201,
         });
       }
     ),
@@ -95,7 +95,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
@@ -103,7 +103,7 @@ export default function handlers(baseUri: string) {
           );
         }
         return HttpResponse.json(null, {
-          status: 200,
+          status: 201,
         });
       }
     ),
@@ -115,7 +115,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
@@ -135,7 +135,7 @@ export default function handlers(baseUri: string) {
         if (parseInt(gameID) === -1) {
           return HttpResponse.json(
             {
-              detail: "El juego no existe",
+              detail: 'El juego no existe',
             },
             {
               status: 404,
