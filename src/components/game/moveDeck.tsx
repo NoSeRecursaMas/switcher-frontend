@@ -47,7 +47,6 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
   }: {
     card: MovementCard;
     isSelected: boolean;
-    isUsed: boolean;
   }) => (
     <Button
       onClick={() => {
