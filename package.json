@@ -11,7 +11,7 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky init"
+    "prepare": "husky"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",

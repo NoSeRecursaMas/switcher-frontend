@@ -1,8 +1,8 @@
-import { Button, Text } from "@chakra-ui/react";
-import { keyframes } from "@emotion/react";
-import { Color } from "../../types/gameTypes";
-import { ExtendedTile } from "../../types/gameTypes";
-import { useGameTile } from "../../hooks/useGameTile";
+import { Button, Text } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
+import { Color } from '../../types/gameTypes';
+import { ExtendedTile } from '../../types/gameTypes';
+import { useGameTile } from '../../hooks/useGameTile';
 
 const breathingKeyframes = keyframes`
   0% { box-shadow: none; }
@@ -16,15 +16,15 @@ const breathingKeyframes = keyframes`
 const colorScheme = (color: Color | undefined) => {
   switch (color) {
     case Color.Y:
-      return "yellow";
+      return 'yellow';
     case Color.R:
-      return "red";
+      return 'red';
     case Color.B:
-      return "blue";
+      return 'blue';
     case Color.G:
-      return "green";
+      return 'green';
     default:
-      return "gray";
+      return 'gray';
   }
 };
 
@@ -36,13 +36,11 @@ export default function BoardTile({ tile }: { tile: ExtendedTile }) {
   const isSelected =
     selectedTile && selectedTile.posX === posX && selectedTile.posY === posY;
 
-  const isNotImportant = selectedTile && (!isHighlighted && !isSelected);
+  const isNotImportant = selectedTile && !isHighlighted && !isSelected;
 
   return (
     <Button
-      onClick={() => {
-        handleClickTile(posX, posY);
-      }}
+      onClick={() => handleClickTile(posX, posY)}
       backgroundSize="cover"
       colorScheme={colorScheme(color)}
       variant="outline"
@@ -54,54 +52,52 @@ export default function BoardTile({ tile }: { tile: ExtendedTile }) {
       //border = "3px solid currentColor"
       _before={{
         content: '""',
-        position: "absolute",
-        height: "111%",
-        width: "111%",
+        position: 'absolute',
+        height: '111%',
+        width: '111%',
         borderTop: markTopBorder
-          ? "2px solid currentColor"
-          : "2px solid transparent",
+          ? '2px solid currentColor'
+          : '2px solid transparent',
         borderRight: markRightBorder
-          ? "2px solid currentColor"
-          : "2px solid transparent",
+          ? '2px solid currentColor'
+          : '2px solid transparent',
         borderBottom: markBottomBorder
-          ? "2px solid currentColor"
-          : "2px solid transparent",
+          ? '2px solid currentColor'
+          : '2px solid transparent',
         borderLeft: markLeftBorder
-          ? "2px solid currentColor"
-          : "2px solid transparent",
-        borderTopLeftRadius: markLeftBorder && markTopBorder ? "20px" : "0",
-        borderTopRightRadius: markRightBorder && markTopBorder ? "20px" : "0",
+          ? '2px solid currentColor'
+          : '2px solid transparent',
+        borderTopLeftRadius: markLeftBorder && markTopBorder ? '20px' : '0',
+        borderTopRightRadius: markRightBorder && markTopBorder ? '20px' : '0',
         borderBottomRightRadius:
-          markRightBorder && markBottomBorder ? "20px" : "0",
+          markRightBorder && markBottomBorder ? '20px' : '0',
         borderBottomLeftRadius:
-          markLeftBorder && markBottomBorder ? "20px" : "0",
+          markLeftBorder && markBottomBorder ? '20px' : '0',
       }}
       _after={{
         content: '""',
-        position: "absolute",
-        top: "5px",
-        right: "5px",
-        borderTop: "1px solid currentColor",
-        borderRight: "1px solid currentColor",
-        borderRadius: "0 60% 0 0",
-        height: "25%",
-        width: "25%",
+        position: 'absolute',
+        top: '5px',
+        right: '5px',
+        borderTop: '1px solid currentColor',
+        borderRight: '1px solid currentColor',
+        borderRadius: '0 60% 0 0',
+        height: '25%',
+        width: '25%',
       }}
       _hover={{
-        transform: "scale(1.1)",
+        transform: 'scale(1.1)',
       }}
       isActive={isSelected}
-      transform={isSelected ? "scale(1.1)" : ""}
-      filter={isNotImportant ? "brightness(0.5)" : ""}
+      transform={isSelected ? 'scale(1.1)' : ''}
+      filter={isNotImportant ? 'brightness(0.5)' : ''}
       animation={
-        isHighlighted ? `${breathingKeyframes} 1s ease-in-out infinite` : ""
+        isHighlighted ? `${breathingKeyframes} 1s ease-in-out infinite` : ''
       }
     >
-      {isPartial && (
-        <Text fontSize="2xl" fontWeight="bold">
-          P
-        </Text>
-      )}
+      <Text fontSize="2xl" fontWeight="bold">
+        {isPartial ? 'P' : '\u00A0'}
+      </Text>
     </Button>
   );
 }

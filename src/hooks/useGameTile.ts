@@ -1,9 +1,9 @@
-import { usePlayerStore } from "../stores/playerStore";
-import { useGameStore } from "../stores/gameStore";
+import { usePlayerStore } from '../stores/playerStore';
+import { useGameStore } from '../stores/gameStore';
 
-import { handleNotificationResponse, sendToast } from "../services/utils";
-import { getExtendedBoard, isHighlighted } from "../services/tilesUtils";
-
+import { handleNotificationResponse, sendToast } from '../services/utils';
+import { getExtendedBoard, isHighlighted } from '../services/tilesUtils';
+import { moveCard as moveCardEndpoint } from '../api/gameEndpoints';
 
 export const useGameTile = () => {
   const player = usePlayerStore((state) => state.player);
@@ -13,16 +13,16 @@ export const useGameTile = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const selectedCard = useGameStore((state) => state.selectedCard);
 
-  const handleClickTile = (posX: number, posY: number) => {
+  const handleClickTile = async (posX: number, posY: number) => {
     if (!game) {
-      sendToast("La información de la partida no es válida", null, "error");
+      sendToast('La información de la partida no es válida', null, 'error');
       return;
     }
     if (!player) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
@@ -31,19 +31,19 @@ export const useGameTile = () => {
     );
     if (!playerInfoGame) {
       sendToast(
-        "No se ha podido cargar la información del jugador",
+        'No se ha podido cargar la información del jugador',
         null,
-        "error"
+        'error'
       );
       return;
     }
 
     if (game.posEnabledToPlay !== playerInfoGame.position) {
-      sendToast("No es tu turno", null, "error");
+      sendToast('No es tu turno', null, 'error');
       return;
     }
-    if (!selectedCard || selectedCard.type !== "movement") {
-      sendToast("No se ha seleccionado una carta de movimiento", null, "error");
+    if (!selectedCard || selectedCard.type !== 'movement') {
+      sendToast('No se ha seleccionado una carta de movimiento', null, 'error');
       return;
     }
 
@@ -53,10 +53,24 @@ export const useGameTile = () => {
     } else if (selectedTile.posX === posX && selectedTile.posY === posY) {
       unselectTile();
       return;
-    } else if (isHighlighted({ posX, posY }, selectedTile)) {
+    } else if (
+      isHighlighted({ posX, posY }, selectedTile, selectedCard.cardData)
+    ) {
       // La primera ficha está seleccionada
       // Y ahora se selecciona la segunda que estaba highlighteada
-      // Se debería llamar al endpoint para mover las fichas
+      // Se llama al endpoint para mover las fichas
+      const data = await moveCardEndpoint(game.gameID, {
+        cardID: selectedCard.cardData.cardID,
+        playerID: player.playerID,
+        origin: selectedTile,
+        destination: { posX, posY },
+      });
+      handleNotificationResponse(
+        data,
+        'Movimiento realizado con éxito',
+        'Error al intercamabiar fichas',
+        () => null
+      );
     } else {
       // La primera ficha está seleccionada
       // Y ahora se selecciona otra pero no está highlighteada
@@ -65,7 +79,7 @@ export const useGameTile = () => {
     }
   };
 
-  const board = getExtendedBoard(game, selectedTile);
+  const board = getExtendedBoard(game, selectedTile, selectedCard?.cardData);
 
   return {
     board,

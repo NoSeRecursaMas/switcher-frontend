@@ -1,14 +1,14 @@
-import { Box, HStack, Button } from "@chakra-ui/react";
-import L1 from "/movementCards/L1.png";
-import L2 from "/movementCards/L2.png";
-import Lineal1 from "/movementCards/Lineal1.png";
-import Lineal2 from "/movementCards/Lineal2.png";
-import Diagonal1 from "/movementCards/Diagonal1.png";
-import Diagonal2 from "/movementCards/Diagonal2.png";
-import LineaLateral from "/movementCards/LineaLateral.png";
-import { Movement } from "../../types/gameTypes";
-import { MovementCard } from "../../types/gameTypes";
-import { useGame } from "../../hooks/useGame";
+import { Box, HStack, Button } from '@chakra-ui/react';
+import L1 from '/movementCards/L1.png';
+import L2 from '/movementCards/L2.png';
+import Lineal1 from '/movementCards/Lineal1.png';
+import Lineal2 from '/movementCards/Lineal2.png';
+import Diagonal1 from '/movementCards/Diagonal1.png';
+import Diagonal2 from '/movementCards/Diagonal2.png';
+import LineaLateral from '/movementCards/LineaLateral.png';
+import { Movement } from '../../types/gameTypes';
+import { MovementCard } from '../../types/gameTypes';
+import { useGame } from '../../hooks/useGame';
 
 function getImgMoveCard(cardData: MovementCard) {
   let img;
@@ -50,7 +50,7 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
   }) => (
     <Button
       onClick={() => {
-        handleClickCard(card.cardID, "movement");
+        handleClickCard(card, 'movement');
       }}
       backgroundImage={getImgMoveCard(card)}
       backgroundSize="cover"
@@ -58,10 +58,19 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
       width="8.9vh"
       height="12vh"
       _hover={{
-        transform: "scale(1.1)",
+        transform: !card.isUsed ? 'scale(1.1)' : 'scale(0.9)',
       }}
-      transform={isSelected ? "scale(1.1)" : "scale(1)"}
-      filter={selectedCard && !isSelected ? "brightness(0.5)" : ""}
+      transform={
+        card.isUsed ? 'scale(0.9)' : isSelected ? 'scale(1.1)' : 'scale(1)'
+      }
+      filter={
+        card.isUsed
+          ? 'grayscale(100%) brightness(0.5)'
+          : selectedCard && !isSelected
+            ? 'brightness(0.5)'
+            : ''
+      }
+      disabled={card.isUsed}
     />
   );
   return (
@@ -71,8 +80,8 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
           {cards.map((card, index) => {
             const isSelected =
               selectedCard &&
-              selectedCard.cardID === card.cardID &&
-              selectedCard.type === "movement";
+              selectedCard.cardData.cardID === card.cardID &&
+              selectedCard.type === 'movement';
             return (
               <RenderMovementCard
                 key={index}

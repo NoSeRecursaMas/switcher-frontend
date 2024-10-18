@@ -1,6 +1,6 @@
-import { SimpleGrid } from "@chakra-ui/react";
-import { useGameTile } from "../../hooks/useGameTile";
-import BoardTile from "./boardTile";
+import { SimpleGrid } from '@chakra-ui/react';
+import { useGameTile } from '../../hooks/useGameTile';
+import BoardTile from './boardTile';
 
 export default function Board() {
   const { board } = useGameTile();
@@ -17,8 +17,8 @@ export default function Board() {
       h="60vh"
       w="60vh"
     >
-      {Array.from({ length: 6 }).map((_, y) =>
-        Array.from({ length: 6 }).map((_, x) => {
+      {Array.from({ length: 6 }).map((_, x) =>
+        Array.from({ length: 6 }).map((_, y) => {
           const tile = board.find((tile) => tile.posX === x && tile.posY === y);
           if (!tile) return null;
 
