@@ -7,6 +7,7 @@ import FigureDeck from '../components/game/figureDeck';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
+import { TfiBackLeft } from 'react-icons/tfi';
 
 export default function Game() {
   const { ID } = useParams();
@@ -14,6 +15,7 @@ export default function Game() {
     currentPlayer,
     otherPlayersInPos,
     endTurn,
+    cancelMove,
     leaveGame,
     posEnabledToPlay,
     cardsMovement,
@@ -42,18 +44,30 @@ export default function Game() {
               vertical={false}
             />
           </HStack>
-          <VStack spacing={4}>
+          <HStack spacing={4}>
             <Button
-              colorScheme="teal"
-              isDisabled={posEnabledToPlay !== currentPlayer?.position}
-              onClick={endTurn}
+              colorScheme="grey"
+              isDisabled={
+                !cardsMovement?.map((card) => card.isUsed).includes(true) ||
+                posEnabledToPlay !== currentPlayer?.position
+              }
+              onClick={cancelMove}
             >
-              Pasar turno
+              <TfiBackLeft size="4vh" color="white" />
             </Button>
-            <Button colorScheme="red" onClick={leaveGame}>
-              Abandonar partida
-            </Button>
-          </VStack>
+            <VStack spacing={4}>
+              <Button
+                colorScheme="teal"
+                isDisabled={posEnabledToPlay !== currentPlayer?.position}
+                onClick={endTurn}
+              >
+                Pasar turno
+              </Button>
+              <Button colorScheme="red" onClick={leaveGame}>
+                Abandonar partida
+              </Button>
+            </VStack>
+          </HStack>
         </HStack>
       </VStack>
     </Center>
