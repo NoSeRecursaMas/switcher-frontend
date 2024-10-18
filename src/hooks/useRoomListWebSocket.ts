@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { RoomListStatusMessage } from "../types/roomTypes";
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoomListStore } from "../stores/roomListStore";
+import { useEffect, useRef } from 'react';
+import { RoomListStatusMessage } from '../types/roomTypes';
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoomListStore } from '../stores/roomListStore';
 
 export const useRoomListWebSocket = () => {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -17,13 +17,16 @@ export const useRoomListWebSocket = () => {
     const socket = new WebSocket(webSocketUrl);
 
     socket.onopen = () => {
-      console.log("Socket con lista de salas establecido");
+      console.log('Socket con lista de salas establecido');
     };
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as RoomListStatusMessage;
-      console.log(`Mensaje de tipo '${message.type}' recibido:`, message.payload);
-      if (message.type === "status") {
+      console.log(
+        `Mensaje de tipo '${message.type}' recibido:`,
+        message.payload
+      );
+      if (message.type === 'status') {
         setRoomList(message.payload);
         // Si la sala seleccionada ya no está disponible, deseleccionarla
         const selectedRoom = message.payload.find(
@@ -40,13 +43,13 @@ export const useRoomListWebSocket = () => {
     };
 
     socket.onclose = (e) => {
-      console.log("Socket con lista de salas cerrado");
+      console.log('Socket con lista de salas cerrado');
       if (e.code === 4004) {
-        console.log("Jugador con este ID no encontrado, borrando jugador");
+        console.log('Jugador con este ID no encontrado, borrando jugador');
         deletePlayer();
       } else if (e.code === 4005) {
-        console.log("Conexión iniciada en otro dispositivo");
-        window.open("about:blank", "_self");
+        console.log('Conexión iniciada en otro dispositivo');
+        window.open('about:blank', '_self');
         window.close();
       }
     };
@@ -56,7 +59,7 @@ export const useRoomListWebSocket = () => {
         case WebSocket.CONNECTING:
           socket.onclose = () => {
             console.log(
-              "Socket con lista de salas interrumpido por desmontaje"
+              'Socket con lista de salas interrumpido por desmontaje'
             );
           };
           socket.onopen = () => {
