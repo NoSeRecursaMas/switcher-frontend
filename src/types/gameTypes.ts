@@ -1,46 +1,46 @@
 enum Color {
-  R = "R",
-  G = "G",
-  B = "B",
-  Y = "Y",
+  R = 'R',
+  G = 'G',
+  B = 'B',
+  Y = 'Y',
 }
 
 enum Movement {
-  mov1 = "mov01",
-  mov2 = "mov02",
-  mov3 = "mov03",
-  mov4 = "mov04",
-  mov5 = "mov05",
-  mov6 = "mov06",
-  mov7 = "mov07",
+  mov1 = 'mov01',
+  mov2 = 'mov02',
+  mov3 = 'mov03',
+  mov4 = 'mov04',
+  mov5 = 'mov05',
+  mov6 = 'mov06',
+  mov7 = 'mov07',
 }
 
 enum Figure {
-  fig01 = "fig01",
-  fig02 = "fig02",
-  fig03 = "fig03",
-  fig04 = "fig04",
-  fig05 = "fig05",
-  fig06 = "fig06",
-  fig07 = "fig07",
-  fig08 = "fig08",
-  fig09 = "fig09",
-  fig10 = "fig10",
-  fig11 = "fig11",
-  fig12 = "fig12",
-  fig13 = "fig13",
-  fig14 = "fig14",
-  fig15 = "fig15",
-  fig16 = "fig16",
-  fig17 = "fig17",
-  fig18 = "fig18",
-  fige01 = "fige01",
-  fige02 = "fige02",
-  fige03 = "fige03",
-  fige04 = "fige04",
-  fige05 = "fige05",
-  fige06 = "fige06",
-  fige07 = "fige07",
+  fig01 = 'fig01',
+  fig02 = 'fig02',
+  fig03 = 'fig03',
+  fig04 = 'fig04',
+  fig05 = 'fig05',
+  fig06 = 'fig06',
+  fig07 = 'fig07',
+  fig08 = 'fig08',
+  fig09 = 'fig09',
+  fig10 = 'fig10',
+  fig11 = 'fig11',
+  fig12 = 'fig12',
+  fig13 = 'fig13',
+  fig14 = 'fig14',
+  fig15 = 'fig15',
+  fig16 = 'fig16',
+  fig17 = 'fig17',
+  fig18 = 'fig18',
+  fige01 = 'fige01',
+  fige02 = 'fige02',
+  fige03 = 'fige03',
+  fige04 = 'fige04',
+  fige05 = 'fige05',
+  fige06 = 'fige06',
+  fige07 = 'fige07',
 }
 
 interface Tile {
@@ -51,11 +51,15 @@ interface Tile {
 }
 
 // Los tipos locales tienen información que no es necesario mandar al servidor
-interface LocalTile extends Tile {
+interface ExtendedTile extends Tile {
   isHighlighted: boolean;
+  markTopBorder: boolean;
+  markRightBorder: boolean;
+  markBottomBorder: boolean;
+  markLeftBorder: boolean;
 }
 
-interface FigureTiles {
+interface CoordsTile {
   posX: number;
   posY: number;
 }
@@ -66,18 +70,10 @@ interface MovementCard {
   isUsed: boolean; // Usada en el turno actual
 }
 
-interface LocalMovementCard extends MovementCard {
-  isSelected: boolean;
-}
-
 interface FigureCard {
   type: Figure;
   cardID: number;
   isBlocked: boolean;
-}
-
-interface LocalFigureCard extends FigureCard {
-  isSelected: boolean;
 }
 
 interface PlayerInGame {
@@ -92,20 +88,37 @@ interface PlayerInGame {
 interface Game {
   gameID: number;
   board: Tile[];
-  figuresToUse: FigureTiles[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
+  figuresToUse: CoordsTile[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
   prohibitedColor: Color | null;
   cardsMovement: MovementCard[];
   posEnabledToPlay: number; // Turno
   players: PlayerInGame[];
 }
 
+interface GameID {
+  gameID: number;
+}
+
+interface PlayMovementCardRequest {
+  playerID: number;
+  cardID: number;
+  origin: { posX: number; posY: number };
+  destination: { posX: number; posY: number };
+}
+
+interface PlayFigureCardRequest {
+  playerID: number;
+  cardID: number;
+  coords: { posX: number; posY: number }[];
+}
+
 interface GameStatusMessage {
-  type: "status";
+  type: 'status';
   payload: Game;
 }
 
 interface GameEndMessage {
-  type: "end";
+  type: 'end';
   payload: {
     winnerID: number;
     username: string;
@@ -116,14 +129,15 @@ type GameMessage = GameStatusMessage | GameEndMessage;
 
 export type {
   Game,
+  GameID,
+  PlayMovementCardRequest,
+  PlayFigureCardRequest,
   GameMessage,
   Tile,
-  LocalTile,
-  FigureTiles,
+  ExtendedTile,
+  CoordsTile,
   MovementCard,
-  LocalMovementCard,
   FigureCard,
-  LocalFigureCard,
   PlayerInGame,
 };
 export { Color, Movement, Figure };

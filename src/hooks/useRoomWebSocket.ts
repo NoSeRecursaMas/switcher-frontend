@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { RoomMessage } from "../types/roomTypes";
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoomStore } from "../stores/roomStore";
-import { useNavigate } from "react-router-dom";
-import { sendToast } from "../services/utils";
+import { useEffect } from 'react';
+import { RoomMessage } from '../types/roomTypes';
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoomStore } from '../stores/roomStore';
+import { useNavigate } from 'react-router-dom';
+import { sendToast } from '../services/utils';
 
 export function useRoomWebSocket(roomID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -24,11 +24,11 @@ export function useRoomWebSocket(roomID: number) {
         `Mensaje de tipo '${message.type}' recibido:`,
         message.payload
       );
-      if (message.type === "status") {
+      if (message.type === 'status') {
         setRoom(message.payload);
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      } else if (message.type === "start") {
-        console.log("Redirigiendo a la sala de juego...");
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      } else if (message.type === 'start') {
+        console.log('Redirigiendo a la sala de juego...');
         navigate(`/game/${message.payload.gameID.toString()}`);
       }
     };
@@ -36,17 +36,25 @@ export function useRoomWebSocket(roomID: number) {
     socket.onclose = (e) => {
       console.log(`Socket con sala ${roomID.toString()} cerrado`);
       if (e.code === 4004) {
-        console.log("Jugador o sala no encontradas");
-        sendToast("No se pudo conectar a la sala", "Sala no encontrada", "error");
-        navigate("/");
+        console.log('Jugador o sala no encontradas');
+        sendToast(
+          'No se pudo conectar a la sala',
+          'Sala no encontrada',
+          'error'
+        );
+        navigate('/');
       } else if (e.code === 4005) {
-        console.log("Conexión iniciada en otro dispositivo");
-        sendToast("Conexión iniciada en otro dispositivo", "Solo puedes tener una conexión a la vez", "warning");
-        navigate("/");
+        console.log('Conexión iniciada en otro dispositivo');
+        sendToast(
+          'Conexión iniciada en otro dispositivo',
+          'Solo puedes tener una conexión a la vez',
+          'warning'
+        );
+        navigate('/');
       } else if (e.code === 4003) {
-        console.log("Desconexión forzada por el servidor, razón:", e.reason);	
-        sendToast("No se pudo conectar a la sala", e.reason, "error");
-        navigate("/");
+        console.log('Desconexión forzada por el servidor, razón:', e.reason);
+        sendToast('No se pudo conectar a la sala', e.reason, 'error');
+        navigate('/');
       }
     };
 
@@ -72,4 +80,4 @@ export function useRoomWebSocket(roomID: number) {
       }
     };
   }, []);
-};
+}

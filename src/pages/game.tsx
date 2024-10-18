@@ -1,52 +1,59 @@
-import { useParams } from "react-router-dom";
-import { VStack, HStack, Button, Center } from "@chakra-ui/react";
-import Board from "../components/game/board";
-import OtherPlayer from "../components/game/otherPlayer";
-import MoveDeck from "../components/game/moveDeck";
-import FigureDeck from "../components/game/figureDeck";
-import { SlArrowUp } from "react-icons/sl";
-import { useGame } from "../hooks/useGame";
-import { useGameWebSocket } from "../hooks/useGameWebSocket";
+import { useParams } from 'react-router-dom';
+import { VStack, HStack, Button, Center, Box } from '@chakra-ui/react';
+import Board from '../components/game/board';
+import OtherPlayer from '../components/game/otherPlayer';
+import MoveDeck from '../components/game/moveDeck';
+import FigureDeck from '../components/game/figureDeck';
+import { SlArrowDown } from 'react-icons/sl';
+import { useGame } from '../hooks/useGame';
+import { useGameWebSocket } from '../hooks/useGameWebSocket';
 
 export default function Game() {
   const { ID } = useParams();
-  const { game, currentPlayer, getPlayerInPosition, endTurn, leaveGame } = useGame();
+  const {
+    currentPlayer,
+    otherPlayersInPos,
+    endTurn,
+    leaveGame,
+    posEnabledToPlay,
+    cardsMovement,
+  } = useGame();
 
-  useGameWebSocket(parseInt(ID ?? ""));
+  useGameWebSocket(parseInt(ID ?? ''));
 
   return (
-    <Center my={4}>
-      <VStack spacing={4}>
-        <OtherPlayer player={getPlayerInPosition("up")} pos="up" />
+    <Center>
+      <VStack h="100vh" justifyContent="space-between" py={4}>
+        <OtherPlayer player={otherPlayersInPos.top} pos="up" />
         <HStack spacing={4}>
-          <OtherPlayer player={getPlayerInPosition("left")} pos="left" />
+          <OtherPlayer player={otherPlayersInPos.left} pos="left" />
           <Board />
-          <OtherPlayer player={getPlayerInPosition("right")} pos="right" />
+          <OtherPlayer player={otherPlayersInPos.right} pos="right" />
         </HStack>
-        {game?.posEnabledToPlay === currentPlayer?.position && (
-          <SlArrowUp size={30} color="white" />
+        {posEnabledToPlay === currentPlayer?.position && (
+          <SlArrowDown size="4vh" color="white" />
         )}
-        <HStack spacing={32}>
-          <HStack spacing={8}>
-            <MoveDeck cards={game?.cardsMovement ?? []} />
+        <HStack w="90vw" justifyContent="space-between">
+          <Box w="10vw" />
+          <HStack spacing={4}>
+            <MoveDeck cards={cardsMovement ?? []} />
             <FigureDeck
               figures={currentPlayer?.cardsFigure ?? []}
               vertical={false}
             />
           </HStack>
-
-          <HStack spacing={4}>
-            <Button colorScheme="red" onClick={leaveGame}>
-              Abandonar partida
-            </Button>
+          <VStack spacing={4}>
             <Button
               colorScheme="teal"
-              isDisabled={game?.posEnabledToPlay !== currentPlayer?.position}
+              isDisabled={posEnabledToPlay !== currentPlayer?.position}
               onClick={endTurn}
             >
               Pasar turno
             </Button>
-          </HStack>
+            <Button colorScheme="red" onClick={leaveGame}>
+              Abandonar partida
+            </Button>
+          </VStack>
         </HStack>
       </VStack>
     </Center>

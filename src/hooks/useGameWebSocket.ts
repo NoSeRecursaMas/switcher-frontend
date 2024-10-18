@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { GameMessage } from "../types/gameTypes";
-import { usePlayerStore } from "../stores/playerStore";
-import { useGameStore } from "../stores/gameStore";
-import { useNavigate } from "react-router-dom";
-import { sendToast } from "../services/utils";
+import { useEffect } from 'react';
+import { GameMessage } from '../types/gameTypes';
+import { usePlayerStore } from '../stores/playerStore';
+import { useGameStore } from '../stores/gameStore';
+import { useNavigate } from 'react-router-dom';
+import { sendToast } from '../services/utils';
 
 export function useGameWebSocket(gameID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -24,30 +24,42 @@ export function useGameWebSocket(gameID: number) {
         `Mensaje de tipo '${message.type}' recibido:`,
         message.payload
       );
-      if (message.type === "status") {
+      if (message.type === 'status') {
         setGame(message.payload);
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      } else if (message.type === "end") {
-        console.log("Partida finalizada");
-        navigate("/");
-        sendToast("Partida finalizada", `El ganador es ${message.payload.username}`, "info");
-      };
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      } else if (message.type === 'end') {
+        console.log('Partida finalizada');
+        navigate('/');
+        sendToast(
+          'Partida finalizada',
+          `El ganador es ${message.payload.username}`,
+          'info'
+        );
+      }
     };
 
     socket.onclose = (e) => {
       console.log(`Socket con partida ${gameID.toString()} cerrado`);
       if (e.code === 4004) {
-        console.log("Jugador o partida no encontradas");
-        sendToast("No se pudo conectar a la partida", "Partida no encontrada", "error");
-        navigate("/");
+        console.log('Jugador o partida no encontradas');
+        sendToast(
+          'No se pudo conectar a la partida',
+          'Partida no encontrada',
+          'error'
+        );
+        navigate('/');
       } else if (e.code === 4005) {
-        console.log("Conexión iniciada en otro dispositivo");
-        sendToast("Conexión iniciada en otro dispositivo", "Solo puedes tener una conexión a la vez", "warning");
-        navigate("/");
+        console.log('Conexión iniciada en otro dispositivo');
+        sendToast(
+          'Conexión iniciada en otro dispositivo',
+          'Solo puedes tener una conexión a la vez',
+          'warning'
+        );
+        navigate('/');
       } else if (e.code === 4003) {
-        console.log("Desconexión forzada por el servidor, razón:", e.reason);	
-        sendToast("No se pudo conectar a la partida", e.reason, "error");
-        navigate("/");
+        console.log('Desconexión forzada por el servidor, razón:', e.reason);
+        sendToast('No se pudo conectar a la partida', e.reason, 'error');
+        navigate('/');
       }
     };
 
@@ -73,4 +85,4 @@ export function useGameWebSocket(gameID: number) {
       }
     };
   }, []);
-};
+}
