@@ -47,6 +47,7 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
   }: {
     card: MovementCard;
     isSelected: boolean;
+    isUsed: boolean;
   }) => (
     <Button
       onClick={() => {
@@ -58,10 +59,19 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
       width="8.9vh"
       height="12vh"
       _hover={{
-        transform: 'scale(1.1)',
+        transform: !card.isUsed ? 'scale(1.1)' : 'scale(0.9)',
       }}
-      transform={isSelected ? 'scale(1.1)' : 'scale(1)'}
-      filter={selectedCard && !isSelected ? 'brightness(0.5)' : ''}
+      transform={
+        card.isUsed ? 'scale(0.9)' : isSelected ? 'scale(1.1)' : 'scale(1)'
+      }
+      filter={
+        card.isUsed
+          ? 'grayscale(100%) brightness(0.5)'
+          : selectedCard && !isSelected
+            ? 'brightness(0.5)'
+            : ''
+      }
+      disabled={card.isUsed}
     />
   );
   return (

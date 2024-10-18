@@ -61,18 +61,6 @@ export const isHighlighted = (
 
     case Movement.mov5: // L 2
       return (
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY + 2) ||
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY - 2) ||
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY + 1)
-      );
-
-    case Movement.mov6: // L 1
-      return (
         (coords.posX === coordsSelected.posX - 2 &&
           coords.posY === coordsSelected.posY + 1) ||
         (coords.posX === coordsSelected.posX + 1 &&
@@ -81,6 +69,17 @@ export const isHighlighted = (
           coords.posY === coordsSelected.posY - 1) ||
         (coords.posX === coordsSelected.posX - 1 &&
           coords.posY === coordsSelected.posY - 2)
+      );
+    case Movement.mov6: // L 1
+      return (
+        (coords.posX === coordsSelected.posX - 1 &&
+          coords.posY === coordsSelected.posY + 2) ||
+        (coords.posX === coordsSelected.posX - 2 &&
+          coords.posY === coordsSelected.posY - 1) ||
+        (coords.posX === coordsSelected.posX + 1 &&
+          coords.posY === coordsSelected.posY - 2) ||
+        (coords.posX === coordsSelected.posX + 2 &&
+          coords.posY === coordsSelected.posY + 1)
       );
 
     case Movement.mov7: // Linea lateral

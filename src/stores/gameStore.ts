@@ -24,12 +24,15 @@ export const useGameStore = create<GameState>((set) => ({
   selectedCard: undefined,
   setGame: (game: Game) => {
     set({ game });
+    set({ selectedTile: undefined });
+    set({ selectedCard: undefined });
   },
   deleteGame: () => {
     set({ game: undefined });
   },
   selectTile: (posX, posY) => {
     set({ selectedTile: { posX, posY } });
+    console.log('selectedTile', { posX, posY });
   },
   unselectTile: () => {
     set({ selectedTile: undefined });

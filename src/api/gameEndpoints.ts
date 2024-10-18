@@ -27,6 +27,6 @@ export const moveCard = async (
     'POST',
     data,
     `games/${gameID.toString()}/movement`,
-    200
+    201
   );
 };
