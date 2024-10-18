@@ -16,16 +16,8 @@ export const useRoomListWebSocket = () => {
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
 
-    socket.onopen = () => {
-      console.log('Socket con lista de salas establecido');
-    };
-
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as RoomListStatusMessage;
-      console.log(
-        `Mensaje de tipo '${message.type}' recibido:`,
-        message.payload
-      );
       if (message.type === 'status') {
         setRoomList(message.payload);
         // Si la sala seleccionada ya no está disponible, deseleccionarla
@@ -43,12 +35,9 @@ export const useRoomListWebSocket = () => {
     };
 
     socket.onclose = (e) => {
-      console.log('Socket con lista de salas cerrado');
       if (e.code === 4004) {
-        console.log('Jugador con este ID no encontrado, borrando jugador');
         deletePlayer();
       } else if (e.code === 4005) {
-        console.log('Conexión iniciada en otro dispositivo');
         window.open('about:blank', '_self');
         window.close();
       }
@@ -57,11 +46,6 @@ export const useRoomListWebSocket = () => {
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onclose = () => {
-            console.log(
-              'Socket con lista de salas interrumpido por desmontaje'
-            );
-          };
           socket.onopen = () => {
             socket.close();
           };

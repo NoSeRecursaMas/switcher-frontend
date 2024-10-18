@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
-import App from "./appRoutes";
-import { ChakraProvider } from "@chakra-ui/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import App from './appRoutes';
+import { render } from './services/testUtils';
 
-describe("App Component", () => {
+describe('App Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -14,26 +14,22 @@ describe("App Component", () => {
     cleanup();
   });
 
-  it("renders without crashing", () => {
+  it('renders without crashing', () => {
     render(<App />);
-    expect(screen.getByLabelText("Toggle Color Mode")).toBeInTheDocument();
+    expect(screen.getByLabelText('Toggle Color Mode')).toBeInTheDocument();
   });
 
-  it("renders the icon light mode", () => {
+  it('renders the icon light mode', () => {
     render(<App />);
-    expect(screen.getByLabelText("Light Mode")).toBeInTheDocument();
+    expect(screen.getByLabelText('Dark Mode')).toBeInTheDocument();
   });
 
-  it("toggles color mode when the button is clicked", async () => {
+  it('toggles color mode when the button is clicked', async () => {
     const user = userEvent.setup();
-    render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
-    );
+    render(<App />);
 
-    expect(screen.getByLabelText("Dark Mode")).toBeInTheDocument();
-    await user.click(screen.getByLabelText("Toggle Color Mode"));
-    expect(screen.getByLabelText("Light Mode")).toBeInTheDocument();
+    expect(screen.getByLabelText('Dark Mode')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('Toggle Color Mode'));
+    expect(screen.getByLabelText('Light Mode')).toBeInTheDocument();
   });
 });

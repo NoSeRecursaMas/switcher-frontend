@@ -20,7 +20,6 @@ const theme = extendTheme({ config });
 
 enableMocking()
   .then(() => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     createRoot(document.getElementById('root')!).render(
       <StrictMode>
         <ChakraProvider theme={theme}>

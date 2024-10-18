@@ -8,27 +8,23 @@ import { sendToast } from '../services/utils';
 export function useGameWebSocket(gameID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
   const setGame = useGameStore((state) => state.setGame);
+  const unselectCard = useGameStore((state) => state.unselectCard);
+  const unselectTile = useGameStore((state) => state.unselectTile);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
   const navigate = useNavigate();
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
 
-    socket.onopen = () => {
-      console.log(`Socket con partida ${gameID.toString()} establecido`);
-    };
-
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as GameMessage;
-      console.log(
-        `Mensaje de tipo '${message.type}' recibido:`,
-        message.payload
-      );
       if (message.type === 'status') {
         setGame(message.payload);
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      } else if (message.type === 'end') {
-        console.log('Partida finalizada');
+        unselectCard();
+        unselectTile();
+      }
+
+      if (message.type === 'end') {
         navigate('/');
         sendToast(
           'Partida finalizada',
@@ -39,9 +35,7 @@ export function useGameWebSocket(gameID: number) {
     };
 
     socket.onclose = (e) => {
-      console.log(`Socket con partida ${gameID.toString()} cerrado`);
       if (e.code === 4004) {
-        console.log('Jugador o partida no encontradas');
         sendToast(
           'No se pudo conectar a la partida',
           'Partida no encontrada',
@@ -49,15 +43,13 @@ export function useGameWebSocket(gameID: number) {
         );
         navigate('/');
       } else if (e.code === 4005) {
-        console.log('Conexión iniciada en otro dispositivo');
         sendToast(
           'Conexión iniciada en otro dispositivo',
-          'Solo puedes tener una conexión a la vez',
+          'Solo puedes tener una conexión por partida a la vez',
           'warning'
         );
         navigate('/');
       } else if (e.code === 4003) {
-        console.log('Desconexión forzada por el servidor, razón:', e.reason);
         sendToast('No se pudo conectar a la partida', e.reason, 'error');
         navigate('/');
       }
@@ -66,11 +58,6 @@ export function useGameWebSocket(gameID: number) {
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onclose = () => {
-            console.log(
-              `Socket con sala ${gameID.toString()} interrumpido por desmontaje`
-            );
-          };
           socket.onopen = () => {
             socket.close();
           };
@@ -78,9 +65,7 @@ export function useGameWebSocket(gameID: number) {
         case WebSocket.OPEN:
           socket.close();
           break;
-        case WebSocket.CLOSING:
-          break;
-        case WebSocket.CLOSED:
+        default:
           break;
       }
     };
