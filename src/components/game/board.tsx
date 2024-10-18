@@ -1,4 +1,4 @@
-import { SimpleGrid } from '@chakra-ui/react';
+import { SimpleGrid, Button } from '@chakra-ui/react';
 import { useGameTile } from '../../hooks/useGameTile';
 import BoardTile from './boardTile';
 
@@ -20,10 +20,18 @@ export default function Board() {
       {Array.from({ length: 6 }).map((_, x) =>
         Array.from({ length: 6 }).map((_, y) => {
           const tile = board.find((tile) => tile.posX === x && tile.posY === y);
-          if (!tile) return null;
-
-          return (
+          return tile ? (
             <BoardTile key={`${x.toString()}-${y.toString()}`} tile={tile} />
+          ) : (
+            <Button
+              width="100%"
+              height="100%"
+              borderRadius="22%"
+              variant="outline"
+              colorScheme="gray"
+              key={`${x.toString()}-${y.toString()}`}
+              aria-label="empty-tile"
+            />
           );
         })
       )}

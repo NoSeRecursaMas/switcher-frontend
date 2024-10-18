@@ -151,8 +151,8 @@ export default function FigureDeck(props: FigureDeckProps) {
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&
-              selectedCard.cardData.cardID === card.cardID &&
-              selectedCard.type === 'figure';
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === card.type;
             return (
               <RenderFigureCard
                 isSelected={isSelected ?? false}
@@ -167,8 +167,8 @@ export default function FigureDeck(props: FigureDeckProps) {
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&
-              selectedCard.cardData.cardID === card.cardID &&
-              selectedCard.type === 'figure';
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === card.type;
             return (
               <RenderFigureCard
                 isSelected={isSelected ?? false}

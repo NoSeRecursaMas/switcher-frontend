@@ -9,7 +9,7 @@ import {
   beforeAll,
   afterAll,
 } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Room from './room';
 import { useRoom } from '../hooks/useRoom';
@@ -18,6 +18,7 @@ import { useRoomWebSocket } from '../hooks/useRoomWebSocket';
 
 import RoomData from '../components/room/roomData';
 import { server } from '../mocks/node';
+import { render } from '../services/testUtils';
 
 vi.mock('../hooks/useRoom');
 vi.mock('../hooks/useRoomWebSocket');

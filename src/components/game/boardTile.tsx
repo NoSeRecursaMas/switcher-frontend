@@ -28,7 +28,11 @@ const colorScheme = (color: Color | undefined) => {
   }
 };
 
-export default function BoardTile({ tile }: { tile: ExtendedTile }) {
+interface BoardTileProps {
+  tile: ExtendedTile;
+}
+
+export default function BoardTile({ tile }: BoardTileProps) {
   const { posX, posY, color, isHighlighted, isPartial } = tile;
   const { markTopBorder, markRightBorder, markBottomBorder, markLeftBorder } =
     tile;

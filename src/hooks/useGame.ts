@@ -9,8 +9,18 @@ import {
 
 import { handleNotificationResponse, sendToast } from '../services/utils';
 import { useNavigate } from 'react-router-dom';
-import { getPlayersPositions } from '../services/gameUtils';
-import { MovementCard, FigureCard } from '../types/gameTypes';
+import { getPlayerInGame, getPlayersPositions } from '../services/gameUtils';
+import {
+  MovementCard,
+  FigureCard,
+  isFigureCard,
+  isMovementCard,
+} from '../types/gameTypes';
+import {
+  validatePlayerInGame,
+  validatePlayerTurn,
+  validatePlayerOwnerRoom,
+} from '../services/validation/validators';
 
 export const useGame = () => {
   const player = usePlayerStore((state) => state.player);
@@ -22,55 +32,37 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const navigate = useNavigate();
 
-  const handleClickCard = (
-    cardData: MovementCard | FigureCard,
-    type: 'movement' | 'figure'
-  ) => {
-    if (!game) {
-      sendToast('La información de la partida no es válida', null, 'error');
+  const handleClickCard = (card: MovementCard | FigureCard) => {
+    if (!validatePlayerTurn(player, game)) return;
+
+    if (isMovementCard(card) && card.isUsed) {
+      sendToast('La carta ya ha sido utilizada', null, 'error');
       return;
     }
-    if (!player) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
-    const playerInfoGame = game.players.find(
-      (playerInGame) => playerInGame.playerID === player.playerID
-    );
-    if (!playerInfoGame) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
+    console.log('card', card);
+    if (isFigureCard(card) && card.isBlocked) {
+      sendToast('La carta está bloqueada', null, 'error');
       return;
     }
 
-    if (game.posEnabledToPlay !== playerInfoGame.position) {
-      sendToast('No es tu turno', null, 'error');
+    unselectTile();
+    if (!selectedCard) {
+      selectCard(card);
       return;
     }
-
     if (
-      selectedCard &&
-      selectedCard.cardData.cardID === cardData.cardID &&
-      selectedCard.type === type
+      selectedCard.cardID === card.cardID &&
+      selectedCard.type === card.type
     ) {
       unselectCard();
-      unselectTile();
-    } else {
-      selectCard(cardData, type);
-      unselectTile();
+      return;
     }
+    selectCard(card);
   };
 
-  const currentPlayer = game?.players.find(
-    (playerInGame) => playerInGame.playerID === player?.playerID
-  );
+  const currentPlayer = validatePlayerInGame(player, game)
+    ? getPlayerInGame(player!, game!)
+    : undefined;
   const otherPlayersUnordered = game?.players.filter(
     (playerInGame) => playerInGame.playerID !== player?.playerID
   );
@@ -85,28 +77,10 @@ export const useGame = () => {
   const cardsMovement = game?.cardsMovement;
 
   const startGame = async () => {
-    if (!room) {
-      sendToast('La información de la sala no es válida', null, 'error');
-      return;
-    }
-    if (!player) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
-    if (room.hostID !== player.playerID) {
-      sendToast(
-        'Solo el creador de la sala puede iniciar la partida',
-        null,
-        'error'
-      );
-      return;
-    }
-    const data = await startGameEndpoint(room.roomID, {
-      playerID: player.playerID,
+    if (!validatePlayerOwnerRoom(player, room)) return;
+
+    const data = await startGameEndpoint(room!.roomID, {
+      playerID: player!.playerID,
     });
     handleNotificationResponse(
       data,
@@ -117,37 +91,12 @@ export const useGame = () => {
   };
 
   const endTurn = async () => {
-    if (!game) {
-      sendToast('La información de la partida no es válida', null, 'error');
-      return;
-    }
-    if (!player) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
-    const playerInfoGame = game.players.find(
-      (playerInGame) => playerInGame.playerID === player.playerID
-    );
-    if (!playerInfoGame) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
-    if (game.posEnabledToPlay !== playerInfoGame.position) {
-      sendToast('No es tu turno', null, 'error');
-      return;
-    }
+    if (!validatePlayerTurn(player, game)) return;
 
-    const data = await turnEndpoint(game.gameID, {
-      playerID: player.playerID,
+    const data = await turnEndpoint(game!.gameID, {
+      playerID: player!.playerID,
     });
+
     handleNotificationResponse(
       data,
       'Turno pasado con éxito',
@@ -160,32 +109,10 @@ export const useGame = () => {
   };
 
   const leaveGame = async () => {
-    if (!game) {
-      sendToast('La información de la partida no es válida', null, 'error');
-      return;
-    }
-    if (!player) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
-    const playerInfoGame = game.players.find(
-      (playerInGame) => playerInGame.playerID === player.playerID
-    );
-    if (!playerInfoGame) {
-      sendToast(
-        'No se ha podido cargar la información del jugador',
-        null,
-        'error'
-      );
-      return;
-    }
+    if (!validatePlayerInGame(player, game)) return;
 
-    const data = await leaveGameEndpoint(game.gameID, {
-      playerID: player.playerID,
+    const data = await leaveGameEndpoint(game!.gameID, {
+      playerID: player!.playerID,
     });
 
     handleNotificationResponse(
@@ -200,13 +127,13 @@ export const useGame = () => {
 
   return {
     otherPlayersInPos,
+    currentPlayer,
+    posEnabledToPlay,
+    cardsMovement,
+    selectedCard,
     startGame,
     endTurn,
     leaveGame,
-    currentPlayer,
-    posEnabledToPlay,
     handleClickCard,
-    cardsMovement,
-    selectedCard,
   };
 };

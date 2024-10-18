@@ -72,3 +72,17 @@ export const ROOMS = [
     private: false,
   },
 ];
+
+export const ROOM = {
+  roomID: 1,
+  roomName: 'test',
+  hostID: 1,
+  maxPlayers: 4,
+  minPlayers: 2,
+  players: [
+    { playerID: 1, username: 'Player 1' },
+    { playerID: 2, username: 'Player 2' },
+    { playerID: 3, username: 'Player 3' },
+    { playerID: 4, username: 'Player 4' },
+  ],
+};
