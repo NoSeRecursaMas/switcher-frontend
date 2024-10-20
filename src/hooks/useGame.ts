@@ -188,6 +188,10 @@ export const useGame = () => {
       sendToast('No es tu turno', null, 'error');
       return;
     }
+    if (!cardsMovement?.map((card) => card.isUsed).includes(true)) {
+      sendToast('No hay movimientos para cancelar', null, 'error');
+      return;
+    }
 
     const data = await cancelMoveEndpoint(game.gameID, {
       playerID: player.playerID,
