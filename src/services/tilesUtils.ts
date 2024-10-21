@@ -94,10 +94,50 @@ export const isHighlighted = (
   return movementChecks[card.type](coords, coordsSelected);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isBorderFigure = (coords: CoordsTile, figures: CoordsTile[][]) => {
-  // Hacer la lógica de si la ficha es borde
-  return { top: false, right: false, bottom: false, left: false };
+  const res = { top: false, right: false, bottom: false, left: false };
+  figures.forEach((figure) => {
+    if (
+      figure.some(
+        (tile) => tile.posX === coords.posX && tile.posY === coords.posY
+      )
+    ) {
+      res.top = true;
+      res.right = true;
+      res.bottom = true;
+      res.left = true;
+      if (
+        figure.some(
+          (tile) => tile.posX === coords.posX && tile.posY === coords.posY + 1
+        )
+      ) {
+        res.right = false;
+      }
+      if (
+        figure.some(
+          (tile) => tile.posX === coords.posX && tile.posY === coords.posY - 1
+        )
+      ) {
+        res.left = false;
+      }
+      if (
+        figure.some(
+          (tile) => tile.posX === coords.posX + 1 && tile.posY === coords.posY
+        )
+      ) {
+        res.bottom = false;
+      }
+      if (
+        figure.some(
+          (tile) => tile.posX === coords.posX - 1 && tile.posY === coords.posY
+        )
+      ) {
+        res.top = false;
+      }
+    }
+  });
+
+  return res;
 };
 
 export const getExtendedBoard = (
