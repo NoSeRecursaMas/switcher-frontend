@@ -134,4 +134,19 @@ describe('useRoomWebSocket', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
+
+  it('Si se recibe un mensaje de fin de partida, se elimina la sala', async () => {
+    const roomID = 1;
+    const webSocketUrl = `ws://localhost:8000/rooms/1/1`;
+    const server = new WS(webSocketUrl);
+    renderHook(() => {
+      useRoomWebSocket(roomID);
+    });
+    await server.connected;
+
+    server.send('{"type":"end", "payload":{}}');
+
+    const room = useRoomStore.getState().room;
+    expect(room).toBeUndefined();
+  });
 });

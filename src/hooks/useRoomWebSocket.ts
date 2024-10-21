@@ -8,6 +8,7 @@ import { sendToast } from '../services/utils';
 export function useRoomWebSocket(roomID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
   const setRoom = useRoomStore((state) => state.setRoom);
+  const deleteRoom = useRoomStore((state) => state.deleteRoom);
   const webSocketUrl = `ws://localhost:8000/rooms/${playerID.toString()}/${roomID.toString()}`;
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ export function useRoomWebSocket(roomID: number) {
           break;
         case 'end':
           navigate('/');
+          deleteRoom();
           break;
         default:
           break;
