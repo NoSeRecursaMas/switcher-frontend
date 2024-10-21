@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { VStack, HStack, Button, Center, Box } from '@chakra-ui/react';
+import {
+  VStack,
+  HStack,
+  Button,
+  Center,
+  Box,
+  IconButton,
+} from '@chakra-ui/react';
 import Board from '../components/game/board';
 import OtherPlayer from '../components/game/otherPlayer';
 import MoveDeck from '../components/game/moveDeck';
@@ -45,16 +52,17 @@ export default function Game() {
             />
           </HStack>
           <HStack spacing={4}>
-            <Button
-              colorScheme="grey"
+            <IconButton
+              icon={<TfiBackLeft size="4vh" color="white" />}
+              aria-label="Cancelar movimiento"
+              variant='ghost'
               isDisabled={
                 !cardsMovement?.map((card) => card.isUsed).includes(true) ||
                 posEnabledToPlay !== currentPlayer?.position
               }
               onClick={cancelMove}
-            >
-              <TfiBackLeft size="4vh" color="white" />
-            </Button>
+            />
+
             <VStack spacing={4}>
               <Button
                 colorScheme="teal"
