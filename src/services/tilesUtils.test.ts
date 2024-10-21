@@ -10,7 +10,18 @@ import {
   Figure,
 } from '../types/gameTypes';
 
+const mockMovementCard: MovementCard = {
+  type: Movement.mov1,
+  cardID: 1,
+  isUsed: false,
+};
+
 const mockGame: Game = {
+  gameID: 1,
+  prohibitedColor: Color.Y,
+  cardsMovement: [mockMovementCard],
+  posEnabledToPlay: 1,
+  players: [],
   board: [
     { posX: 0, posY: 0, color: Color.R, isPartial: false },
     { posX: 1, posY: 1, color: Color.B, isPartial: false },
@@ -24,12 +35,6 @@ const mockGame: Game = {
       { posX: 1, posY: 1 },
     ],
   ],
-};
-
-const mockMovementCard: MovementCard = {
-  type: Movement.mov1,
-  cardID: 1,
-  isUsed: false,
 };
 
 const mockFigureCard: FigureCard = {

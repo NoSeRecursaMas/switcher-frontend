@@ -34,7 +34,7 @@ export const useGameTile = () => {
         const data = await playFigureEndpoint(game!.gameID, {
           playerID: player!.playerID,
           cardID: selectedCard.cardID,
-          coords: figureCoords,
+          figure: figureCoords,
         });
 
         handleNotificationResponse(
