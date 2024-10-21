@@ -55,9 +55,7 @@ export default function BoardTile({ tile }: BoardTileProps) {
     isMovementCard(selectedCard);
 
   const isNotImportant2 =
-    selectedCard &&
-    isFigureCard(selectedCard) &&
-    !(markTopBorder || markRightBorder || markBottomBorder || markLeftBorder);
+    selectedCard && isFigureCard(selectedCard) && !markBackground;
 
   return (
     <>
