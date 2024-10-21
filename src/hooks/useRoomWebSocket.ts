@@ -34,8 +34,6 @@ export function useRoomWebSocket(roomID: number) {
             'info'
           );
           break;
-        default:
-          break;
       }
     };
 

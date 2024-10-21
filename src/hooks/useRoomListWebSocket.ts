@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { RoomListStatusMessage } from '../types/roomTypes';
 import { usePlayerStore } from '../stores/playerStore';
 import { useRoomListStore } from '../stores/roomListStore';
+import { useNavigate } from 'react-router-dom';
 
 export const useRoomListWebSocket = () => {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -12,6 +13,7 @@ export const useRoomListWebSocket = () => {
   const deselectRoomID = useRoomListStore((state) => state.deselectRoomID);
   const setRoomList = useRoomListStore((state) => state.setRoomList);
   const webSocketUrl = `ws://localhost:8000/rooms/${playerID.toString()}`;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
@@ -37,18 +39,14 @@ export const useRoomListWebSocket = () => {
     socket.onclose = (e) => {
       if (e.code === 4004) {
         deletePlayer();
-      } else if (e.code === 4005) {
-        window.open('about:blank', '_self');
-        window.close();
+        navigate('/signup');
       }
     };
 
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onopen = () => {
-            socket.close();
-          };
+          socket.close();
           break;
         case WebSocket.OPEN:
           socket.close();
