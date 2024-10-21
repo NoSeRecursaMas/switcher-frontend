@@ -1,4 +1,11 @@
-import { PlayerInGame, Game } from '../types/gameTypes';
+import {
+  PlayerInGame,
+  Game,
+  MovementCard,
+  FigureCard,
+  isFigureCard,
+  isMovementCard,
+} from '../types/gameTypes';
 import { Player } from '../types/playerTypes';
 
 interface PlayerPositions {
@@ -58,4 +65,18 @@ export function getPlayerInGame(
   return game.players.find(
     (playerInGame) => playerInGame.playerID === player.playerID
   );
+}
+
+export function areCardsEqual(
+  card1: MovementCard | FigureCard | undefined,
+  card2: MovementCard | FigureCard | undefined
+) {
+  if (!card1 || !card2) return false;
+  if (isMovementCard(card1) && isMovementCard(card2)) {
+    return card1.cardID === card2.cardID;
+  }
+  if (isFigureCard(card1) && isFigureCard(card2)) {
+    return card1.cardID === card2.cardID;
+  }
+  return false;
 }

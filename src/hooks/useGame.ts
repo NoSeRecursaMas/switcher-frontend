@@ -9,7 +9,11 @@ import {
 
 import { handleNotificationResponse, sendToast } from '../services/utils';
 import { useNavigate } from 'react-router-dom';
-import { getPlayerInGame, getPlayersPositions } from '../services/gameUtils';
+import {
+  areCardsEqual,
+  getPlayerInGame,
+  getPlayersPositions,
+} from '../services/gameUtils';
 import {
   MovementCard,
   FigureCard,
@@ -32,37 +36,38 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const navigate = useNavigate();
 
+  const currentPlayer = player && game ? getPlayerInGame(player, game) : null;
+
   const handleClickCard = (card: MovementCard | FigureCard) => {
     if (!validatePlayerTurn(player, game)) return;
 
     if (isMovementCard(card) && card.isUsed) {
-      sendToast('La carta ya ha sido utilizada', null, 'error');
+      sendToast('La carta ya ha sido utilizada', null, 'warning');
       return;
     }
-    console.log('card', card);
+
     if (isFigureCard(card) && card.isBlocked) {
-      sendToast('La carta está bloqueada', null, 'error');
+      sendToast('La carta está bloqueada', null, 'warning');
+      return;
+    }
+
+    const isCardInPlayerHand = currentPlayer?.cardsFigure.some((cardInHand) =>
+      areCardsEqual(cardInHand, card)
+    );
+
+    if (!isCardInPlayerHand && isFigureCard(card)) {
+      sendToast('Esa carta no es tuya', null, 'warning');
       return;
     }
 
     unselectTile();
-    if (!selectedCard) {
-      selectCard(card);
-      return;
-    }
-    if (
-      selectedCard.cardID === card.cardID &&
-      selectedCard.type === card.type
-    ) {
+    if (areCardsEqual(selectedCard, card)) {
       unselectCard();
       return;
     }
     selectCard(card);
   };
 
-  const currentPlayer = validatePlayerInGame(player, game)
-    ? getPlayerInGame(player!, game!)
-    : undefined;
   const otherPlayersUnordered = game?.players.filter(
     (playerInGame) => playerInGame.playerID !== player?.playerID
   );

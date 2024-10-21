@@ -34,6 +34,7 @@ export function useRoomWebSocket(roomID: number) {
         );
         navigate('/');
       } else if (e.code === 4005) {
+        console.log(e.reason);
         sendToast(
           'Conexión iniciada en otro dispositivo',
           'Solo puedes tener una conexión a la vez',
@@ -49,16 +50,12 @@ export function useRoomWebSocket(roomID: number) {
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onopen = () => {
-            socket.close();
-          };
+          socket.close();
           break;
         case WebSocket.OPEN:
           socket.close();
           break;
-        case WebSocket.CLOSING:
-          break;
-        case WebSocket.CLOSED:
+        default:
           break;
       }
     };
