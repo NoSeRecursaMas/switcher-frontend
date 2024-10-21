@@ -35,8 +35,13 @@ interface BoardTileProps {
 
 export default function BoardTile({ tile }: BoardTileProps) {
   const { posX, posY, color, isHighlighted, isPartial } = tile;
-  const { markTopBorder, markRightBorder, markBottomBorder, markLeftBorder } =
-    tile;
+  const {
+    markTopBorder,
+    markRightBorder,
+    markBottomBorder,
+    markLeftBorder,
+    markBackground,
+  } = tile;
   const { handleClickTile, selectedTile } = useGameTile();
   const { selectedCard } = useGame();
   const isSelected =
@@ -97,10 +102,7 @@ export default function BoardTile({ tile }: BoardTileProps) {
           width: '100%',
           p: '4px',
           bg:
-            (markBottomBorder ||
-              markTopBorder ||
-              markRightBorder ||
-              markLeftBorder) &&
+            markBackground &&
             'color-mix(in srgb, currentColor 10%, transparent)',
           borderTopLeftRadius: markLeftBorder && markTopBorder ? '20px' : '0',
           borderTopRightRadius: markRightBorder && markTopBorder ? '20px' : '0',

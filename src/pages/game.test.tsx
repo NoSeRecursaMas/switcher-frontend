@@ -23,6 +23,7 @@ import { GAME } from '../mocks/data/gameData';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
 import { server } from '../mocks/node';
+import { Movement } from '../types/gameTypes';
 
 vi.mock('../hooks/useGame');
 vi.mock('../hooks/useGameWebSocket');
@@ -79,7 +80,7 @@ describe('Game', () => {
     expect(screen.getAllByText('PlayerInfoMock').length).toBe(3);
 
     // 2 buttons
-    expect(screen.getAllByRole('button').length).toBe(2);
+    expect(screen.getAllByRole('button').length).toBe(3);
 
     // Button text
     expect(
@@ -93,6 +94,11 @@ describe('Game', () => {
   it('calls useGameWebSocket with the correct ID', () => {
     render(<Game />);
     expect(useGameWebSocket).toHaveBeenCalledWith(1);
+  });
+
+  it('calls useGame', () => {
+    render(<Game />);
+    expect(useGame).toHaveBeenCalled();
   });
 
   it('renders PlayerInfo components with correct props', () => {
@@ -168,5 +174,25 @@ describe('Game', () => {
     expect(
       screen.queryByLabelText('Bottom player turn')
     ).not.toBeInTheDocument();
+  });
+
+  it('Cancle move button is disabled when no card is used', () => {
+    render(<Game />);
+    const cancelButton = screen.getByRole('button', {
+      name: 'Cancelar movimiento',
+    });
+    expect(cancelButton).toBeDisabled();
+  });
+
+  it('Cancel move button is enabled when at least one card is used', () => {
+    (useGame as Mock).mockReturnValue({
+      ...mockUseGame,
+      cardsMovement: [{ isUsed: true, cardID: 1, type: Movement.mov1 }],
+    });
+    render(<Game />);
+    const cancelButton = screen.getByRole('button', {
+      name: 'Cancelar movimiento',
+    });
+    expect(cancelButton).not.toBeDisabled();
   });
 });
