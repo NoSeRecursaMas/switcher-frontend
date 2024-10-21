@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
-import { RoomListStatusMessage } from "../types/roomTypes";
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoomListStore } from "../stores/roomListStore";
+import { useEffect, useRef } from 'react';
+import { RoomListStatusMessage } from '../types/roomTypes';
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoomListStore } from '../stores/roomListStore';
+import { useNavigate } from 'react-router-dom';
 
 export const useRoomListWebSocket = () => {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -12,18 +13,14 @@ export const useRoomListWebSocket = () => {
   const deselectRoomID = useRoomListStore((state) => state.deselectRoomID);
   const setRoomList = useRoomListStore((state) => state.setRoomList);
   const webSocketUrl = `ws://localhost:8000/rooms/${playerID.toString()}`;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
 
-    socket.onopen = () => {
-      console.log("Socket con lista de salas establecido");
-    };
-
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as RoomListStatusMessage;
-      console.log(`Mensaje de tipo '${message.type}' recibido:`, message.payload);
-      if (message.type === "status") {
+      if (message.type === 'status') {
         setRoomList(message.payload);
         // Si la sala seleccionada ya no está disponible, deseleccionarla
         const selectedRoom = message.payload.find(
@@ -40,35 +37,21 @@ export const useRoomListWebSocket = () => {
     };
 
     socket.onclose = (e) => {
-      console.log("Socket con lista de salas cerrado");
       if (e.code === 4004) {
-        console.log("Jugador con este ID no encontrado, borrando jugador");
         deletePlayer();
-      } else if (e.code === 4005) {
-        console.log("Conexión iniciada en otro dispositivo");
-        window.open("about:blank", "_self");
-        window.close();
+        navigate('/signup');
       }
     };
 
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onclose = () => {
-            console.log(
-              "Socket con lista de salas interrumpido por desmontaje"
-            );
-          };
-          socket.onopen = () => {
-            socket.close();
-          };
+          socket.close();
           break;
         case WebSocket.OPEN:
           socket.close();
           break;
-        case WebSocket.CLOSING:
-          break;
-        case WebSocket.CLOSED:
+        default:
           break;
       }
     };

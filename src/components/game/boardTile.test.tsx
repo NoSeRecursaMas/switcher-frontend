@@ -1,33 +1,66 @@
-import { describe, it, expect } from "vitest";
-import { Color } from "../../types/gameTypes";
-import Ficha1 from "/Ficha1.png";
-import Ficha2 from "/Ficha2.png";
-import Ficha3 from "/Ficha3.png";
-import Ficha4 from "/Ficha4.png";
-import BoardTile from "./boardTile";
+import { screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import BoardTile from './boardTile';
+import '@testing-library/jest-dom';
+import { useGameTile } from '../../hooks/useGameTile';
+import { useGame } from '../../hooks/useGame';
+import { ExtendedTile, Color } from '../../types/gameTypes';
+import { render } from '../../services/testUtils';
 
-describe("BoardTile img function", () => {
-    it("should return Ficha1 for Color.Y", () => {
-        const result = BoardTile({ color: Color.Y }) as { props: { backgroundImage: string } };
-        expect(result.props.backgroundImage).toBe(Ficha1);
-    });
+vi.mock('../../hooks/useGameTile');
+vi.mock('../../hooks/useGame');
 
-    it("should return Ficha2 for Color.R", () => {
-        const result = BoardTile({ color: Color.R }) as { props: { backgroundImage: string } };
-        expect(result.props.backgroundImage).toBe(Ficha2);
-    });
+describe('BoardTile', () => {
+  const mockHandleClickTile = vi.fn();
 
-    it("should return Ficha3 for Color.B", () => {
-        const result = BoardTile({ color: Color.B }) as { props: { backgroundImage: string } };
-        expect(result.props.backgroundImage).toBe(Ficha3);
-    });
+  const mockTile: ExtendedTile = {
+    posX: 1,
+    posY: 1,
+    color: Color.R,
+    isHighlighted: false,
+    isPartial: false,
+    markTopBorder: false,
+    markRightBorder: false,
+    markBottomBorder: false,
+    markLeftBorder: false,
+  };
 
-    it("should return Ficha4 for Color.G", () => {
-        const result = BoardTile({ color: Color.G }) as { props: { backgroundImage: string } };
-        expect(result.props.backgroundImage).toBe(Ficha4);
+  beforeEach(() => {
+    vi.resetAllMocks();
+    (useGameTile as Mock).mockReturnValue({
+      handleClickTile: mockHandleClickTile,
+      selectedTile: undefined,
     });
+    (useGame as Mock).mockReturnValue({
+      selectedCard: undefined,
+    });
+  });
 
-    it("should throw an error for an invalid color", () => {
-        expect(() => BoardTile({ color: undefined })).toThrow("Invalid color");
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('renders the BoardTile component correctly', () => {
+    render(<BoardTile tile={mockTile} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('calls handleClickTile when the button is clicked', async () => {
+    const user = userEvent.setup();
+    render(<BoardTile tile={mockTile} />);
+    const button = screen.getByRole('button');
+    await user.click(button);
+    expect(mockHandleClickTile).toHaveBeenCalledWith(1, 1);
+  });
+
+  it('applies the correct styles when the tile is selected', () => {
+    (useGameTile as Mock).mockReturnValue({
+      handleClickTile: mockHandleClickTile,
+      selectedTile: { posX: 1, posY: 1 },
     });
+    render(<BoardTile tile={mockTile} />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveStyle('transform: scale(1.1)');
+  });
 });

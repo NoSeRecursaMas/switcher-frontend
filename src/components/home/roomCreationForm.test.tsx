@@ -1,14 +1,25 @@
-import { describe, it, expect, afterEach, vi, beforeEach, Mock, beforeAll, afterAll } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
-import RoomCreationForm from "./roomCreationForm";
-import { useRoom } from "../../hooks/useRoom";
-import { server } from "../../mocks/node";
+import {
+  describe,
+  it,
+  expect,
+  afterEach,
+  vi,
+  beforeEach,
+  Mock,
+  beforeAll,
+  afterAll,
+} from 'vitest';
+import { screen, cleanup } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import RoomCreationForm from './roomCreationForm';
+import { useRoom } from '../../hooks/useRoom';
+import { server } from '../../mocks/node';
+import { render } from '../../services/testUtils';
 
-vi.mock("../../hooks/useRoom");
+vi.mock('../../hooks/useRoom');
 
-describe("RoomCreationForm", () => {
+describe('RoomCreationForm', () => {
   const mockCreateRoom = vi.fn();
 
   beforeAll(() => {
@@ -30,47 +41,47 @@ describe("RoomCreationForm", () => {
     cleanup();
   });
 
-  it("El modal es visible al abrirse", () => {
+  it('El modal es visible al abrirse', () => {
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
-    expect(screen.getByText("Crear partida")).toBeInTheDocument();
+    expect(screen.getByText('Crear partida')).toBeInTheDocument();
   });
 
-  it("El modal no es visible al cerrarse", () => {
+  it('El modal no es visible al cerrarse', () => {
     render(<RoomCreationForm isOpen={false} onClose={() => null} />);
-    expect(screen.queryByText("Crear partida")).not.toBeInTheDocument();
+    expect(screen.queryByText('Crear partida')).not.toBeInTheDocument();
   });
 
-  it("El modal se cierra al hacer click en el botón de cerrar", async () => {
+  it('El modal se cierra al hacer click en el botón de cerrar', async () => {
     const onClose = vi.fn();
     const user = userEvent.setup();
 
     render(<RoomCreationForm isOpen={true} onClose={onClose} />);
 
-    await user.click(screen.getByRole("button", { name: "Cancelar" }));
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
 
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("Se puede crear una sala y se llama a la función de creación", async () => {
+  it('Se puede crear una sala y se llama a la función de creación', async () => {
     const user = userEvent.setup();
-    const roomName = "Sala de test";
+    const roomName = 'Sala de test';
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
@@ -79,35 +90,35 @@ describe("RoomCreationForm", () => {
     );
   });
 
-  it("No se puede crear una sala con un nombre con más de 32 caracteres y se muestra un mensaje de error", async () => {
+  it('No se puede crear una sala con un nombre con más de 32 caracteres y se muestra un mensaje de error', async () => {
     const user = userEvent.setup();
-    const roomName = "a".repeat(33);
+    const roomName = 'a'.repeat(33);
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(
-      screen.getByText("El nombre no puede tener más de 32 caracteres")
+      screen.getByText('El nombre no puede tener más de 32 caracteres')
     ).toBeInTheDocument();
     expect(mockCreateRoom).not.toHaveBeenCalled();
   });
 
-  it("No se puede crear una sala con un nombre con caracteres no ASCII y se muestra un mensaje de error", async () => {
+  it('No se puede crear una sala con un nombre con caracteres no ASCII y se muestra un mensaje de error', async () => {
     const user = userEvent.setup();
     const minPlayers = 2;
     const maxPlayers = 4;
@@ -115,76 +126,76 @@ describe("RoomCreationForm", () => {
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
-      "😀"
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
+      '😀'
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(
-      screen.getByText("El nombre solo puede contener caracteres ASCII")
+      screen.getByText('El nombre solo puede contener caracteres ASCII')
     ).toBeInTheDocument();
     expect(mockCreateRoom).not.toHaveBeenCalled();
   });
 
-  it("No se puede crear una sala con un número de jugadores mínimos mayor que el de jugadores máximos y se muestra un mensaje de error", async () => {
+  it('No se puede crear una sala con un número de jugadores mínimos mayor que el de jugadores máximos y se muestra un mensaje de error', async () => {
     const user = userEvent.setup();
-    const roomName = "Sala de test";
+    const roomName = 'Sala de test';
     const minPlayers = 4;
     const maxPlayers = 2;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(
       screen.getByText(
-        "El mínimo de jugadores debe ser menor o igual al máximo"
+        'El mínimo de jugadores debe ser menor o igual al máximo'
       )
     ).toBeInTheDocument();
     expect(mockCreateRoom).not.toHaveBeenCalled();
   });
 
-  it("Se puede seleccionar un nombre de sala con 1 solo caracter", async () => {
+  it('Se puede seleccionar un nombre de sala con 1 solo caracter', async () => {
     const user = userEvent.setup();
-    const roomName = "a";
+    const roomName = 'a';
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
@@ -193,27 +204,27 @@ describe("RoomCreationForm", () => {
     );
   });
 
-  it("Se puede seleccionar un nombre de sala con 32 caracteres", async () => {
+  it('Se puede seleccionar un nombre de sala con 32 caracteres', async () => {
     const user = userEvent.setup();
-    const roomName = "a".repeat(32);
+    const roomName = 'a'.repeat(32);
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
@@ -222,27 +233,27 @@ describe("RoomCreationForm", () => {
     );
   });
 
-  it("Se puede seleccionar un número de jugadores mínimo igual al máximo", async () => {
+  it('Se puede seleccionar un número de jugadores mínimo igual al máximo', async () => {
     const user = userEvent.setup();
-    const roomName = "Sala de test";
+    const roomName = 'Sala de test';
     const minPlayers = 4;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
@@ -251,27 +262,27 @@ describe("RoomCreationForm", () => {
     );
   });
 
-  it("Se puede seleccionar un nombre con muchos espacios al inicio/final y se remueven", async () => {
+  it('Se puede seleccionar un nombre con muchos espacios al inicio/final y se remueven', async () => {
     const user = userEvent.setup();
-    const roomName = "                  Sala de test              ";
+    const roomName = '                  Sala de test              ';
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName.trim(),
@@ -280,30 +291,30 @@ describe("RoomCreationForm", () => {
     );
   });
 
-  it("No se puede crear una sala con un nombre de solo espacios y se muestra un mensaje de error", async () => {
+  it('No se puede crear una sala con un nombre de solo espacios y se muestra un mensaje de error', async () => {
     const user = userEvent.setup();
-    const roomName = "                  ";
+    const roomName = '                  ';
     const minPlayers = 2;
     const maxPlayers = 4;
 
     render(<RoomCreationForm isOpen={true} onClose={() => null} />);
 
     await user.type(
-      screen.getByRole("textbox", { name: "Nombre de la partida" }),
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
       roomName
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores mínimos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
       minPlayers.toString()
     );
     await user.type(
-      screen.getByRole("spinbutton", { name: "Jugadores máximos" }),
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
       maxPlayers.toString()
     );
-    await user.click(screen.getByRole("button", { name: "Crear" }));
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
 
     expect(
-      screen.getByText("El nombre no puede estar vacío")
+      screen.getByText('El nombre no puede estar vacío')
     ).toBeInTheDocument();
     expect(mockCreateRoom).not.toHaveBeenCalled();
   });
