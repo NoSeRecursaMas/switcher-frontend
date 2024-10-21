@@ -4,6 +4,7 @@ import WS from 'jest-websocket-mock';
 import { useRoomWebSocket } from './useRoomWebSocket';
 import { usePlayerStore } from '../stores/playerStore';
 import { useRoomStore } from '../stores/roomStore';
+import * as utils from '../services/utils';
 
 const mockNavigate = vi.fn();
 
@@ -148,5 +149,23 @@ describe('useRoomWebSocket', () => {
 
     const room = useRoomStore.getState().room;
     expect(room).toBeUndefined();
+  });
+  it('Si se recibe un mensaje de fin de partida, se muestra un toast', async () => {
+    const roomID = 1;
+    const webSocketUrl = `ws://localhost:8000/rooms/1/1`;
+    const server = new WS(webSocketUrl);
+    const sendToast = vi.spyOn(utils, 'sendToast');
+    renderHook(() => {
+      useRoomWebSocket(roomID);
+    });
+    await server.connected;
+
+    server.send('{"type":"end", "payload":{}}');
+
+    expect(sendToast).toHaveBeenCalledWith(
+      'Sala cerrada',
+      'La sala ha sido cerrada por el creador',
+      'info'
+    );
   });
 });

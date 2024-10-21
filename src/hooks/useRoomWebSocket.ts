@@ -28,6 +28,11 @@ export function useRoomWebSocket(roomID: number) {
         case 'end':
           navigate('/');
           deleteRoom();
+          sendToast(
+            'Sala cerrada',
+            'La sala ha sido cerrada por el creador',
+            'info'
+          );
           break;
         default:
           break;
