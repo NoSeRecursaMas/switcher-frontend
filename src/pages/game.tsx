@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import Board from '../components/game/board';
-import OtherPlayer from '../components/game/otherPlayer';
+import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
 import { SlArrowDown } from 'react-icons/sl';
@@ -33,11 +33,11 @@ export default function Game() {
   return (
     <Center>
       <VStack h="100vh" justifyContent="space-between" py={4}>
-        <OtherPlayer player={otherPlayersInPos.top} pos="up" />
+        <PlayerInfo player={otherPlayersInPos.top} pos="up" />
         <HStack spacing={4}>
-          <OtherPlayer player={otherPlayersInPos.left} pos="left" />
+          <PlayerInfo player={otherPlayersInPos.left} pos="left" />
           <Board />
-          <OtherPlayer player={otherPlayersInPos.right} pos="right" />
+          <PlayerInfo player={otherPlayersInPos.right} pos="right" />
         </HStack>
         {posEnabledToPlay === currentPlayer?.position && (
           <SlArrowDown size="4vh" color="white" />

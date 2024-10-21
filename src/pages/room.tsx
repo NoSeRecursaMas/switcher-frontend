@@ -26,18 +26,20 @@ export default function Room() {
                   ? 'Abandonar sala'
                   : 'Cerrar sala'}
               </Button>
-
-              {room.players.length >= room.minPlayers &&
-              room.hostID === player?.playerID ? (
-                <Button colorScheme="teal" onClick={() => startGame()}>
-                  Iniciar partida
-                </Button>
-              ) : (
-                <Tooltip label="Esperando a que se unan más jugadores">
-                  <Button colorScheme="teal" isDisabled>
-                    Iniciar partida
-                  </Button>
-                </Tooltip>
+              {room.hostID === player?.playerID && (
+                <>
+                  {room.players.length >= room.minPlayers ? (
+                    <Button colorScheme="teal" onClick={() => startGame()}>
+                      Iniciar partida
+                    </Button>
+                  ) : (
+                    <Tooltip label="Esperando a que se unan más jugadores">
+                      <Button colorScheme="teal" isDisabled>
+                        Iniciar partida
+                      </Button>
+                    </Tooltip>
+                  )}
+                </>
               )}
             </HStack>
           )}

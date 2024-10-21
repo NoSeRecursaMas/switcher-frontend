@@ -27,12 +27,12 @@ const getAvatar = (playerID: number, position: number) => {
   }
 };
 
-interface OtherPlayerProps {
+interface PlayerInfoProps {
   player: PlayerInGame | undefined;
-  pos: 'up' | 'left' | 'right';
+  pos: 'up' | 'left' | 'right' | 'down';
 }
 
-export default function OtherPlayer(props: OtherPlayerProps) {
+export default function PlayerInfo(props: PlayerInfoProps) {
   const { player, pos } = props;
   const { posEnabledToPlay } = useGame();
   if (!player) return null;
@@ -64,6 +64,9 @@ export default function OtherPlayer(props: OtherPlayerProps) {
         </HStack>
       ) : (
         <>
+          {posEnabledToPlay === player.position && pos === 'down' && (
+            <SlArrowUp size="4vh" color="white" aria-label="ArrowDown" />
+          )}
           <HStack spacing={4}>
             <VStack spacing={0}>
               <Avatar
@@ -78,7 +81,7 @@ export default function OtherPlayer(props: OtherPlayerProps) {
             </VStack>
             <FigureDeck figures={player.cardsFigure} vertical={false} />
           </HStack>
-          {posEnabledToPlay === player.position && (
+          {posEnabledToPlay === player.position && pos === 'up' && (
             <SlArrowUp size="4vh" color="white" aria-label="ArrowDown" />
           )}
         </>

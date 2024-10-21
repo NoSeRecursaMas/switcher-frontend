@@ -1,13 +1,13 @@
 import { screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import '@testing-library/jest-dom';
-import OtherPlayer from './otherPlayer';
+import PlayerInfo from './playerInfo';
 import { useGame } from '../../hooks/useGame';
 import { render } from '../../services/testUtils';
 
 vi.mock('../../hooks/useGame');
 
-describe('OtherPlayer Component', () => {
+describe('PlayerInfo Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     (useGame as Mock).mockReturnValue({
@@ -16,7 +16,7 @@ describe('OtherPlayer Component', () => {
   });
 
   it('should return null when player is undefined', () => {
-    render(<OtherPlayer player={undefined} pos="left" />);
+    render(<PlayerInfo player={undefined} pos="left" />);
     expect(screen.queryByText('Player1')).toBeNull();
   });
 
@@ -29,7 +29,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="left" />);
+    render(<PlayerInfo player={player} pos="left" />);
     expect(screen.getByText('Player1')).toBeInTheDocument();
   });
 
@@ -42,7 +42,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="right" />);
+    render(<PlayerInfo player={player} pos="right" />);
     expect(screen.getByText('Player1')).toBeInTheDocument();
   });
 
@@ -55,7 +55,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="up" />);
+    render(<PlayerInfo player={player} pos="up" />);
     expect(screen.getByText('Player1')).toBeInTheDocument();
   });
 
@@ -68,7 +68,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="left" />);
+    render(<PlayerInfo player={player} pos="left" />);
     expect(screen.getByLabelText('ArrowRight')).toBeInTheDocument();
   });
 
@@ -81,7 +81,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="right" />);
+    render(<PlayerInfo player={player} pos="right" />);
     expect(screen.getByLabelText('ArrowLeft')).toBeInTheDocument();
   });
 
@@ -94,7 +94,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="up" />);
+    render(<PlayerInfo player={player} pos="up" />);
     expect(screen.getByLabelText('ArrowDown')).toBeInTheDocument();
   });
 
@@ -107,7 +107,7 @@ describe('OtherPlayer Component', () => {
       isActive: true,
       sizeDeckFigure: 0,
     };
-    render(<OtherPlayer player={player} pos="up" />);
+    render(<PlayerInfo player={player} pos="up" />);
     expect(screen.queryByLabelText('ArrowDown')).toBeNull();
   });
 });
