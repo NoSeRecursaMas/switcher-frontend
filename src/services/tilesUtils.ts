@@ -1,101 +1,97 @@
-import { CoordsTile } from '../types/gameTypes';
-import { Game, MovementCard, FigureCard, Movement } from '../types/gameTypes';
+import {
+  Game,
+  MovementCard,
+  FigureCard,
+  Movement,
+  CoordsTile,
+  isMovementCard,
+} from '../types/gameTypes';
+
+const checkCoords = (
+  coords: CoordsTile,
+  coordsSelected: CoordsTile,
+  offsets: [number, number][]
+) => {
+  return offsets.some(
+    ([offsetX, offsetY]) =>
+      coords.posX === coordsSelected.posX + offsetX &&
+      coords.posY === coordsSelected.posY + offsetY
+  );
+};
+
+const movementChecks: {
+  [key in Movement]: (
+    coords: CoordsTile,
+    coordsSelected: CoordsTile
+  ) => boolean;
+} = {
+  [Movement.mov1]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [2, 2],
+      [-2, -2],
+      [2, -2],
+      [-2, 2],
+    ]),
+  [Movement.mov2]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [2, 0],
+      [-2, 0],
+      [0, -2],
+      [0, 2],
+    ]),
+  [Movement.mov3]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [1, 0],
+      [-1, 0],
+      [0, -1],
+      [0, 1],
+    ]),
+  [Movement.mov4]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [1, 1],
+      [-1, -1],
+      [1, -1],
+      [-1, 1],
+    ]),
+  [Movement.mov5]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [-2, 1],
+      [1, 2],
+      [2, -1],
+      [-1, -2],
+    ]),
+  [Movement.mov6]: (coords, coordsSelected) =>
+    checkCoords(coords, coordsSelected, [
+      [-1, 2],
+      [-2, -1],
+      [1, -2],
+      [2, 1],
+    ]),
+  [Movement.mov7]: (coords, coordsSelected) => {
+    if (
+      coordsSelected.posX === coords.posX &&
+      coordsSelected.posY === coords.posY
+    ) {
+      return false;
+    }
+    return (
+      (coords.posX === coordsSelected.posX &&
+        (coords.posY === 5 || coords.posY === 0)) ||
+      (coords.posY === coordsSelected.posY &&
+        (coords.posX === 0 || coords.posX === 5))
+    );
+  },
+};
 
 export const isHighlighted = (
   coords: CoordsTile,
   coordsSelected: CoordsTile,
   card: MovementCard | FigureCard | undefined
 ) => {
-  if (!card) {
+  if (!card || !isMovementCard(card)) {
     return false;
   }
-  card = card as MovementCard;
-  switch (card.type) {
-    case Movement.mov1: // Diagonal 2
-      return (
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY + 2) ||
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY - 2) ||
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY - 2) ||
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY + 2)
-      );
-
-    case Movement.mov2: // Lineal 2
-      return (
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY) ||
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY) ||
-        (coords.posX === coordsSelected.posX &&
-          coords.posY === coordsSelected.posY - 2) ||
-        (coords.posX === coordsSelected.posX &&
-          coords.posY === coordsSelected.posY + 2)
-      );
-
-    case Movement.mov3: // Lineal 1
-      return (
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY) ||
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY) ||
-        (coords.posX === coordsSelected.posX &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX &&
-          coords.posY === coordsSelected.posY + 1)
-      );
-
-    case Movement.mov4: // Diagonal 1
-      return (
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY + 1) ||
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY + 1)
-      );
-
-    case Movement.mov5: // L 2
-      return (
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY + 1) ||
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY + 2) ||
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY - 2)
-      );
-    case Movement.mov6: // L 1
-      return (
-        (coords.posX === coordsSelected.posX - 1 &&
-          coords.posY === coordsSelected.posY + 2) ||
-        (coords.posX === coordsSelected.posX - 2 &&
-          coords.posY === coordsSelected.posY - 1) ||
-        (coords.posX === coordsSelected.posX + 1 &&
-          coords.posY === coordsSelected.posY - 2) ||
-        (coords.posX === coordsSelected.posX + 2 &&
-          coords.posY === coordsSelected.posY + 1)
-      );
-
-    case Movement.mov7: // Linea lateral
-      if (
-        coordsSelected.posX === coords.posX &&
-        coordsSelected.posY === coords.posY
-      ) {
-        return false;
-      }
-      return (
-        (coords.posX === coordsSelected.posX && coords.posY === 5) ||
-        (coords.posX === coordsSelected.posX && coords.posY === 0) ||
-        (coords.posX === 0 && coords.posY === coordsSelected.posY) ||
-        (coords.posX === 5 && coords.posY === coordsSelected.posY)
-      );
-  }
+  return movementChecks[card.type](coords, coordsSelected);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -9,7 +9,7 @@ import {
   beforeAll,
   afterAll,
 } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Room from './room';
 import { useRoom } from '../hooks/useRoom';
@@ -18,11 +18,15 @@ import { useRoomWebSocket } from '../hooks/useRoomWebSocket';
 
 import RoomData from '../components/room/roomData';
 import { server } from '../mocks/node';
+import { render } from '../services/testUtils';
+import { usePlayer } from '../hooks/usePlayer';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('../hooks/useRoom');
 vi.mock('../hooks/useRoomWebSocket');
 vi.mock('../components/room/roomData');
 vi.mock('../hooks/useGame');
+vi.mock('../hooks/usePlayer');
 
 describe('Room', () => {
   const mockLeaveRoom = vi.fn();
@@ -56,6 +60,9 @@ describe('Room', () => {
     (useGame as Mock).mockReturnValue({
       startGame: vi.fn(),
     });
+    (usePlayer as Mock).mockReturnValue({
+      player: { playerID: 1, username: 'Player 1' },
+    });
   });
 
   afterEach(() => {
@@ -68,10 +75,51 @@ describe('Room', () => {
     expect(useRoom).toHaveBeenCalled();
     expect(useRoomWebSocket).toHaveBeenCalled();
 
-    // Check if the buttons are rendered
-    expect(screen.getByText('Abandonar sala')).toBeInTheDocument();
-
     // Check if the room data is rendered
     expect(screen.getByText('RoomDataMock')).toBeInTheDocument();
+  });
+
+  it('Render the leave room button', () => {
+    render(<Room />);
+    expect(screen.getByText('Abandonar sala')).toBeInTheDocument();
+  });
+
+  it('Not render the start game button', () => {
+    render(<Room />);
+    expect(screen.getByText('Iniciar partida')).toBeDisabled();
+  });
+
+  it('Render the start game button', () => {
+    (usePlayer as Mock).mockReturnValue({
+      player: { playerID: 2, username: 'Player 2' },
+    });
+    render(<Room />);
+    expect(screen.getByText('Iniciar partida')).not.toBeDisabled();
+  });
+
+  it('Render the close room button', () => {
+    (usePlayer as Mock).mockReturnValue({
+      player: { playerID: 2, username: 'Player 2' },
+    });
+    render(<Room />);
+    expect(screen.getByText('Cerrar sala')).toBeInTheDocument();
+  });
+
+  it('Call leave room function', async () => {
+    const user = userEvent.setup();
+    render(<Room />);
+    await user.click(screen.getByText('Abandonar sala'));
+    expect(mockLeaveRoom).toHaveBeenCalled();
+  });
+
+  it('Call start game function', async () => {
+    (usePlayer as Mock).mockReturnValue({
+      player: { playerID: 2, username: 'Player 2' },
+    });
+    const user = userEvent.setup();
+    render(<Room />);
+    await user.click(screen.getByText('Iniciar partida'));
+    expect(useGame).toHaveBeenCalled();
+    expect(useGame().startGame).toHaveBeenCalled();
   });
 });

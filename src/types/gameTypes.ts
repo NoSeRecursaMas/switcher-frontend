@@ -76,6 +76,14 @@ interface FigureCard {
   isBlocked: boolean;
 }
 
+function isMovementCard(card: MovementCard | FigureCard): card is MovementCard {
+  return 'isUsed' in card;
+}
+
+function isFigureCard(card: MovementCard | FigureCard): card is FigureCard {
+  return 'isBlocked' in card;
+}
+
 interface PlayerInGame {
   position: number; // Posición en los turnos
   username: string;
@@ -140,5 +148,5 @@ export type {
   FigureCard,
   PlayerInGame,
 };
-export { Color, Movement, Figure };
+export { Color, Movement, Figure, isMovementCard, isFigureCard };
 export default Game;

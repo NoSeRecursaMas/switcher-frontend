@@ -80,8 +80,8 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
           {cards.map((card, index) => {
             const isSelected =
               selectedCard &&
-              selectedCard.cardData.cardID === card.cardID &&
-              selectedCard.type === 'movement';
+              selectedCard.cardID === card.cardID &&
+              selectedCard.type === card.type;
             return (
               <RenderMovementCard
                 key={index}
