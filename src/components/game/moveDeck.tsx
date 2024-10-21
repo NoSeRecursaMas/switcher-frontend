@@ -50,7 +50,7 @@ export default function MoveDeck({ cards }: { cards: MovementCard[] }) {
   }) => (
     <Button
       onClick={() => {
-        handleClickCard(card, 'movement');
+        handleClickCard(card);
       }}
       backgroundImage={getImgMoveCard(card)}
       backgroundSize="cover"

@@ -40,7 +40,11 @@ export default function Game() {
           <PlayerInfo player={otherPlayersInPos.right} pos="right" />
         </HStack>
         {posEnabledToPlay === currentPlayer?.position && (
-          <SlArrowDown size="4vh" color="white" />
+          <SlArrowDown
+            size="4vh"
+            color="white"
+            aria-label="Bottom player turn"
+          />
         )}
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />

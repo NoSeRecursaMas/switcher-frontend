@@ -1,7 +1,6 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import Player from "../types/playerTypes";
-import { redirect } from "react-router-dom";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import Player from '../types/playerTypes';
 
 interface PlayerState {
   player: Player | undefined;
@@ -18,11 +17,10 @@ export const usePlayerStore = create(
       },
       deletePlayer: () => {
         set({ player: undefined });
-        redirect("/signup");
       },
     }),
     {
-      name: "player-storage",
+      name: 'player-storage',
     }
   )
 );

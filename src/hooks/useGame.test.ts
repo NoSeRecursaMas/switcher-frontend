@@ -57,7 +57,7 @@ describe('useGame', () => {
   it('Me devuelve el estado de la partida (caso undefined)', () => {
     const { result } = renderHook(() => useGame());
     expect(result.current.cardsMovement).toBeUndefined();
-    //expect(result.current.currentPlayer).toBeUndefined();
+    expect(result.current.currentPlayer).toBeUndefined();
     expect(result.current.posEnabledToPlay).toBeUndefined();
     expect(result.current.selectedCard).toBeUndefined();
     expect(result.current.otherPlayersInPos).toEqual({
@@ -230,5 +230,14 @@ describe('useGame', () => {
       result.current.handleClickCard(CARD_MOVEMENT_VALID);
     });
     expect(result.current.selectedCard).toEqual(CARD_MOVEMENT_VALID);
+  });
+
+  it('No puedo seleccionar una carta que no es mia', () => {
+    useGameStore.setState({ game: GAME });
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
+    });
+    expect(result.current.selectedCard).toBeUndefined();
   });
 });

@@ -117,7 +117,7 @@ interface PlayMovementCardRequest {
 interface PlayFigureCardRequest {
   playerID: number;
   cardID: number;
-  coords: { posX: number; posY: number }[];
+  figure: { posX: number; posY: number }[];
 }
 
 interface GameStatusMessage {
