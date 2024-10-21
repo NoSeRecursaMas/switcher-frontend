@@ -36,7 +36,8 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const navigate = useNavigate();
 
-  const currentPlayer = player && game ? getPlayerInGame(player, game) : null;
+  const currentPlayer =
+    player && game ? getPlayerInGame(player, game) : undefined;
 
   const handleClickCard = (card: MovementCard | FigureCard) => {
     if (!validatePlayerTurn(player, game)) return;

@@ -137,7 +137,7 @@ export default function BoardTile({ tile }: BoardTileProps) {
             transform: 'scale(1.1)',
           }}
           isActive={isSelected}
-          transform={isSelected ? 'scale(1.1)' : ''}
+          transform={isSelected ? 'scale(1.1)' : 'scale(1)'}
           filter={isNotImportant ? 'brightness(0.5)' : ''}
           animation={
             isHighlighted ? `${breathingKeyframes} 1s ease-in-out infinite` : ''

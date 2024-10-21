@@ -35,7 +35,14 @@ const BOARD = Array.from({ length: 36 }, (_, i) => ({
 export const GAME = {
   gameID: 1,
   board: BOARD,
-  figuresToUse: [],
+  figuresToUse: [
+    [
+      { posX: 1, posY: 1 },
+      { posX: 2, posY: 1 },
+      { posX: 3, posY: 1 },
+      { posX: 4, posY: 1 },
+    ],
+  ],
   prohibitedColor: null,
   cardsMovement: MOVEMENT_CARDS,
   posEnabledToPlay: 2,

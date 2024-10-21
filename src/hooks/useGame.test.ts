@@ -57,7 +57,7 @@ describe('useGame', () => {
   it('Me devuelve el estado de la partida (caso undefined)', () => {
     const { result } = renderHook(() => useGame());
     expect(result.current.cardsMovement).toBeUndefined();
-    //expect(result.current.currentPlayer).toBeUndefined();
+    expect(result.current.currentPlayer).toBeUndefined();
     expect(result.current.posEnabledToPlay).toBeUndefined();
     expect(result.current.selectedCard).toBeUndefined();
     expect(result.current.otherPlayersInPos).toEqual({
