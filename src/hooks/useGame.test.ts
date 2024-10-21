@@ -215,4 +215,13 @@ describe('useGame', () => {
     });
     expect(result.current.selectedCard).toEqual(CARD_MOVEMENT_VALID);
   });
+
+  it('No puedo seleccionar una carta que no es mia', () => {
+    useGameStore.setState({ game: GAME });
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
+    });
+    expect(result.current.selectedCard).toBeUndefined();
+  });
 });

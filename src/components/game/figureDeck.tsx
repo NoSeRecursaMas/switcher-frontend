@@ -129,7 +129,7 @@ export default function FigureDeck(props: FigureDeckProps) {
   }) => (
     <Button
       onClick={() => {
-        handleClickCard(card, 'figure');
+        handleClickCard(card);
       }}
       backgroundImage={getImgFigureCard(card)}
       backgroundSize="cover"
@@ -147,7 +147,7 @@ export default function FigureDeck(props: FigureDeckProps) {
   return (
     <>
       {vertical ? (
-        <VStack spacing={4}>
+        <VStack spacing={4} aria-label="Figure deck vertical">
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&
@@ -163,7 +163,7 @@ export default function FigureDeck(props: FigureDeckProps) {
           })}
         </VStack>
       ) : (
-        <HStack spacing={4}>
+        <HStack spacing={4} aria-label="Figure deck horizontal">
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&
