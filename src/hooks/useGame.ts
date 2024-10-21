@@ -5,6 +5,7 @@ import {
   startGame as startGameEndpoint,
   turn as turnEndpoint,
   leaveGame as leaveGameEndpoint,
+  cancelMove as cancelMoveEndpoint,
 } from '../api/gameEndpoints';
 
 import { handleNotificationResponse, sendToast } from '../services/utils';
@@ -114,6 +115,53 @@ export const useGame = () => {
     );
   };
 
+  const cancelMove = async () => {
+    if (!game) {
+      sendToast('La información de la partida no es válida', null, 'error');
+      return;
+    }
+    if (!player) {
+      sendToast(
+        'No se ha podido cargar la información del jugador',
+        null,
+        'error'
+      );
+      return;
+    }
+    const playerInfoGame = game.players.find(
+      (playerInGame) => playerInGame.playerID === player.playerID
+    );
+    if (!playerInfoGame) {
+      sendToast(
+        'No se ha podido cargar la información del jugador',
+        null,
+        'error'
+      );
+      return;
+    }
+    if (game.posEnabledToPlay !== playerInfoGame.position) {
+      sendToast('No es tu turno', null, 'error');
+      return;
+    }
+    if (!cardsMovement?.map((card) => card.isUsed).includes(true)) {
+      sendToast('No hay movimientos para cancelar', null, 'error');
+      return;
+    }
+
+    const data = await cancelMoveEndpoint(game.gameID, {
+      playerID: player.playerID,
+    });
+    handleNotificationResponse(
+      data,
+      'Movimiento cancelado con éxito',
+      'Error al intentar cancelar movimiento',
+      () => {
+        unselectCard();
+        unselectTile();
+      }
+    );
+  };
+
   const leaveGame = async () => {
     if (!validatePlayerInGame(player, game)) return;
 
@@ -139,6 +187,7 @@ export const useGame = () => {
     selectedCard,
     startGame,
     endTurn,
+    cancelMove,
     leaveGame,
     handleClickCard,
   };

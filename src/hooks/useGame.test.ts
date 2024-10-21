@@ -130,6 +130,22 @@ describe('useGame', () => {
     expect(handleNotificationResponse).not.toHaveBeenCalled();
   });
 
+  it('Se llama al endpoint de cancelar movimiento correctamente', async () => {
+    gameStatus.cardsMovement[0].isUsed = true;
+    useGameStore.setState({ game: gameStatus });
+    const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
+    const handleNotificationResponse = vi.spyOn(
+      utils,
+      'handleNotificationResponse'
+    );
+    const { result } = renderHook(() => useGame());
+    await act(() => result.current.cancelMove());
+    expect(cancelMoveEndpoint).toHaveBeenCalledWith(gameStatus.gameID, {
+      playerID: 1,
+    });
+    expect(handleNotificationResponse).toHaveBeenCalled();
+  });
+
   it('Al salir de una partida se llama al endpoint y se notifica al usuario', async () => {
     useGameStore.setState({ game: GAME });
     const leaveEndpoint = vi.spyOn(GameEndpoints, 'leaveGame');
