@@ -17,11 +17,18 @@ export function useRoomWebSocket(roomID: number) {
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as RoomMessage;
 
-      if (message.type === 'status') {
-        setRoom(message.payload);
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      } else if (message.type === 'start') {
-        navigate(`/game/${message.payload.gameID.toString()}`);
+      switch (message.type) {
+        case 'status':
+          setRoom(message.payload);
+          break;
+        case 'start':
+          navigate(`/game/${message.payload.gameID.toString()}`);
+          break;
+        case 'end':
+          navigate('/');
+          break;
+        default:
+          break;
       }
     };
 
