@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { VStack, HStack, Button, Center, Box } from '@chakra-ui/react';
+import {
+  VStack,
+  HStack,
+  Button,
+  Center,
+  Box,
+  IconButton,
+} from '@chakra-ui/react';
 import Board from '../components/game/board';
 import OtherPlayer from '../components/game/otherPlayer';
 import MoveDeck from '../components/game/moveDeck';
@@ -7,6 +14,7 @@ import FigureDeck from '../components/game/figureDeck';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
+import { TfiBackLeft } from 'react-icons/tfi';
 
 export default function Game() {
   const { ID } = useParams();
@@ -14,6 +22,7 @@ export default function Game() {
     currentPlayer,
     otherPlayersInPos,
     endTurn,
+    cancelMove,
     leaveGame,
     posEnabledToPlay,
     cardsMovement,
@@ -42,18 +51,31 @@ export default function Game() {
               vertical={false}
             />
           </HStack>
-          <VStack spacing={4}>
-            <Button
-              colorScheme="teal"
-              isDisabled={posEnabledToPlay !== currentPlayer?.position}
-              onClick={endTurn}
-            >
-              Pasar turno
-            </Button>
-            <Button colorScheme="red" onClick={leaveGame}>
-              Abandonar partida
-            </Button>
-          </VStack>
+          <HStack spacing={4}>
+            <IconButton
+              icon={<TfiBackLeft size="4vh" color="white" />}
+              aria-label="Cancelar movimiento"
+              variant='ghost'
+              isDisabled={
+                !cardsMovement?.map((card) => card.isUsed).includes(true) ||
+                posEnabledToPlay !== currentPlayer?.position
+              }
+              onClick={cancelMove}
+            />
+
+            <VStack spacing={4}>
+              <Button
+                colorScheme="teal"
+                isDisabled={posEnabledToPlay !== currentPlayer?.position}
+                onClick={endTurn}
+              >
+                Pasar turno
+              </Button>
+              <Button colorScheme="red" onClick={leaveGame}>
+                Abandonar partida
+              </Button>
+            </VStack>
+          </HStack>
         </HStack>
       </VStack>
     </Center>

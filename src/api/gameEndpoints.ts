@@ -30,3 +30,12 @@ export const moveCard = async (
     201
   );
 };
+
+export const cancelMove = async (gameID: number, playerID: PlayerID) => {
+  return handleRequest(
+    'DELETE',
+    playerID,
+    `games/${gameID.toString()}/movement?playerID=${playerID.playerID.toString()}`,
+    200
+  );
+};
