@@ -84,9 +84,9 @@ describe('Room', () => {
     expect(screen.getByText('Abandonar sala')).toBeInTheDocument();
   });
 
-  it('Not render the start game button', () => {
+  it('Not render the start game button if the player is not the host', () => {
     render(<Room />);
-    expect(screen.getByText('Iniciar partida')).toBeDisabled();
+    expect(screen.queryByText('Iniciar partida')).not.toBeInTheDocument();
   });
 
   it('Render the start game button', () => {
@@ -94,7 +94,7 @@ describe('Room', () => {
       player: { playerID: 2, username: 'Player 2' },
     });
     render(<Room />);
-    expect(screen.getByText('Iniciar partida')).not.toBeDisabled();
+    expect(screen.getByText('Iniciar partida')).toBeInTheDocument();
   });
 
   it('Render the close room button', () => {
