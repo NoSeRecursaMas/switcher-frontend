@@ -51,9 +51,7 @@ export const useRoomListWebSocket = () => {
         case WebSocket.OPEN:
           socket.close();
           break;
-        case WebSocket.CLOSING:
-          break;
-        case WebSocket.CLOSED:
+        default:
           break;
       }
     };

@@ -8,6 +8,7 @@ import { sendToast } from '../services/utils';
 export function useGameWebSocket(gameID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
   const setGame = useGameStore((state) => state.setGame);
+  const deleteGame = useGameStore((state) => state.deleteGame);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
@@ -31,6 +32,7 @@ export function useGameWebSocket(gameID: number) {
           `El ganador es ${message.payload.username}`,
           'info'
         );
+        deleteGame();
       }
     };
 
@@ -58,9 +60,7 @@ export function useGameWebSocket(gameID: number) {
     return () => {
       switch (socket.readyState) {
         case WebSocket.CONNECTING:
-          socket.onopen = () => {
-            socket.close();
-          };
+          socket.close();
           break;
         case WebSocket.OPEN:
           socket.close();

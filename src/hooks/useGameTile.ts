@@ -3,9 +3,12 @@ import { useGameStore } from '../stores/gameStore';
 
 import { handleNotificationResponse, sendToast } from '../services/utils';
 import { getExtendedBoard, isHighlighted } from '../services/tilesUtils';
-import { moveCard as moveCardEndpoint } from '../api/gameEndpoints';
+import {
+  moveCard as moveCardEndpoint,
+  playFigure as playFigureEndpoint,
+} from '../api/gameEndpoints';
 import { validatePlayerTurn } from '../services/validation/validators';
-import { isMovementCard } from '../types/gameTypes';
+import { isFigureCard, isMovementCard } from '../types/gameTypes';
 
 export const useGameTile = () => {
   const player = usePlayerStore((state) => state.player);
@@ -19,6 +22,26 @@ export const useGameTile = () => {
     if (!validatePlayerTurn(player, game)) return;
     if (!selectedCard) {
       sendToast('No se ha seleccionado una carta', null, 'error');
+      return;
+    }
+
+    const figureCoords = game?.figuresToUse.find((figure) =>
+      figure.some((coord) => coord.posX === posX && coord.posY === posY)
+    );
+
+    if (isFigureCard(selectedCard) && figureCoords) {
+      const data = await playFigureEndpoint(game!.gameID, {
+        playerID: player!.playerID,
+        cardID: selectedCard.cardID,
+        coords: figureCoords,
+      });
+
+      handleNotificationResponse(
+        data,
+        'Figura jugada con éxito',
+        'Error al intentar jugar la figura',
+        () => null
+      );
       return;
     }
 

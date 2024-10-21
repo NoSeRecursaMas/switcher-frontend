@@ -1,8 +1,9 @@
 import { Box, Button, Text } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
-import { Color } from '../../types/gameTypes';
+import { Color, isFigureCard, isMovementCard } from '../../types/gameTypes';
 import { ExtendedTile } from '../../types/gameTypes';
 import { useGameTile } from '../../hooks/useGameTile';
+import { useGame } from '../../hooks/useGame';
 
 const breathingKeyframes = keyframes`
   0% { box-shadow: none; }
@@ -37,10 +38,21 @@ export default function BoardTile({ tile }: BoardTileProps) {
   const { markTopBorder, markRightBorder, markBottomBorder, markLeftBorder } =
     tile;
   const { handleClickTile, selectedTile } = useGameTile();
+  const { selectedCard } = useGame();
   const isSelected =
     selectedTile && selectedTile.posX === posX && selectedTile.posY === posY;
 
-  const isNotImportant = selectedTile && !isHighlighted && !isSelected;
+  const isNotImportant =
+    selectedTile &&
+    !isHighlighted &&
+    !isSelected &&
+    selectedCard &&
+    isMovementCard(selectedCard);
+
+  const isNotImportant2 =
+    selectedCard &&
+    isFigureCard(selectedCard) &&
+    !(markTopBorder || markRightBorder || markBottomBorder || markLeftBorder);
 
   return (
     <>
@@ -130,6 +142,7 @@ export default function BoardTile({ tile }: BoardTileProps) {
           animation={
             isHighlighted ? `${breathingKeyframes} 1s ease-in-out infinite` : ''
           }
+          disabled={isNotImportant2}
         >
           <Text fontSize="2xl" fontWeight="bold">
             {isPartial ? 'P' : '\u00A0'}

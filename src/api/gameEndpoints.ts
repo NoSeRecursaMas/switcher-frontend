@@ -1,6 +1,9 @@
 import handleRequest from './httpClient';
 import { PlayerID } from '../types/playerTypes';
-import { PlayMovementCardRequest } from '../types/gameTypes';
+import {
+  PlayMovementCardRequest,
+  PlayFigureCardRequest,
+} from '../types/gameTypes';
 
 export const startGame = async (roomID: number, playerID: PlayerID) => {
   return handleRequest('POST', playerID, `games/${roomID.toString()}`, 201);
@@ -29,4 +32,11 @@ export const moveCard = async (
     `games/${gameID.toString()}/movement`,
     201
   );
+};
+
+export const playFigure = async (
+  gameID: number,
+  data: PlayFigureCardRequest
+) => {
+  return handleRequest('POST', data, `games/${gameID.toString()}/figure`, 201);
 };
