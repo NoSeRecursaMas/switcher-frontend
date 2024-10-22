@@ -1,70 +1,60 @@
-import { isError } from "../api/types";
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoomStore } from "../stores/roomStore";
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoomStore } from '../stores/roomStore';
 import {
   joinRoom as joinRoomEndpoint,
   leaveRoom as leaveRoomEndpoint,
   createRoom as createRoomEndpoint,
-} from "../api/roomEndpoints";
-import { sendErrorToast, sendToast } from "../services/utils";
-import { useNavigate } from "react-router-dom";
-import { Room } from "../types/roomTypes";
-import { WebSocketLike } from "react-use-websocket/dist/lib/types";
+} from '../api/roomEndpoints';
+import { handleNotificationResponse, sendToast } from '../services/utils';
+import { useNavigate } from 'react-router-dom';
+import { useRoomListStore } from '../stores/roomListStore';
+import {
+  validatePlayerInRoom,
+  validatePlayerLoaded,
+} from '../services/validation/validators';
 
-export const useRoom = (roomID?: number) => {
+export const useRoom = () => {
   const player = usePlayerStore((state) => state.player);
   const room = useRoomStore((state) => state.room);
+  const selectedRoomID = useRoomListStore((state) => state.selectedRoomID);
+
   const navigate = useNavigate();
 
   const joinRoom = async () => {
-    if (!roomID) {
-      sendToast("La información de la sala no es válida", null, "error");
+    if (!validatePlayerLoaded(player)) return;
+    if (!selectedRoomID) {
+      sendToast('La información de la sala no es válida', null, 'error');
       return;
     }
-    if (!player) {
-      sendToast(
-        "No se ha podido cargar la información del jugador",
-        null,
-        "error"
-      );
-      return;
-    }
-    const data = await joinRoomEndpoint(roomID, {
+
+    const data = await joinRoomEndpoint(selectedRoomID, {
       playerID: player.playerID,
     });
 
-    if (isError(data)) {
-      sendErrorToast(data, "Error al intentar unirse a la sala");
-    } else {
-      sendToast("Te has unido a la sala", null, "success");
-      navigate(`/room/${roomID.toString()}`);
-    }
+    handleNotificationResponse(
+      data,
+      'Te has unido a la sala con éxito',
+      'Error al intentar unirse a la sala',
+      () => {
+        navigate(`/room/${selectedRoomID.toString()}`);
+      }
+    );
   };
 
-  const leaveRoom = async (websocket: WebSocketLike | null) => {
-    if (!room) {
-      sendToast("La información de la sala no es válida", null, "error");
-      return;
-    }
-    if (!player) {
-      sendToast(
-        "No se ha podido cargar la información del jugador",
-        null,
-        "error"
-      );
-      return;
-    }
-    const data = await leaveRoomEndpoint(room.roomID, {
-      playerID: player.playerID,
+  const leaveRoom = async () => {
+    if (!validatePlayerInRoom(player, room)) return;
+    const data = await leaveRoomEndpoint(room!.roomID, {
+      playerID: player!.playerID,
     });
 
-    if (isError(data)) {
-      sendErrorToast(data, "Error al intentar salir de la sala");
-    } else {
-      sendToast("Has salido de la sala", null, "success");
-      if (websocket) websocket.close();
-      navigate("/");
-    }
+    handleNotificationResponse(
+      data,
+      'Has salido de la sala con éxito',
+      'Error al intentar salir de la sala',
+      () => {
+        navigate('/');
+      }
+    );
   };
 
   const createRoom = async (
@@ -72,30 +62,23 @@ export const useRoom = (roomID?: number) => {
     maxPlayers: number,
     minPlayers: number
   ) => {
-    if (!player) {
-      sendToast(
-        "No se ha podido cargar la información del jugador",
-        null,
-        "error"
-      );
-      return;
-    }
+    if (!validatePlayerLoaded(player)) return;
+
     const data = await createRoomEndpoint({
       playerID: player.playerID,
       roomName,
       minPlayers,
       maxPlayers,
     });
-    if (isError(data)) {
-      sendErrorToast(data, "Error al crear la sala");
-    } else {
-      sendToast("Sala creada con éxito", null, "success");
-      navigate(`/room/${data.roomID.toString()}`);
-    }
-  };
-
-  const updateRoom = (room: Room) => {
-    useRoomStore.setState({ room: room });
+    handleNotificationResponse(
+      data,
+      'Sala creada con éxito',
+      'Error al crear la sala',
+      () => {
+        const dataRoomID = data as { roomID: number };
+        navigate(`/room/${dataRoomID.roomID.toString()}`);
+      }
+    );
   };
 
   return {
@@ -103,6 +86,5 @@ export const useRoom = (roomID?: number) => {
     joinRoom,
     leaveRoom,
     createRoom,
-    updateRoom,
   };
 };

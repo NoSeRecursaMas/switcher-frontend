@@ -1,33 +1,30 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import App from "./appRoutes";
+import { createRoot } from 'react-dom/client';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import App from './appRoutes';
 
 async function enableMocking() {
-  if (import.meta.env.VITE_MOCK !== "true") {
+  if (import.meta.env.VITE_MOCK !== 'true') {
     return;
   }
-  const { worker } = await import("./mocks/browser");
+  const { worker } = await import('./mocks/browser');
   return worker.start();
 }
 
 const config = {
   initialColorMode: 'night',
   useSystemColorMode: true,
-}
+};
 
-const theme = extendTheme({ config })
+const theme = extendTheme({ config });
 
 enableMocking()
   .then(() => {
-    createRoot(document.getElementById("root")!).render(
-      <StrictMode>
-        <ChakraProvider theme={theme}>
-          <App />
-        </ChakraProvider>
-      </StrictMode>
+    createRoot(document.getElementById('root')!).render(
+      <ChakraProvider theme={theme}>
+        <App />
+      </ChakraProvider>
     );
   })
   .catch((error: unknown) => {
-    console.error("Error during initialization:", error);
+    console.error('Error during initialization:', error);
   });

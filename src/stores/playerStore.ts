@@ -1,5 +1,6 @@
-import { create } from "zustand";
-import Player from "../types/playerTypes";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import Player from '../types/playerTypes';
 
 interface PlayerState {
   player: Player | undefined;
@@ -7,12 +8,19 @@ interface PlayerState {
   deletePlayer: () => void;
 }
 
-export const usePlayerStore = create<PlayerState>((set) => ({
-  player: undefined,
-  setPlayer: (player: Player) => {
-    set({ player });
-  },
-  deletePlayer: () => {
-    set({ player: undefined });
-  },
-}));
+export const usePlayerStore = create(
+  persist<PlayerState>(
+    (set) => ({
+      player: undefined,
+      setPlayer: (player: Player) => {
+        set({ player });
+      },
+      deletePlayer: () => {
+        set({ player: undefined });
+      },
+    }),
+    {
+      name: 'player-storage',
+    }
+  )
+);

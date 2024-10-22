@@ -1,20 +1,22 @@
-import { sendErrorToast, sendToast } from "../services/utils";
-import { isError } from "..//api/types";
+import { handleNotificationResponse } from "../services/utils";
 import { usePlayerStore } from "../stores/playerStore";
 import { createPlayer as createPlayerEndpoint } from "../api/playerEndpoints";
+import Player from "../types/playerTypes";
 
 export const usePlayer = () => {
-    const { player, setPlayer } = usePlayerStore();
+  const { player, setPlayer } = usePlayerStore();
 
-    const createPlayer = async (username : string) => {
-        const data = await createPlayerEndpoint({ username });
-        if (isError(data)) {
-          sendErrorToast(data, "Error al seleccionar nombre");
-        } else {
-          setPlayer(data);
-          sendToast("¡Nombre seleccionado con éxito!", null, "success");
-        }
-    };
+  const createPlayer = async (username: string) => {
+    const data = await createPlayerEndpoint({ username });
+    handleNotificationResponse(
+      data,
+      "Nombre seleccionado con éxito",
+      "Error al seleccionar el nombre",
+      () => {
+        setPlayer(data as Player);
+      }
+    );
+  };
 
-    return { player, createPlayer };
-}
+  return { player, createPlayer };
+};

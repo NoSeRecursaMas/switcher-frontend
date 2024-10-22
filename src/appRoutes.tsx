@@ -4,34 +4,47 @@ import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import Home from "./pages/home";
 import Room from "./pages/room";
 import Game from "./pages/game";
-import NotFound from "./pages/notFound";
+import Signup from "./pages/signup";
+import RequirePlayer from "./components/requirePlayer";
 
-const router = createBrowserRouter([
+const protectedRoutes = [
   {
     path: "/",
     element: <Home />,
-    errorElement: <NotFound />,
   },
   {
     path: "/room/:ID",
-    element: (
-        <Room />
-    ),
-    errorElement: <NotFound />,
+    element: <Room />,
   },
   {
     path: "/game/:ID",
     element: <Game />,
-    errorElement: <NotFound />,
+  },
+];
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RequirePlayer />,
+    children: protectedRoutes,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
   },
 ]);
 
 export default function App() {
-  const { colorMode, toggleColorMode } = useColorMode()
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
-      <IconButton onClick={toggleColorMode} aria-label="Toggle Color Mode" icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />} style={{ position: "absolute", top: "1rem", right: "1rem" }} />
+      <IconButton
+        onClick={toggleColorMode}
+        aria-label="Toggle Color Mode"
+        icon={colorMode === "light" ? <MoonIcon aria-label="Dark Mode" /> : <SunIcon aria-label="Light Mode" />}
+        style={{ position: "absolute", top: "1rem", right: "1rem" }}
+      />
       <RouterProvider router={router} />
-      </>
+    </>
   );
 }
