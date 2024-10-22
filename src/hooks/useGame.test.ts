@@ -6,9 +6,10 @@ import {
   vi,
   beforeAll,
   afterAll,
+  afterEach,
   Mock,
 } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, cleanup } from '@testing-library/react';
 import { useGame } from './useGame';
 import { usePlayerStore } from '../stores/playerStore';
 import { useRoomStore } from '../stores/roomStore';
@@ -52,6 +53,10 @@ describe('useGame', () => {
     useGameStore.setState({ game: undefined });
     useGameStore.getState().unselectCard();
     useGameStore.getState().unselectTile();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it('Me devuelve el estado de la partida (caso undefined)', () => {
@@ -128,22 +133,6 @@ describe('useGame', () => {
     await act(() => result.current.endTurn());
     expect(turnEndpoint).not.toHaveBeenCalled();
     expect(handleNotificationResponse).not.toHaveBeenCalled();
-  });
-
-  it('Se llama al endpoint de cancelar movimiento correctamente', async () => {
-    gameStatus.cardsMovement[0].isUsed = true;
-    useGameStore.setState({ game: gameStatus });
-    const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
-    const handleNotificationResponse = vi.spyOn(
-      utils,
-      'handleNotificationResponse'
-    );
-    const { result } = renderHook(() => useGame());
-    await act(() => result.current.cancelMove());
-    expect(cancelMoveEndpoint).toHaveBeenCalledWith(gameStatus.gameID, {
-      playerID: 1,
-    });
-    expect(handleNotificationResponse).toHaveBeenCalled();
   });
 
   it('Al salir de una partida se llama al endpoint y se notifica al usuario', async () => {
@@ -239,5 +228,63 @@ describe('useGame', () => {
       result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
     });
     expect(result.current.selectedCard).toBeUndefined();
+  });
+
+  it('Al cancelar un movimiento se envia al endpoint', async () => {
+    useGameStore.setState({
+      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_USED] },
+    });
+    const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
+    const handleNotificationResponse = vi.spyOn(
+      utils,
+      'handleNotificationResponse'
+    );
+    const { result } = renderHook(() => useGame());
+    await act(() => result.current.cancelMove());
+    expect(cancelMoveEndpoint).toHaveBeenCalled();
+    expect(handleNotificationResponse).toHaveBeenCalled();
+  });
+
+  it('No puedo cancelar un movimiento si no hay cartas usadas', async () => {
+    useGameStore.setState({
+      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_VALID] },
+    });
+    const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
+    const handleNotificationResponse = vi.spyOn(
+      utils,
+      'handleNotificationResponse'
+    );
+    const { result } = renderHook(() => useGame());
+    await act(() => result.current.cancelMove());
+    expect(cancelMoveEndpoint).not.toHaveBeenCalled();
+    expect(handleNotificationResponse).not.toHaveBeenCalled();
+  });
+
+  it('Se envia un toast si no hay cartas usadas', async () => {
+    useGameStore.setState({
+      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_VALID] },
+    });
+    const sendToast = vi.spyOn(utils, 'sendToast');
+    const { result } = renderHook(() => useGame());
+    await act(() => result.current.cancelMove());
+    expect(sendToast).toHaveBeenCalledWith(
+      'No hay movimientos para cancelar',
+      null,
+      'warning'
+    );
+  });
+
+  it('No puedo cancelar un movimiento si no es mi turno', async () => {
+    useGameStore.setState({ game: GAME });
+    usePlayerStore.setState({ player: { playerID: 3, username: 'test' } });
+    const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
+    const handleNotificationResponse = vi.spyOn(
+      utils,
+      'handleNotificationResponse'
+    );
+    const { result } = renderHook(() => useGame());
+    await act(() => result.current.cancelMove());
+    expect(cancelMoveEndpoint).not.toHaveBeenCalled();
+    expect(handleNotificationResponse).not.toHaveBeenCalled();
   });
 });

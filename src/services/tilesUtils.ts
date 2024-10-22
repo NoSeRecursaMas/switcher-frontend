@@ -95,7 +95,13 @@ export const isHighlighted = (
 };
 
 const isBorderFigure = (coords: CoordsTile, figures: CoordsTile[][]) => {
-  const res = { top: false, right: false, bottom: false, left: false };
+  const res = {
+    top: false,
+    right: false,
+    bottom: false,
+    left: false,
+    bg: false,
+  };
   figures.forEach((figure) => {
     if (
       figure.some(
@@ -106,6 +112,7 @@ const isBorderFigure = (coords: CoordsTile, figures: CoordsTile[][]) => {
       res.right = true;
       res.bottom = true;
       res.left = true;
+      res.bg = true;
       if (
         figure.some(
           (tile) => tile.posX === coords.posX && tile.posY === coords.posY + 1
@@ -154,7 +161,7 @@ export const getExtendedBoard = (
       { posX: selectedTile?.posX, posY: selectedTile?.posY } as CoordsTile,
       selectedCard
     );
-    const { top, right, bottom, left } = isBorderFigure(
+    const { top, right, bottom, left, bg } = isBorderFigure(
       { posX: tile.posX, posY: tile.posY },
       game.figuresToUse
     );
@@ -166,6 +173,7 @@ export const getExtendedBoard = (
       markRightBorder: right,
       markBottomBorder: bottom,
       markLeftBorder: left,
+      markBackground: bg,
     };
   });
 };

@@ -57,6 +57,7 @@ interface ExtendedTile extends Tile {
   markRightBorder: boolean;
   markBottomBorder: boolean;
   markLeftBorder: boolean;
+  markBackground: boolean;
 }
 
 interface CoordsTile {
