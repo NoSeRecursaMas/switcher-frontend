@@ -24,6 +24,7 @@ describe('BoardTile', () => {
     markRightBorder: false,
     markBottomBorder: false,
     markLeftBorder: false,
+    markBackground: false,
   };
 
   beforeEach(() => {
