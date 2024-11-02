@@ -57,8 +57,18 @@ export const useGame = () => {
       areCardsEqual(cardInHand, card)
     );
 
-    if (!isCardInPlayerHand && isFigureCard(card)) {
-      sendToast('Esa carta no es tuya', null, 'warning');
+    const cardOwner = game?.players.find((playerInGame) =>
+      playerInGame.cardsFigure.some((cardInHand) =>
+        areCardsEqual(cardInHand, card)
+      )
+    );
+
+    const ownerHasBlockedCard = cardOwner?.cardsFigure.some(
+      (cardInHand) => cardInHand.isBlocked
+    );
+
+    if (!isCardInPlayerHand && isFigureCard(card) && ownerHasBlockedCard) {
+      sendToast('El jugador ya tiene una carta bloqueada', null, 'warning');
       return;
     }
 

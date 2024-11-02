@@ -24,6 +24,7 @@ import fige04 from '/figureCards/fige04.png';
 import fige05 from '/figureCards/fige05.png';
 import fige06 from '/figureCards/fige06.png';
 import fige07 from '/figureCards/fige07.png';
+import figblock from '/figureCards/figblock.png';
 import { Figure } from '../../types/gameTypes';
 import type { FigureCard } from '../../types/gameTypes';
 import { useGame } from '../../hooks/useGame';
@@ -106,6 +107,9 @@ function getImgFigureCard(card: FigureCard) {
     case Figure.fige07:
       img = fige07;
       break;
+  }
+  if (card.isBlocked) {
+    img = figblock;
   }
 
   return img;

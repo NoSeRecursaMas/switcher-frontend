@@ -121,6 +121,13 @@ interface PlayFigureCardRequest {
   figure: { posX: number; posY: number }[];
 }
 
+interface BlockFigureCardRequest {
+  cardID: number;
+  playerID: number;
+  targetID: number;
+  figure: { posX: number; posY: number }[];
+}
+
 interface GameStatusMessage {
   type: 'status';
   payload: Game;
@@ -141,6 +148,7 @@ export type {
   GameID,
   PlayMovementCardRequest,
   PlayFigureCardRequest,
+  BlockFigureCardRequest,
   GameMessage,
   Tile,
   ExtendedTile,
