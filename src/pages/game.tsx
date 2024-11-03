@@ -11,6 +11,7 @@ import Board from '../components/game/board';
 import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
+import BannedColor from '../components/game/bannedColor';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
@@ -59,13 +60,14 @@ export default function Game() {
             <IconButton
               icon={<TfiBackLeft size="4vh" color="white" />}
               aria-label="Cancelar movimiento"
-              variant='ghost'
+              variant="ghost"
               isDisabled={
                 !cardsMovement?.map((card) => card.isUsed).includes(true) ||
                 posEnabledToPlay !== currentPlayer?.position
               }
               onClick={cancelMove}
             />
+            <BannedColor />
 
             <VStack spacing={4}>
               <Button
