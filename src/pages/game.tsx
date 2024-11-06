@@ -11,6 +11,7 @@ import Board from '../components/game/board';
 import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
+import CountdownComponent from '../components/game/countdown';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
@@ -46,6 +47,7 @@ export default function Game() {
             aria-label="Bottom player turn"
           />
         )}
+        <CountdownComponent />
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
           <HStack spacing={4}>
@@ -59,14 +61,13 @@ export default function Game() {
             <IconButton
               icon={<TfiBackLeft size="4vh" color="white" />}
               aria-label="Cancelar movimiento"
-              variant='ghost'
+              variant="ghost"
               isDisabled={
                 !cardsMovement?.map((card) => card.isUsed).includes(true) ||
                 posEnabledToPlay !== currentPlayer?.position
               }
               onClick={cancelMove}
             />
-
             <VStack spacing={4}>
               <Button
                 colorScheme="teal"
