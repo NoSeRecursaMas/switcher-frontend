@@ -11,7 +11,7 @@ import Board from '../components/game/board';
 import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
-import BannedColor from '../components/game/bannedColor';
+import ProhibitedColor from '../components/game/prohibitedColor';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
@@ -22,6 +22,7 @@ export default function Game() {
   const {
     currentPlayer,
     otherPlayersInPos,
+    prohibitedColor,
     endTurn,
     cancelMove,
     leaveGame,
@@ -67,7 +68,7 @@ export default function Game() {
               }
               onClick={cancelMove}
             />
-            <BannedColor />
+            <ProhibitedColor color={prohibitedColor} />
 
             <VStack spacing={4}>
               <Button

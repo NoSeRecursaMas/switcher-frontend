@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
 import { Color } from '../../types/gameTypes';
-import { useGameStore } from '../../stores/gameStore';
 
 const colorScheme = (color: Color | undefined) => {
   switch (color) {
@@ -17,9 +16,12 @@ const colorScheme = (color: Color | undefined) => {
   }
 };
 
-export default function BannedColor() {
-  const game = useGameStore((state) => state.game);
-  const bannedColor = game?.prohibitedColor;
+interface BannedColorProps {
+  color: Color | undefined;
+}
+
+export default function ProhibitedColor(props: BannedColorProps) {
+  const { color } = props;
 
   return (
     <Box
@@ -27,7 +29,7 @@ export default function BannedColor() {
       h="50px"
       borderRadius="xl"
       outline="2px solid #5e666a"
-      bg={colorScheme(bannedColor)}
+      bg={colorScheme(color)}
       position="relative"
       overflow="hidden"
       _after={{
