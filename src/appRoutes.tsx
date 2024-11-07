@@ -38,12 +38,12 @@ export default function App() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
-      {/* <IconButton
+      <IconButton
         onClick={toggleColorMode}
         aria-label="Toggle Color Mode"
         icon={colorMode === "light" ? <MoonIcon aria-label="Dark Mode" /> : <SunIcon aria-label="Light Mode" />}
         style={{ position: "absolute", top: "1rem", right: "1rem" }}
-      /> */}
+      />
       <RouterProvider router={router} />
     </>
   );
