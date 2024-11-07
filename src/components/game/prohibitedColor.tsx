@@ -30,6 +30,17 @@ export default function ProhibitedColor(props: BannedColorProps) {
       borderRadius="xl"
       outline="2px solid #5e666a"
       bg={colorScheme(color)}
+      aria-label={
+        color === Color.Y
+          ? 'Yellow'
+          : color === Color.R
+            ? 'Red'
+            : color === Color.B
+              ? 'Blue'
+              : color === Color.G
+                ? 'Green'
+                : 'Gray'
+      }
       position="relative"
       overflow="hidden"
       _after={{

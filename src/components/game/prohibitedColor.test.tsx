@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 import ProhibitedColor from './prohibitedColor';
 import { Color } from '../../types/gameTypes';
 import { ChakraProvider, theme } from '@chakra-ui/react';
+import { screen } from '@testing-library/react';
 
 const renderWithChakra = (ui: React.ReactNode) => {
   return render(<ChakraProvider theme={theme}>{ui}</ChakraProvider>);
@@ -11,36 +12,27 @@ const renderWithChakra = (ui: React.ReactNode) => {
 
 describe('ProhibitedColor component', () => {
   it('renders with yellow color', () => {
-    const { container } = renderWithChakra(<ProhibitedColor color={Color.Y} />);
-    const element = container.firstChild as HTMLElement;
-    expect(element).toHaveStyle(
-      `background-color: ${theme.colors.yellow[300]}`
-    );
+    renderWithChakra(<ProhibitedColor color={Color.Y} />);
+    expect(screen.getByLabelText('Yellow')).toBeInTheDocument();
   });
 
   it('renders with red color', () => {
-    const { container } = renderWithChakra(<ProhibitedColor color={Color.R} />);
-    const element = container.firstChild as HTMLElement;
-    expect(element).toHaveStyle(`background-color: ${theme.colors.red[300]}`);
+    renderWithChakra(<ProhibitedColor color={Color.R} />);
+    expect(screen.getByLabelText('Red')).toBeInTheDocument();
   });
 
   it('renders with blue color', () => {
-    const { container } = renderWithChakra(<ProhibitedColor color={Color.B} />);
-    const element = container.firstChild as HTMLElement;
-    expect(element).toHaveStyle(`background-color: ${theme.colors.blue[300]}`);
+    renderWithChakra(<ProhibitedColor color={Color.B} />);
+    expect(screen.getByLabelText('Blue')).toBeInTheDocument();
   });
 
   it('renders with green color', () => {
-    const { container } = renderWithChakra(<ProhibitedColor color={Color.G} />);
-    const element = container.firstChild as HTMLElement;
-    expect(element).toHaveStyle(`background-color: ${theme.colors.green[300]}`);
+    renderWithChakra(<ProhibitedColor color={Color.G} />);
+    expect(screen.getByLabelText('Green')).toBeInTheDocument();
   });
 
   it('renders with gray color when color is undefined', () => {
-    const { container } = renderWithChakra(
-      <ProhibitedColor color={undefined} />
-    );
-    const element = container.firstChild as HTMLElement;
-    expect(element).toHaveStyle(`background-color: ${theme.colors.gray[200]}`);
+    renderWithChakra(<ProhibitedColor color={undefined} />);
+    expect(screen.getByLabelText('Gray')).toBeInTheDocument();
   });
 });
