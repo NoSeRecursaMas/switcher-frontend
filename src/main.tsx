@@ -12,7 +12,7 @@ async function enableMocking() {
 
 const config = {
   initialColorMode: 'night',
-  useSystemColorMode: true,
+  useSystemColorMode: false,
 };
 
 const theme = extendTheme({ config });
