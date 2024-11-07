@@ -1,39 +1,15 @@
 import Countdown from 'react-countdown';
-import { useGame } from '../../hooks/useGame';
 import { Box } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
 
 const TURN_DURATION = 120000; // 2 minutos en milisegundos
 
-export default function CountdownComponent() {
-  const { endTurn, currentPlayer, posEnabledToPlay } = useGame();
-  const [targetTime, setTargetTime] = useState<number | null>(null);
+interface CountdownProps {
+  timestamp: number; // Timestamp del inicio del turno (en milisegundos desde la época UNIX)
+}
 
-  useEffect(() => {
-    // Verifica si existe una hora de finalización del turno en localStorage
-    const savedTargetTime = localStorage.getItem('targetTime');
-
-    if (savedTargetTime) {
-      setTargetTime(Number(savedTargetTime));
-    } else {
-      startNewTurn();
-    }
-  }, []);
-
-  // Función para comenzar un nuevo turno y establecer la hora de finalización
-  const startNewTurn = () => {
-    const newTargetTime = Date.now() + TURN_DURATION;
-    localStorage.setItem('targetTime', newTargetTime.toString());
-    setTargetTime(newTargetTime);
-  };
-
-  // Llama a endTurn y comienza un nuevo turno cuando el temporizador se completa
-  const handleComplete = async () => {
-    if (posEnabledToPlay === currentPlayer?.position) {
-      await endTurn();
-      startNewTurn();
-    }
-  };
+export default function CountdownComponent({ timestamp }: CountdownProps) {
+  // Calcula el tiempo de finalización basado en el timestamp del inicio del turno
+  const targetTime = timestamp + TURN_DURATION;
 
   // Renderizador personalizado para mostrar minutos y segundos en formato "mm:ss"
   const renderer = ({
@@ -48,11 +24,5 @@ export default function CountdownComponent() {
     </Box>
   );
 
-  return targetTime ? (
-    <Countdown
-      date={targetTime}
-      onComplete={handleComplete}
-      renderer={renderer}
-    />
-  ) : null;
+  return <Countdown date={targetTime} renderer={renderer} />;
 }

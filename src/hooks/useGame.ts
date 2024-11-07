@@ -32,6 +32,7 @@ export const useGame = () => {
   const room = useRoomStore((state) => state.room);
   const game = useGameStore((state) => state.game);
   const selectedCard = useGameStore((state) => state.selectedCard);
+  const turnTimestamp = useGameStore((state) => state.game!.turnTimestamp);
   const selectCard = useGameStore((state) => state.selectCard);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
@@ -157,6 +158,7 @@ export const useGame = () => {
     posEnabledToPlay,
     cardsMovement,
     selectedCard,
+    turnTimestamp,
     startGame,
     endTurn,
     cancelMove,

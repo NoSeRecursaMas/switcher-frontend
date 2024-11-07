@@ -22,6 +22,7 @@ export default function Game() {
   const {
     currentPlayer,
     otherPlayersInPos,
+    turnTimestamp,
     endTurn,
     cancelMove,
     leaveGame,
@@ -47,7 +48,7 @@ export default function Game() {
             aria-label="Bottom player turn"
           />
         )}
-        <CountdownComponent />
+        <CountdownComponent timestamp={turnTimestamp} />
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
           <HStack spacing={4}>
