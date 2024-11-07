@@ -19,6 +19,7 @@ import { render } from '../services/testUtils';
 import { useParams } from 'react-router-dom';
 import PlayerInfo from '../components/game/playerInfo';
 import Board from '../components/game/board';
+import Chat from '../components/game/chat';
 import { GAME } from '../mocks/data/gameData';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
@@ -34,10 +35,11 @@ vi.mock('../components/game/playerInfo');
 vi.mock('../components/game/board');
 vi.mock('../components/game/moveDeck');
 vi.mock('../components/game/figureDeck');
+vi.mock('../components/game/chat');
 
 describe('Game', () => {
   const mockUseGame = {
-    currentPlayer: { position: 'bottom', cardsFigure: [] },
+    currentPlayer: { position: 'bottom', cardsFigure: [], username: 'player1' },
     otherPlayersInPos: {
       top: GAME.players[2],
       left: GAME.players[3],
@@ -47,16 +49,21 @@ describe('Game', () => {
     leaveGame: vi.fn(),
     posEnabledToPlay: 'bottom',
     cardsMovement: [],
+    chatMessages: [],
   };
+
+  const mockUseGameWebSocket = vi.fn();
 
   beforeEach(() => {
     vi.resetAllMocks();
     (useParams as Mock).mockReturnValue({ ID: '1' });
     (useGame as Mock).mockReturnValue(mockUseGame);
+    (useGameWebSocket as Mock).mockReturnValue(mockUseGameWebSocket);
     (PlayerInfo as Mock).mockReturnValue(<div>PlayerInfoMock</div>);
     (Board as Mock).mockReturnValue(<div>BoardMock</div>);
     (MoveDeck as Mock).mockReturnValue(<div>MoveDeckMock</div>);
     (FigureDeck as Mock).mockReturnValue(<div>FigureDeckMock</div>);
+    (Chat as Mock).mockReturnValue(<div>ChatMock</div>);
   });
 
   afterEach(() => {
@@ -76,6 +83,7 @@ describe('Game', () => {
     expect(screen.getByText('BoardMock')).toBeInTheDocument();
     expect(screen.getByText('MoveDeckMock')).toBeInTheDocument();
     expect(screen.getByText('FigureDeckMock')).toBeInTheDocument();
+    expect(screen.getByText('ChatMock')).toBeInTheDocument();
     // 3 PlayerInfo components
     expect(screen.getAllByText('PlayerInfoMock').length).toBe(3);
 
@@ -134,6 +142,18 @@ describe('Game', () => {
     );
   });
 
+  it('renders the Chat component with correct props', () => {
+    render(<Game />);
+    expect(Chat).toHaveBeenCalledWith(
+      {
+        sendMessage: mockUseGameWebSocket,
+        username: mockUseGame.currentPlayer.username,
+        chatMessages: mockUseGame.chatMessages,
+      },
+      {}
+    );
+  });
+
   it('enables "Pasar turno" button when posEnabledToPlay matches currentPlayer.position', () => {
     render(<Game />);
     const passTurnButton = screen.getByRole('button', { name: 'Pasar turno' });
@@ -148,16 +168,6 @@ describe('Game', () => {
     render(<Game />);
     const passTurnButton = screen.getByRole('button', { name: 'Pasar turno' });
     expect(passTurnButton).toBeDisabled();
-  });
-
-  it('calls leaveGame when "Abandonar partida" button is clicked', async () => {
-    const user = userEvent.setup();
-    render(<Game />);
-    const leaveGameButton = screen.getByRole('button', {
-      name: 'Abandonar partida',
-    });
-    await user.click(leaveGameButton);
-    expect(mockUseGame.leaveGame).toHaveBeenCalled();
   });
 
   it('displays the arrow icon when posEnabledToPlay matches currentPlayer.position', () => {
@@ -194,5 +204,15 @@ describe('Game', () => {
       name: 'Cancelar movimiento',
     });
     expect(cancelButton).not.toBeDisabled();
+  });
+
+  it('calls leaveGame when "Abandonar partida" button is clicked and confirmed', async () => {
+    window.confirm = vi.fn().mockImplementation(() => true);
+    render(<Game />);
+    const leaveGameButton = screen.getByRole('button', {
+      name: 'Abandonar partida',
+    });
+    await userEvent.click(leaveGameButton);
+    expect(mockUseGame.leaveGame).toHaveBeenCalled();
   });
 });
