@@ -102,7 +102,7 @@ interface Game {
   cardsMovement: MovementCard[];
   posEnabledToPlay: number; // Turno
   players: PlayerInGame[];
-  turnTimestamp: number; // Cuando se inició el turno actual
+  turnTimestamp: number; // Segundos restantes del turno actual
 }
 
 interface GameID {

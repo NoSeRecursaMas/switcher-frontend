@@ -1,15 +1,15 @@
 import Countdown from 'react-countdown';
 import { Box } from '@chakra-ui/react';
 
-const TURN_DURATION = 120000; // 2 minutos en milisegundos
-
 interface CountdownProps {
-  timestamp: number; // Timestamp del inicio del turno (en milisegundos desde la época UNIX)
+  remainingSeconds: number; // Cantidad de segundos restantes al comienzo del turno
 }
 
-export default function CountdownComponent({ timestamp }: CountdownProps) {
-  // Calcula el tiempo de finalización basado en el timestamp del inicio del turno
-  const targetTime = timestamp + TURN_DURATION;
+export default function CountdownComponent({
+  remainingSeconds,
+}: CountdownProps) {
+  // Calcula el tiempo de finalización basado en los segundos restantes
+  const targetTime = Date.now() + remainingSeconds * 1000;
 
   // Renderizador personalizado para mostrar minutos y segundos en formato "mm:ss"
   const renderer = ({

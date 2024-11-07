@@ -48,7 +48,7 @@ export default function Game() {
             aria-label="Bottom player turn"
           />
         )}
-        <CountdownComponent timestamp={turnTimestamp} />
+        <CountdownComponent remainingSeconds={turnTimestamp} />
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
           <HStack spacing={4}>
