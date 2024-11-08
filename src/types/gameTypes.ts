@@ -98,7 +98,7 @@ interface Game {
   gameID: number;
   board: Tile[];
   figuresToUse: CoordsTile[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
-  prohibitedColor: Color | null;
+  prohibitedColor: Color | undefined;
   cardsMovement: MovementCard[];
   posEnabledToPlay: number; // Turno
   players: PlayerInGame[];

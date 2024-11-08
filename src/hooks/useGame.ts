@@ -102,6 +102,8 @@ export const useGame = () => {
 
   const cardsMovement = game?.cardsMovement;
 
+  const prohibitedColor = game?.prohibitedColor;
+
   const startGame = async () => {
     if (!validatePlayerOwnerRoom(player, room)) return;
 
@@ -176,6 +178,7 @@ export const useGame = () => {
     posEnabledToPlay,
     cardsMovement,
     selectedCard,
+    prohibitedColor,
     startGame,
     endTurn,
     cancelMove,
