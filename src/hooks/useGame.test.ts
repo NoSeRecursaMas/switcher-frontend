@@ -190,6 +190,15 @@ describe('useGame', () => {
     expect(result.current.selectedCard).toBeUndefined();
   });
 
+  it('No puedo seleccionar una carta de figura si el jugador ya tiene una bloqueada', () => {
+    useGameStore.setState({ game: GAME });
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
+    });
+    expect(result.current.selectedCard).toBeUndefined();
+  });
+
   it('Puedo deseleccionar una carta', () => {
     useGameStore.setState({ game: GAME });
     const { result } = renderHook(() => useGame());
@@ -221,13 +230,13 @@ describe('useGame', () => {
     expect(result.current.selectedCard).toEqual(CARD_MOVEMENT_VALID);
   });
 
-  it('No puedo seleccionar una carta que no es mia', () => {
+  it('Puedo seleccionar una carta de figura ajena', () => {
     useGameStore.setState({ game: GAME });
     const { result } = renderHook(() => useGame());
     act(() => {
-      result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
+      result.current.handleClickCard(GAME.players[2].cardsFigure[0]);
     });
-    expect(result.current.selectedCard).toBeUndefined();
+    expect(result.current.selectedCard).toEqual(GAME.players[2].cardsFigure[0]);
   });
 
   it('Al cancelar un movimiento se envia al endpoint', async () => {

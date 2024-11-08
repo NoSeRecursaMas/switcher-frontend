@@ -3,9 +3,11 @@ import { useGameStore } from '../stores/gameStore';
 
 import { handleNotificationResponse, sendToast } from '../services/utils';
 import { getExtendedBoard, isHighlighted } from '../services/tilesUtils';
+import { areCardsEqual, getPlayerInGame } from '../services/gameUtils';
 import {
   moveCard as moveCardEndpoint,
   playFigure as playFigureEndpoint,
+  blockFigure as blockFigureEndpoint,
 } from '../api/gameEndpoints';
 import { validatePlayerTurn } from '../services/validation/validators';
 import { isFigureCard, isMovementCard } from '../types/gameTypes';
@@ -31,18 +33,45 @@ export const useGameTile = () => {
 
     if (isFigureCard(selectedCard)) {
       if (figureCoords) {
-        const data = await playFigureEndpoint(game!.gameID, {
-          playerID: player!.playerID,
-          cardID: selectedCard.cardID,
-          figure: figureCoords,
-        });
+        const currentPlayer =
+          player && game ? getPlayerInGame(player, game) : undefined;
 
-        handleNotificationResponse(
-          data,
-          'Figura jugada con éxito',
-          'Error al intentar jugar la figura',
-          () => null
+        const isCardInPlayerHand = currentPlayer?.cardsFigure.some(
+          (cardInHand) => areCardsEqual(cardInHand, selectedCard)
         );
+        if (isCardInPlayerHand) {
+          const data = await playFigureEndpoint(game!.gameID, {
+            playerID: player!.playerID,
+            cardID: selectedCard.cardID,
+            figure: figureCoords,
+          });
+
+          handleNotificationResponse(
+            data,
+            'Figura jugada con éxito',
+            'Error al intentar jugar la figura',
+            () => null
+          );
+        } else {
+          const cardOwner = game?.players.find((playerInGame) =>
+            playerInGame.cardsFigure.some((cardInHand) =>
+              areCardsEqual(cardInHand, selectedCard)
+            )
+          );
+          const data = await blockFigureEndpoint(game!.gameID, {
+            cardID: selectedCard.cardID,
+            playerID: player!.playerID,
+            targetID: cardOwner!.playerID,
+            figure: figureCoords,
+          });
+
+          handleNotificationResponse(
+            data,
+            'Figura bloqueada con éxito',
+            'Error al intentar bloquear figura',
+            () => null
+          );
+        }
       } else {
         sendToast('Debes seleccionar una figura valida', null, 'warning');
       }
