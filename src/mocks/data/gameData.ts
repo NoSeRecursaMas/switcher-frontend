@@ -43,7 +43,7 @@ export const GAME = {
       { posX: 4, posY: 1 },
     ],
   ],
-  prohibitedColor: null,
+  prohibitedColor: undefined,
   cardsMovement: MOVEMENT_CARDS,
   posEnabledToPlay: 2,
   players: [
