@@ -67,6 +67,15 @@ export const useGame = () => {
       (cardInHand) => cardInHand.isBlocked
     );
 
+    if (
+      !isCardInPlayerHand &&
+      isFigureCard(card) &&
+      cardOwner!.cardsFigure.length < 3
+    ) {
+      sendToast('El jugador tiene menos de 3 cartas', null, 'warning');
+      return;
+    }
+
     if (!isCardInPlayerHand && isFigureCard(card) && ownerHasBlockedCard) {
       sendToast('El jugador ya tiene una carta bloqueada', null, 'warning');
       return;
