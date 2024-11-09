@@ -65,6 +65,7 @@ export default function Chat(props: ChatProps) {
       borderColor="gray.600"
       borderRadius={20}
       aria-label="game-board"
+      w="100%"
       maxW="25vw"
       h="100%"
     >
