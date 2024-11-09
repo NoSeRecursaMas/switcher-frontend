@@ -5,6 +5,7 @@ import {
   Movement,
   CoordsTile,
   isMovementCard,
+  Color,
 } from '../types/gameTypes';
 
 const checkCoords = (
@@ -19,12 +20,10 @@ const checkCoords = (
   );
 };
 
-const movementChecks: {
-  [key in Movement]: (
-    coords: CoordsTile,
-    coordsSelected: CoordsTile
-  ) => boolean;
-} = {
+const movementChecks: Record<
+  Movement,
+  (coords: CoordsTile, coordsSelected: CoordsTile) => boolean
+> = {
   [Movement.mov1]: (coords, coordsSelected) =>
     checkCoords(coords, coordsSelected, [
       [2, 2],
@@ -94,7 +93,12 @@ export const isHighlighted = (
   return movementChecks[card.type](coords, coordsSelected);
 };
 
-const isBorderFigure = (coords: CoordsTile, figures: CoordsTile[][]) => {
+const isBorderFigure = (
+  coords: CoordsTile,
+  figures: CoordsTile[][],
+  tileColor: Color,
+  bannedColor: Color | undefined
+) => {
   const res = {
     top: false,
     right: false,
@@ -143,7 +147,13 @@ const isBorderFigure = (coords: CoordsTile, figures: CoordsTile[][]) => {
       }
     }
   });
-
+  if (bannedColor === tileColor) {
+    res.bg = false;
+    res.top = false;
+    res.bottom = false;
+    res.left = false;
+    res.right = false;
+  }
   return res;
 };
 
@@ -163,7 +173,9 @@ export const getExtendedBoard = (
     );
     const { top, right, bottom, left, bg } = isBorderFigure(
       { posX: tile.posX, posY: tile.posY },
-      game.figuresToUse
+      game.figuresToUse,
+      tile.color,
+      game.prohibitedColor
     );
 
     return {

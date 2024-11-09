@@ -4,6 +4,7 @@ import Board from '../components/game/board';
 import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
+import ProhibitedColor from '../components/game/prohibitedColor';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
@@ -17,6 +18,7 @@ export default function Game() {
   const {
     currentPlayer,
     otherPlayersInPos,
+    prohibitedColor,
     endTurn,
     cancelMove,
     leaveGame,

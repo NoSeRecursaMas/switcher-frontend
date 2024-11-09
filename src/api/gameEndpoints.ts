@@ -3,6 +3,7 @@ import { PlayerID } from '../types/playerTypes';
 import {
   PlayMovementCardRequest,
   PlayFigureCardRequest,
+  BlockFigureCardRequest,
 } from '../types/gameTypes';
 
 export const startGame = async (roomID: number, playerID: PlayerID) => {
@@ -48,4 +49,11 @@ export const cancelMove = async (gameID: number, playerID: PlayerID) => {
     `games/${gameID.toString()}/movement?playerID=${playerID.playerID.toString()}`,
     200
   );
+};
+
+export const blockFigure = async (
+  gameID: number,
+  data: BlockFigureCardRequest
+) => {
+  return handleRequest('PUT', data, `games/${gameID.toString()}/block`, 201);
 };
