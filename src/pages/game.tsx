@@ -48,7 +48,6 @@ export default function Game() {
             aria-label="Bottom player turn"
           />
         )}
-        <CountdownComponent remainingSeconds={turnTimestamp} />
         <HStack w="90vw" justifyContent="space-between">
           <Box w="10vw" />
           <HStack spacing={4}>
@@ -69,6 +68,7 @@ export default function Game() {
               }
               onClick={cancelMove}
             />
+            <CountdownComponent remainingSeconds={turnTimestamp} />
             <VStack spacing={4}>
               <Button
                 colorScheme="teal"
