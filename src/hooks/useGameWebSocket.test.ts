@@ -216,4 +216,38 @@ describe('useGameWebSocket', () => {
     expect(game).toBeUndefined();
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
+
+  it('Se envía un mensaje al WebSocket', async () => {
+    const gameID = 1;
+    const webSocketUrl = `ws://localhost:8000/games/1/1`;
+    const server = new WS(webSocketUrl);
+    const { result } = renderHook(() => {
+      return useGameWebSocket(gameID);
+    });
+    await server.connected;
+
+    result.current({
+      type: 'msg',
+      payload: { username: 'test', text: 'test' },
+    });
+
+    await expect(server).toReceiveMessage(
+      '{"type":"msg","payload":{"username":"test","text":"test"}}'
+    );
+  });
+
+  it('Se recibe un mensaje del WebSocket', async () => {
+    const gameID = 1;
+    const webSocketUrl = `ws://localhost:8000/games/1/1`;
+    const server = new WS(webSocketUrl);
+    renderHook(() => {
+      return useGameWebSocket(gameID);
+    });
+    await server.connected;
+
+    server.send('{"type":"msg","payload":{"username":"test","text":"test"}}');
+
+    const chatMessages = useGameStore.getState().chat;
+    expect(chatMessages).toEqual([{ username: 'test', text: 'test' }]);
+  });
 });

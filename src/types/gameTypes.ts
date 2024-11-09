@@ -141,7 +141,17 @@ interface GameEndMessage {
   };
 }
 
-type GameMessage = GameStatusMessage | GameEndMessage;
+interface ChatMessage {
+  username: string;
+  text: string;
+}
+
+interface GameChatMessage {
+  type: 'msg';
+  payload: ChatMessage;
+}
+
+type GameMessage = GameStatusMessage | GameEndMessage | GameChatMessage;
 
 export type {
   Game,
@@ -156,6 +166,7 @@ export type {
   MovementCard,
   FigureCard,
   PlayerInGame,
+  ChatMessage,
 };
 export { Color, Movement, Figure, isMovementCard, isFigureCard };
 export default Game;

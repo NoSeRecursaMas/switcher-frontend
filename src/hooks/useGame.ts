@@ -35,6 +35,7 @@ export const useGame = () => {
   const selectCard = useGameStore((state) => state.selectCard);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
+  const chatMessages = useGameStore((state) => state.chat);
   const navigate = useNavigate();
 
   const currentPlayer =
@@ -184,5 +185,6 @@ export const useGame = () => {
     cancelMove,
     leaveGame,
     handleClickCard,
+    chatMessages,
   };
 };
