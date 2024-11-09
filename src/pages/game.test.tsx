@@ -39,7 +39,12 @@ vi.mock('../components/game/chat');
 
 describe('Game', () => {
   const mockUseGame = {
-    currentPlayer: { position: 'bottom', cardsFigure: [], username: 'player1' },
+    currentPlayer: {
+      position: 'bottom',
+      cardsFigure: [],
+      cardsMovement: [],
+      username: 'player1',
+    },
     otherPlayersInPos: {
       top: GAME.players[2],
       left: GAME.players[3],
@@ -48,7 +53,6 @@ describe('Game', () => {
     endTurn: vi.fn(),
     leaveGame: vi.fn(),
     posEnabledToPlay: 'bottom',
-    cardsMovement: [],
     chatMessages: [],
   };
 
@@ -133,11 +137,15 @@ describe('Game', () => {
   it('renders MoveDeck and FigureDeck components with correct props', () => {
     render(<Game />);
     expect(MoveDeck).toHaveBeenCalledWith(
-      { cards: mockUseGame.cardsMovement },
+      { cards: [], vertical: false, own: true },
       {}
     );
     expect(FigureDeck).toHaveBeenCalledWith(
-      { figures: mockUseGame.currentPlayer.cardsFigure, vertical: false },
+      {
+        figures: mockUseGame.currentPlayer.cardsFigure,
+        vertical: false,
+        amount: 0,
+      },
       {}
     );
   });
@@ -197,7 +205,10 @@ describe('Game', () => {
   it('Cancel move button is enabled when at least one card is used', () => {
     (useGame as Mock).mockReturnValue({
       ...mockUseGame,
-      cardsMovement: [{ isUsed: true, cardID: 1, type: Movement.mov1 }],
+      currentPlayer: {
+        ...mockUseGame.currentPlayer,
+        cardsMovement: [{ type: Movement.mov3, cardID: 3, isUsed: true }],
+      },
     });
     render(<Game />);
     const cancelButton = screen.getByRole('button', {

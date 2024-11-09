@@ -61,7 +61,6 @@ describe('useGame', () => {
 
   it('Me devuelve el estado de la partida (caso undefined)', () => {
     const { result } = renderHook(() => useGame());
-    expect(result.current.cardsMovement).toBeUndefined();
     expect(result.current.currentPlayer).toBeUndefined();
     expect(result.current.posEnabledToPlay).toBeUndefined();
     expect(result.current.selectedCard).toBeUndefined();
@@ -75,7 +74,6 @@ describe('useGame', () => {
   it('Me devuelve el estado de la partida (caso definido)', () => {
     useGameStore.setState({ game: GAME });
     const { result } = renderHook(() => useGame());
-    expect(result.current.cardsMovement).toEqual(GAME.cardsMovement);
     expect(result.current.currentPlayer).toEqual({
       position: 2,
       username: 'Player 1',
@@ -83,6 +81,7 @@ describe('useGame', () => {
       isActive: true,
       sizeDeckFigure: 6,
       cardsFigure: GAME.players[0].cardsFigure,
+      cardsMovement: GAME.players[0].cardsMovement,
     });
     expect(result.current.posEnabledToPlay).toEqual(GAME.posEnabledToPlay);
     expect(result.current.selectedCard).toBeUndefined();
@@ -241,7 +240,18 @@ describe('useGame', () => {
 
   it('Al cancelar un movimiento se envia al endpoint', async () => {
     useGameStore.setState({
-      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_USED] },
+      game: {
+        ...GAME,
+        players: [
+          {
+            ...GAME.players[0],
+            cardsMovement: [
+              { ...GAME.players[0].cardsMovement[0], isUsed: true },
+              ...GAME.players[0].cardsMovement.slice(1),
+            ],
+          },
+        ],
+      },
     });
     const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
     const handleNotificationResponse = vi.spyOn(
@@ -256,7 +266,7 @@ describe('useGame', () => {
 
   it('No puedo cancelar un movimiento si no hay cartas usadas', async () => {
     useGameStore.setState({
-      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_VALID] },
+      game: GAME,
     });
     const cancelMoveEndpoint = vi.spyOn(GameEndpoints, 'cancelMove');
     const handleNotificationResponse = vi.spyOn(
@@ -271,7 +281,7 @@ describe('useGame', () => {
 
   it('Se envia un toast si no hay cartas usadas', async () => {
     useGameStore.setState({
-      game: { ...GAME, cardsMovement: [CARD_MOVEMENT_VALID] },
+      game: GAME,
     });
     const sendToast = vi.spyOn(utils, 'sendToast');
     const { result } = renderHook(() => useGame());
@@ -295,5 +305,23 @@ describe('useGame', () => {
     await act(() => result.current.cancelMove());
     expect(cancelMoveEndpoint).not.toHaveBeenCalled();
     expect(handleNotificationResponse).not.toHaveBeenCalled();
+  });
+
+  it('No puedo seleccionar una carta de figura de otro jugador si el jugador tiene una bloqueada', () => {
+    useGameStore.setState({ game: GAME });
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleClickCard(GAME.players[1].cardsFigure[0]);
+    });
+    expect(result.current.selectedCard).toBeUndefined();
+  });
+
+  it('No puedo seleccionar una carta de figura si el jugador tiene menos de 3 cartas', () => {
+    useGameStore.setState({ game: GAME });
+    const { result } = renderHook(() => useGame());
+    act(() => {
+      result.current.handleClickCard(GAME.players[3].cardsFigure[0]);
+    });
+    expect(result.current.selectedCard).toBeUndefined();
   });
 });

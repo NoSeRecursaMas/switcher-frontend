@@ -88,6 +88,26 @@ export default function handlers(baseUri: string) {
       }
     ),
 
+    http.put<GameIDPath, PlayerID, null | ErrorType, string>(
+      `${baseUri}games/:gameID/block`,
+      ({ params }) => {
+        const { gameID } = params;
+        if (parseInt(gameID) === -1) {
+          return HttpResponse.json(
+            {
+              detail: 'El juego no existe',
+            },
+            {
+              status: 404,
+            }
+          );
+        }
+        return HttpResponse.json(null, {
+          status: 201,
+        });
+      }
+    ),
+
     http.delete<GameIDPath, PlayerID, null | ErrorType, string>(
       `${baseUri}/games/:gameID/movement`,
       ({ params }) => {

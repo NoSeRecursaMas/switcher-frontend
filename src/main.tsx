@@ -11,7 +11,7 @@ async function enableMocking() {
 }
 
 const config = {
-  initialColorMode: 'night',
+  initialColorMode: 'dark',
   useSystemColorMode: false,
 };
 

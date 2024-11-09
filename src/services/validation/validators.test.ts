@@ -258,6 +258,7 @@ describe('validatePlayerInGame', () => {
       isActive: true,
       sizeDeckFigure: 6,
       cardsFigure: GAME.players[0].cardsFigure,
+      cardsMovement: GAME.players[0].cardsMovement,
     });
     expect(sendToast).not.toHaveBeenCalled();
   });

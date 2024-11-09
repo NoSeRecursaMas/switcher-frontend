@@ -11,6 +11,7 @@ import genji from '/avatars/genji.png';
 import farquaad from '/avatars/farquaad.png';
 import principe from '/avatars/principe.png';
 import fiona from '/avatars/fiona.png';
+import MoveDeck from './moveDeck';
 
 const getAvatar = (playerID: number, position: number) => {
   switch (position) {
@@ -56,7 +57,28 @@ export default function PlayerInfo(props: PlayerInfoProps) {
                 {player.isActive ? player.username : 'Desconectado'}
               </Text>
             </VStack>
-            <FigureDeck figures={player.cardsFigure} vertical={true} />
+            <HStack spacing={2}>
+              {pos === 'left' && (
+                <MoveDeck
+                  cards={player.cardsMovement}
+                  vertical={true}
+                  own={false}
+                />
+              )}
+              <FigureDeck
+                figures={player.cardsFigure}
+                vertical={true}
+                chiquito={true}
+                amount={player.sizeDeckFigure}
+              />
+              {pos === 'right' && (
+                <MoveDeck
+                  cards={player.cardsMovement}
+                  vertical={true}
+                  own={false}
+                />
+              )}
+            </HStack>
           </VStack>
           {pos === 'left' && posEnabledToPlay === player.position && (
             <SlArrowLeft size="4vh" color="white" aria-label="ArrowRight" />
@@ -79,7 +101,17 @@ export default function PlayerInfo(props: PlayerInfoProps) {
                 {player.isActive ? player.username : 'Desconectado'}
               </Text>
             </VStack>
-            <FigureDeck figures={player.cardsFigure} vertical={false} />
+            <MoveDeck
+              cards={player.cardsMovement}
+              vertical={false}
+              own={false}
+            />
+            <FigureDeck
+              figures={player.cardsFigure}
+              vertical={false}
+              chiquito={true}
+              amount={player.sizeDeckFigure}
+            />
           </HStack>
           {posEnabledToPlay === player.position && pos === 'up' && (
             <SlArrowUp size="4vh" color="white" aria-label="ArrowDown" />

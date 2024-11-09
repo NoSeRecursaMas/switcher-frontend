@@ -101,8 +101,6 @@ export const useGame = () => {
 
   const posEnabledToPlay = game?.posEnabledToPlay;
 
-  const cardsMovement = game?.cardsMovement;
-
   const prohibitedColor = game?.prohibitedColor;
 
   const startGame = async () => {
@@ -140,7 +138,9 @@ export const useGame = () => {
   const cancelMove = async () => {
     if (!validatePlayerTurn(player, game)) return;
 
-    if (!cardsMovement?.map((card) => card.isUsed).includes(true)) {
+    if (
+      !currentPlayer?.cardsMovement.map((card) => card.isUsed).includes(true)
+    ) {
       sendToast('No hay movimientos para cancelar', null, 'warning');
       return;
     }
@@ -177,7 +177,6 @@ export const useGame = () => {
     otherPlayersInPos,
     currentPlayer,
     posEnabledToPlay,
-    cardsMovement,
     selectedCard,
     prohibitedColor,
     startGame,
