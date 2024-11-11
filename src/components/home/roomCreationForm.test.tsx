@@ -323,4 +323,51 @@ describe('RoomCreationForm', () => {
     ).toBeInTheDocument();
     expect(mockCreateRoom).not.toHaveBeenCalled();
   });
+
+  it('Se puede crear una sala con una contraseña', async () => {
+    const user = userEvent.setup();
+    const roomName = 'Sala de test';
+    const minPlayers = 2;
+    const maxPlayers = 4;
+    const password = '1234';
+
+    render(<RoomCreationForm isOpen={true} onClose={() => null} />);
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Nombre de la partida' }),
+      roomName
+    );
+    await user.type(
+      screen.getByRole('spinbutton', { name: 'Jugadores mínimos' }),
+      minPlayers.toString()
+    );
+    await user.type(
+      screen.getByRole('spinbutton', { name: 'Jugadores máximos' }),
+      maxPlayers.toString()
+    );
+    await user.type(screen.getByLabelText('Contraseña'), password);
+    await user.click(screen.getByRole('button', { name: 'Crear' }));
+
+    expect(mockCreateRoom).toHaveBeenCalledWith(
+      roomName,
+      maxPlayers,
+      minPlayers,
+      password
+    );
+  });
+
+  it('Se puede mostrar y ocultar la contraseña', async () => {
+    const user = userEvent.setup();
+
+    render(<RoomCreationForm isOpen={true} onClose={() => null} />);
+
+    await user.click(screen.getByRole('button', { name: 'Mostrar' }));
+    expect(screen.getByLabelText('Contraseña')).toHaveAttribute('type', 'text');
+
+    await user.click(screen.getByRole('button', { name: 'Ocultar' }));
+    expect(screen.getByLabelText('Contraseña')).toHaveAttribute(
+      'type',
+      'password'
+    );
+  });
 });

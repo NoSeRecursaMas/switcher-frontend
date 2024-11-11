@@ -140,7 +140,7 @@ export const useGame = () => {
     if (!validatePlayerTurn(player, game)) return;
 
     if (
-      !currentPlayer?.cardsMovement.map((card) => card.isUsed).includes(true)
+      !currentPlayer?.cardsMovement.map((card) => card?.isUsed).includes(true)
     ) {
       sendToast('No hay movimientos para cancelar', null, 'warning');
       return;

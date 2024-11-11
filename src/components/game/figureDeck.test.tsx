@@ -114,4 +114,36 @@ describe('RenderFigureCard', () => {
     render(<FigureDeck figures={mockCards} vertical={false} amount={3} />);
     expect(screen.getByLabelText('Figure deck horizontal')).toBeInTheDocument();
   });
+
+  it('renders with chiquito size', () => {
+    render(
+      <FigureDeck
+        figures={mockCards}
+        vertical={true}
+        amount={3}
+        chiquito={true}
+      />
+    );
+    const buttons = screen.getAllByRole('button');
+    buttons.forEach((button) => {
+      expect(button).toHaveStyle('width: 10vh');
+      expect(button).toHaveStyle('height: 10vh');
+    });
+  });
+
+  it('renders with default size', () => {
+    render(
+      <FigureDeck
+        figures={mockCards}
+        vertical={true}
+        amount={3}
+        chiquito={false}
+      />
+    );
+    const buttons = screen.getAllByRole('button');
+    buttons.forEach((button) => {
+      expect(button).toHaveStyle('width: 12vh');
+      expect(button).toHaveStyle('height: 12vh');
+    });
+  });
 });
