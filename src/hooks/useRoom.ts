@@ -35,6 +35,19 @@ export const useRoom = () => {
     }
 
     if (
+      roomList
+        ?.find((room) => room.roomID === selectedRoomID)
+        ?.playersID.includes(player.playerID)
+    ) {
+      if (roomList.find((room) => room.roomID === selectedRoomID)?.started) {
+        navigate(`/game/${selectedRoomID.toString()}`);
+      } else {
+        navigate(`/room/${selectedRoomID.toString()}`);
+      }
+      return;
+    }
+
+    if (
       roomList?.find((room) => room.roomID === selectedRoomID)?.private &&
       !password
     ) {
