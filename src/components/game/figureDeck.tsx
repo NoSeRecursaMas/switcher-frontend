@@ -147,7 +147,7 @@ export default function FigureDeck(props: FigureDeckProps) {
         transform: 'scale(1.1)',
       }}
       transform={isSelected ? 'scale(1.1)' : 'scale(1)'}
-      filter={selectedCard && !isSelected ? 'brightness(0.5)' : ''}
+      filter={selectedCard && !isSelected && !chiquito ? 'brightness(0.5)' : ''}
     ></Button>
   );
 

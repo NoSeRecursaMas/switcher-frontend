@@ -80,7 +80,7 @@ export default function MoveDeck(props: MoveDeckProps) {
         }
         filter={
           card?.isUsed
-            ? 'grayscale(100%) brightness(0.5)'
+            ? 'grayscale(50%) brightness(0.5)'
             : selectedCard && !isSelected
               ? 'brightness(0.5)'
               : ''
@@ -102,9 +102,9 @@ export default function MoveDeck(props: MoveDeckProps) {
         }
         filter={
           card?.isUsed
-            ? 'grayscale(100%) brightness(0.5)'
+            ? 'grayscale(50%)'
             : selectedCard && !isSelected
-              ? 'brightness(0.5)'
+              ? ''
               : ''
         }
         disabled={card?.isUsed}
