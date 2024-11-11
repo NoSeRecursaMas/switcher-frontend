@@ -201,16 +201,9 @@ export default function RoomList() {
                 handleSelectRoomID(room.roomID);
               }}
               _hover={{
-                bg:
-                  room.actualPlayers === room.maxPlayers
-                    ? undefined
-                    : colorHover,
+                bg: colorHover,
               }}
-              cursor={
-                room.actualPlayers === room.maxPlayers
-                  ? 'not-allowed'
-                  : 'pointer'
-              }
+              cursor={'pointer'}
               bg={selectedRoomID === room.roomID ? colorSelected : undefined}
             >
               <HStack justifyContent="space-between" h="50px">
