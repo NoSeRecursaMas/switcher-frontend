@@ -23,7 +23,6 @@ export default function Game() {
     cancelMove,
     leaveGame,
     posEnabledToPlay,
-    cardsMovement,
     chatMessages,
   } = useGame();
 
@@ -60,10 +59,15 @@ export default function Game() {
             />
           )}
           <HStack spacing={4}>
-            <MoveDeck cards={cardsMovement ?? []} />
+            <MoveDeck
+              cards={currentPlayer?.cardsMovement ?? []}
+              vertical={false}
+              own={true}
+            />
             <FigureDeck
               figures={currentPlayer?.cardsFigure ?? []}
               vertical={false}
+              amount={currentPlayer?.sizeDeckFigure ?? 0}
             />
           </HStack>
         </VStack>
@@ -72,8 +76,9 @@ export default function Game() {
           <Button
             rightIcon={<FaArrowRotateLeft />}
             isDisabled={
-              !cardsMovement?.map((card) => card.isUsed).includes(true) ||
-              posEnabledToPlay !== currentPlayer?.position
+              !currentPlayer?.cardsMovement
+                .map((card) => card?.isUsed)
+                .includes(true) || posEnabledToPlay !== currentPlayer.position
             }
             colorScheme="gray"
             variant="outline"

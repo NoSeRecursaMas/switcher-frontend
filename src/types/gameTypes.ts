@@ -92,6 +92,7 @@ interface PlayerInGame {
   isActive: boolean; // Si abandonó la partida o no
   sizeDeckFigure: number; // Tamaño de la pila de figuras
   cardsFigure: FigureCard[];
+  cardsMovement: (MovementCard | null)[];
 }
 
 interface Game {
@@ -99,9 +100,9 @@ interface Game {
   board: Tile[];
   figuresToUse: CoordsTile[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
   prohibitedColor: Color | undefined;
-  cardsMovement: MovementCard[];
   posEnabledToPlay: number; // Turno
   players: PlayerInGame[];
+  timer: number; // Ni idea si el tipo está bien
 }
 
 interface GameID {
