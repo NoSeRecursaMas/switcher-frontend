@@ -7,26 +7,69 @@ import {
   VStack,
   Tooltip,
   useDisclosure,
-} from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
-import { FaArrowRightToBracket } from "react-icons/fa6";
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Input,
+  Button,
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import { FaArrowRightToBracket } from 'react-icons/fa6';
 
-import RoomCreationForm from "../components/home/roomCreationForm";
-import RoomList from "../components/home/roomList";
+import RoomCreationForm from '../components/home/roomCreationForm';
+import RoomList from '../components/home/roomList';
 
-import { useRoomList } from "../hooks/useRoomList";
-import { usePlayer } from "../hooks/usePlayer";
-import { useRoom } from "../hooks/useRoom";
+import { useRoomList } from '../hooks/useRoomList';
+import { usePlayer } from '../hooks/usePlayer';
+import { useRoom } from '../hooks/useRoom';
+import { useState } from 'react';
 
 export default function Home() {
   const { player } = usePlayer();
-  const { selectedRoomID } = useRoomList();
+  const { selectedRoomID, passwordModalOpen, closePasswordModal } =
+    useRoomList();
   const { joinRoom } = useRoom();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [password, setPassword] = useState<string | undefined>(undefined);
 
   return (
     <Center h="100vh">
       <RoomCreationForm isOpen={isOpen} onClose={onClose} />
+      <Modal isOpen={passwordModalOpen} onClose={closePasswordModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Introduce la contraseña</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="teal"
+              mr={3}
+              onClick={async () => {
+                await joinRoom(password);
+                setPassword(undefined);
+              }}
+            >
+              Unirse
+            </Button>
+            <Button variant="ghost" onClick={closePasswordModal}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <VStack>
         <Heading size="4xl">EL SWITCHER</Heading>
         <HStack>
@@ -51,8 +94,8 @@ export default function Home() {
           <Tooltip
             label={
               selectedRoomID
-                ? "Unirse a la sala"
-                : "Selecciona una sala para unirte"
+                ? 'Unirse a la sala'
+                : 'Selecciona una sala para unirte'
             }
           >
             <IconButton
@@ -61,7 +104,7 @@ export default function Home() {
               aria-label="Join Room"
               colorScheme="teal"
               isDisabled={selectedRoomID === undefined}
-              onClick={joinRoom}
+              onClick={() => joinRoom(password)}
             />
           </Tooltip>
         </HStack>

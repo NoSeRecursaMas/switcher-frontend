@@ -17,12 +17,15 @@ import {
   FormErrorMessage,
   ModalHeader,
   HStack,
-} from "@chakra-ui/react";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { roomSchema } from "../../services/validation/roomSchema";
-import { useRoom } from "../../hooks/useRoom";
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { roomSchema } from '../../services/validation/roomSchema';
+import { useRoom } from '../../hooks/useRoom';
+import { useState } from 'react';
 
 interface roomCreationFormProps {
   isOpen: boolean;
@@ -32,6 +35,7 @@ interface roomCreationFormProps {
 export default function RoomCreationForm(props: roomCreationFormProps) {
   const { isOpen, onClose } = props;
   const { createRoom } = useRoom();
+  const [show, setShow] = useState(false);
 
   const {
     register,
@@ -46,19 +50,54 @@ export default function RoomCreationForm(props: roomCreationFormProps) {
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent maxW="xl">
-        <form onSubmit={handleSubmit((input) => createRoom(input.name, input.maxPlayers, input.minPlayers))}>
+        <form
+          onSubmit={handleSubmit((input) =>
+            createRoom(
+              input.name,
+              input.maxPlayers,
+              input.minPlayers,
+              input.password.length ? input.password : undefined
+            )
+          )}
+        >
           <ModalCloseButton />
           <ModalHeader>Crear partida</ModalHeader>
           <ModalBody>
             <FormControl isRequired isInvalid={!!errors.name}>
               <FormLabel>Nombre de la partida</FormLabel>
+
               <Input
                 autoComplete="off"
                 type="text"
-                {...register("name")}
+                {...register('name')}
                 focusBorderColor="teal.400"
               />
+
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!errors.password}>
+              <FormLabel>Contraseña</FormLabel>
+              <InputGroup>
+                <Input
+                  autoComplete="off"
+                  type={show ? 'text' : 'password'}
+                  {...register('password')}
+                  focusBorderColor="teal.400"
+                  pr="5rem"
+                />
+                <InputRightElement width="5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => {
+                      setShow(!show);
+                    }}
+                  >
+                    {show ? 'Ocultar' : 'Mostrar'}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
             <HStack spacing={4} mt={2}>
               <FormControl isRequired isInvalid={!!errors.minPlayers}>
