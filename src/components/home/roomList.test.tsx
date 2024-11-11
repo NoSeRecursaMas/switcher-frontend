@@ -165,7 +165,7 @@ describe('RoomList', () => {
   it('Filtra las salas por nombre', async () => {
     const user = userEvent.setup();
     render(<RoomList />);
-    
+
     await user.type(screen.getByPlaceholderText('Buscar por nombre'), 'test');
     expect(screen.getByText('Sala de test')).toBeInTheDocument();
     expect(screen.queryByText('Sala llena')).not.toBeInTheDocument();
@@ -174,7 +174,7 @@ describe('RoomList', () => {
   it('Filtra las salas por cantidad de jugadores', async () => {
     const user = userEvent.setup();
     render(<RoomList />);
-    
+
     await user.type(screen.getByLabelText('Cantidad de jugadores'), '2');
     expect(screen.getByText('Sala de test')).toBeInTheDocument();
     expect(screen.queryByText('Sala llena')).not.toBeInTheDocument();
@@ -183,7 +183,7 @@ describe('RoomList', () => {
   it('Ordena las salas por nombre', async () => {
     const user = userEvent.setup();
     render(<RoomList />);
-    
+
     await user.selectOptions(screen.getByRole('combobox'), 'name');
     const rooms = screen.getAllByLabelText('Nombre de la sala');
     expect(rooms[0]).toHaveTextContent('Sala de test');
@@ -194,7 +194,7 @@ describe('RoomList', () => {
   it('Ordena las salas por cantidad de jugadores', async () => {
     const user = userEvent.setup();
     render(<RoomList />);
-    
+
     await user.selectOptions(screen.getByRole('combobox'), 'players');
     const rooms = screen.getAllByLabelText('Nombre de la sala');
     expect(rooms[0]).toHaveTextContent('Sala llena');
@@ -205,7 +205,7 @@ describe('RoomList', () => {
   it('Si no tengo ningun valor en los filtros, se muestran todas las salas', async () => {
     const user = userEvent.setup();
     render(<RoomList />);
-    
+
     await user.type(screen.getByPlaceholderText('Buscar por nombre'), 'test');
     await user.type(screen.getByLabelText('Cantidad de jugadores'), '2');
     await user.clear(screen.getByPlaceholderText('Buscar por nombre'));
@@ -213,5 +213,5 @@ describe('RoomList', () => {
     expect(screen.getByText('Sala de test')).toBeInTheDocument();
     expect(screen.getByText('Sala llena')).toBeInTheDocument();
     expect(screen.getByText('Sala privada')).toBeInTheDocument();
-  })
+  });
 });

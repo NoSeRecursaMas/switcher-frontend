@@ -4,7 +4,7 @@ import Board from '../components/game/board';
 import PlayerInfo from '../components/game/playerInfo';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
-import ProhibitedColor from '../components/game/prohibitedColor';
+import CountdownComponent from '../components/game/countdown';
 import { SlArrowDown } from 'react-icons/sl';
 import { useGame } from '../hooks/useGame';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
@@ -12,6 +12,7 @@ import { FaArrowRotateLeft } from 'react-icons/fa6';
 import { ImExit } from 'react-icons/im';
 import Chat from '../components/game/chat';
 import { ArrowRightIcon } from '@chakra-ui/icons';
+import ProhibitedColor from '../components/game/prohibitedColor';
 
 export default function Game() {
   const { ID } = useParams();
@@ -19,6 +20,7 @@ export default function Game() {
     currentPlayer,
     otherPlayersInPos,
     prohibitedColor,
+    turnTimestamp,
     endTurn,
     cancelMove,
     leaveGame,
@@ -72,6 +74,7 @@ export default function Game() {
           </HStack>
         </VStack>
         <VStack spacing={4}>
+          <CountdownComponent remainingSeconds={turnTimestamp} />
           <ProhibitedColor color={prohibitedColor} />
           <Button
             rightIcon={<FaArrowRotateLeft />}
