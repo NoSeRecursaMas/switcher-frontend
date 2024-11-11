@@ -194,4 +194,52 @@ describe('useRoom', () => {
     await act(() => result.current.createRoom('test', 4, 2));
     expect(createRoomEndpoint).toHaveBeenCalled();
   });
+
+  it('Al unirse a una sala privada sin contraseña, se abre el modal de contraseña', async () => {
+    useRoomListStore.setState({
+      roomList: [
+        {
+          roomID: 1,
+          roomName: 'test',
+          private: true,
+          maxPlayers: 4,
+          actualPlayers: 1,
+          started: false,
+        },
+      ],
+      selectedRoomID: 1,
+    });
+    const openPasswordModal = vi.spyOn(
+      useRoomListStore.getState(),
+      'openPasswordModal'
+    );
+    const { result } = renderHook(() => useRoom());
+    await act(() => result.current.joinRoom());
+    expect(openPasswordModal).toHaveBeenCalled();
+  });
+
+  it('Al unirse a una sala privada con contraseña, no se abre el modal de contraseña', async () => {
+    useRoomListStore.setState({
+      roomList: [
+        {
+          roomID: 1,
+          roomName: 'test',
+          private: true,
+          maxPlayers: 4,
+          actualPlayers: 1,
+          started: false,
+        },
+      ],
+      selectedRoomID: 1,
+    });
+    const openPasswordModal = vi.spyOn(
+      useRoomListStore.getState(),
+      'openPasswordModal'
+    );
+    const joinRoomEndpoint = vi.spyOn(roomEndpoints, 'joinRoom');
+    const { result } = renderHook(() => useRoom());
+    await act(() => result.current.joinRoom('password'));
+    expect(openPasswordModal).not.toHaveBeenCalled();
+    expect(joinRoomEndpoint).toHaveBeenCalled();
+  });
 });

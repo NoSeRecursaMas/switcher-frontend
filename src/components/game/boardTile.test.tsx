@@ -5,7 +5,7 @@ import BoardTile from './boardTile';
 import '@testing-library/jest-dom';
 import { useGameTile } from '../../hooks/useGameTile';
 import { useGame } from '../../hooks/useGame';
-import { ExtendedTile, Color } from '../../types/gameTypes';
+import { ExtendedTile, Color, Movement } from '../../types/gameTypes';
 import { render } from '../../services/testUtils';
 
 vi.mock('../../hooks/useGameTile');
@@ -63,5 +63,18 @@ describe('BoardTile', () => {
     render(<BoardTile tile={mockTile} />);
     const button = screen.getByRole('button');
     expect(button).toHaveStyle('transform: scale(1.1)');
+  });
+
+  it('applies brightness filter when isNotImportant is true', () => {
+    (useGameTile as Mock).mockReturnValue({
+      handleClickTile: mockHandleClickTile,
+      selectedTile: { posX: 4, posY: 4 },
+    });
+    (useGame as Mock).mockReturnValue({
+      selectedCard: { cardID: 1, type: Movement.mov1, isUsed: false },
+    });
+    render(<BoardTile tile={mockTile} />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveStyle('filter: brightness(0.5)');
   });
 });

@@ -1,11 +1,17 @@
-import { sendToast } from "../services/utils";
-import { useRoomListStore } from "../stores/roomListStore";
+import { sendToast } from '../services/utils';
+import { useRoomListStore } from '../stores/roomListStore';
 
 export const useRoomList = () => {
   const selectedRoomID = useRoomListStore((state) => state.selectedRoomID);
   const selectRoomID = useRoomListStore((state) => state.selectRoomID);
   const deselectRoomID = useRoomListStore((state) => state.deselectRoomID);
   const roomList = useRoomListStore((state) => state.roomList);
+  const passwordModalOpen = useRoomListStore(
+    (state) => state.passwordModalOpen
+  );
+  const closePasswordModal = useRoomListStore(
+    (state) => state.closePasswordModal
+  );
 
   const handleSelectRoomID = (newRoomID: number) => {
     const roomData = roomList?.find((room) => room.roomID === newRoomID);
@@ -14,9 +20,9 @@ export const useRoomList = () => {
 
     if (roomData.actualPlayers >= roomData.maxPlayers) {
       sendToast(
-        "La sala está llena",
-        "No puedes unirte a una que ya alcanzó su límite de jugadores",
-        "warning"
+        'La sala está llena',
+        'No puedes unirte a una que ya alcanzó su límite de jugadores',
+        'warning'
       );
       return;
     }
@@ -27,10 +33,12 @@ export const useRoomList = () => {
       selectRoomID(newRoomID);
     }
   };
-  
+
   return {
     roomList,
     selectedRoomID,
     handleSelectRoomID,
+    passwordModalOpen,
+    closePasswordModal,
   };
 };

@@ -11,6 +11,7 @@ import {
 } from 'vitest';
 import { screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 import Home from './home';
 import { useRoom } from '../hooks/useRoom';
 import { useRoomList } from '../hooks/useRoomList';
@@ -107,5 +108,38 @@ describe('Home', () => {
       </ChakraProvider>
     );
     expect(screen.getByLabelText('Join Room')).not.toBeDisabled();
+  });
+
+  it('Opens password modal when join room button is clicked', async () => {
+    const user = userEvent.setup();
+    (useRoomList as Mock).mockReturnValue({
+      selectedRoomID: 1,
+      passwordModalOpen: true,
+      closePasswordModal: vi.fn(),
+    });
+    render(
+      <ChakraProvider>
+        <Home />
+      </ChakraProvider>
+    );
+    await user.click(screen.getByLabelText('Join Room'));
+    expect(screen.getByText('Introduce la contraseña')).toBeInTheDocument();
+  });
+
+  it('Calls joinRoom with password when join button is clicked in modal', async () => {
+    const user = userEvent.setup();
+    (useRoomList as Mock).mockReturnValue({
+      selectedRoomID: 1,
+      passwordModalOpen: true,
+      closePasswordModal: vi.fn(),
+    });
+    render(
+      <ChakraProvider>
+        <Home />
+      </ChakraProvider>
+    );
+    await user.type(screen.getByPlaceholderText('Contraseña'), 'test-password');
+    await user.click(screen.getByText('Unirse'));
+    expect(mockJoinRoom).toHaveBeenCalledWith('test-password');
   });
 });
