@@ -69,7 +69,7 @@ describe('MoveDeck Component', () => {
 
     // Check styles for the second card (used)
     expect(buttons[1]).toHaveStyle('transform: scale(0.9)');
-    expect(buttons[1]).toHaveStyle('filter: grayscale(100%) brightness(0.5)');
+    expect(buttons[1]).toHaveStyle('filter: grayscale(50%) brightness(0.5)');
   });
 
   it('Apply correct style on hover', async () => {

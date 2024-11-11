@@ -86,7 +86,8 @@ describe('RoomCreationForm', () => {
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
       maxPlayers,
-      minPlayers
+      minPlayers,
+      undefined
     );
   });
 
@@ -200,7 +201,8 @@ describe('RoomCreationForm', () => {
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
       maxPlayers,
-      minPlayers
+      minPlayers,
+      undefined
     );
   });
 
@@ -229,7 +231,8 @@ describe('RoomCreationForm', () => {
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
       maxPlayers,
-      minPlayers
+      minPlayers,
+      undefined
     );
   });
 
@@ -258,7 +261,8 @@ describe('RoomCreationForm', () => {
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName,
       maxPlayers,
-      minPlayers
+      minPlayers,
+      undefined
     );
   });
 
@@ -287,7 +291,8 @@ describe('RoomCreationForm', () => {
     expect(mockCreateRoom).toHaveBeenCalledWith(
       roomName.trim(),
       maxPlayers,
-      minPlayers
+      minPlayers,
+      undefined
     );
   });
 
