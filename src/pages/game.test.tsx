@@ -19,6 +19,7 @@ import { render } from '../services/testUtils';
 import { useParams } from 'react-router-dom';
 import PlayerInfo from '../components/game/playerInfo';
 import Board from '../components/game/board';
+import Chat from '../components/game/chat';
 import { GAME } from '../mocks/data/gameData';
 import MoveDeck from '../components/game/moveDeck';
 import FigureDeck from '../components/game/figureDeck';
@@ -34,10 +35,16 @@ vi.mock('../components/game/playerInfo');
 vi.mock('../components/game/board');
 vi.mock('../components/game/moveDeck');
 vi.mock('../components/game/figureDeck');
+vi.mock('../components/game/chat');
 
 describe('Game', () => {
   const mockUseGame = {
-    currentPlayer: { position: 'bottom', cardsFigure: [] },
+    currentPlayer: {
+      position: 'bottom',
+      cardsFigure: [],
+      cardsMovement: [],
+      username: 'player1',
+    },
     otherPlayersInPos: {
       top: GAME.players[2],
       left: GAME.players[3],
@@ -46,17 +53,21 @@ describe('Game', () => {
     endTurn: vi.fn(),
     leaveGame: vi.fn(),
     posEnabledToPlay: 'bottom',
-    cardsMovement: [],
+    chatMessages: [],
   };
+
+  const mockUseGameWebSocket = vi.fn();
 
   beforeEach(() => {
     vi.resetAllMocks();
     (useParams as Mock).mockReturnValue({ ID: '1' });
     (useGame as Mock).mockReturnValue(mockUseGame);
+    (useGameWebSocket as Mock).mockReturnValue(mockUseGameWebSocket);
     (PlayerInfo as Mock).mockReturnValue(<div>PlayerInfoMock</div>);
     (Board as Mock).mockReturnValue(<div>BoardMock</div>);
     (MoveDeck as Mock).mockReturnValue(<div>MoveDeckMock</div>);
     (FigureDeck as Mock).mockReturnValue(<div>FigureDeckMock</div>);
+    (Chat as Mock).mockReturnValue(<div>ChatMock</div>);
   });
 
   afterEach(() => {
@@ -76,6 +87,7 @@ describe('Game', () => {
     expect(screen.getByText('BoardMock')).toBeInTheDocument();
     expect(screen.getByText('MoveDeckMock')).toBeInTheDocument();
     expect(screen.getByText('FigureDeckMock')).toBeInTheDocument();
+    expect(screen.getByText('ChatMock')).toBeInTheDocument();
     // 3 PlayerInfo components
     expect(screen.getAllByText('PlayerInfoMock').length).toBe(3);
 
@@ -125,11 +137,27 @@ describe('Game', () => {
   it('renders MoveDeck and FigureDeck components with correct props', () => {
     render(<Game />);
     expect(MoveDeck).toHaveBeenCalledWith(
-      { cards: mockUseGame.cardsMovement },
+      { cards: [], vertical: false, own: true },
       {}
     );
     expect(FigureDeck).toHaveBeenCalledWith(
-      { figures: mockUseGame.currentPlayer.cardsFigure, vertical: false },
+      {
+        figures: mockUseGame.currentPlayer.cardsFigure,
+        vertical: false,
+        amount: 0,
+      },
+      {}
+    );
+  });
+
+  it('renders the Chat component with correct props', () => {
+    render(<Game />);
+    expect(Chat).toHaveBeenCalledWith(
+      {
+        sendMessage: mockUseGameWebSocket,
+        username: mockUseGame.currentPlayer.username,
+        chatMessages: mockUseGame.chatMessages,
+      },
       {}
     );
   });
@@ -148,16 +176,6 @@ describe('Game', () => {
     render(<Game />);
     const passTurnButton = screen.getByRole('button', { name: 'Pasar turno' });
     expect(passTurnButton).toBeDisabled();
-  });
-
-  it('calls leaveGame when "Abandonar partida" button is clicked', async () => {
-    const user = userEvent.setup();
-    render(<Game />);
-    const leaveGameButton = screen.getByRole('button', {
-      name: 'Abandonar partida',
-    });
-    await user.click(leaveGameButton);
-    expect(mockUseGame.leaveGame).toHaveBeenCalled();
   });
 
   it('displays the arrow icon when posEnabledToPlay matches currentPlayer.position', () => {
@@ -187,12 +205,25 @@ describe('Game', () => {
   it('Cancel move button is enabled when at least one card is used', () => {
     (useGame as Mock).mockReturnValue({
       ...mockUseGame,
-      cardsMovement: [{ isUsed: true, cardID: 1, type: Movement.mov1 }],
+      currentPlayer: {
+        ...mockUseGame.currentPlayer,
+        cardsMovement: [{ type: Movement.mov3, cardID: 3, isUsed: true }],
+      },
     });
     render(<Game />);
     const cancelButton = screen.getByRole('button', {
       name: 'Cancelar movimiento',
     });
     expect(cancelButton).not.toBeDisabled();
+  });
+
+  it('calls leaveGame when "Abandonar partida" button is clicked and confirmed', async () => {
+    window.confirm = vi.fn().mockImplementation(() => true);
+    render(<Game />);
+    const leaveGameButton = screen.getByRole('button', {
+      name: 'Abandonar partida',
+    });
+    await userEvent.click(leaveGameButton);
+    expect(mockUseGame.leaveGame).toHaveBeenCalled();
   });
 });

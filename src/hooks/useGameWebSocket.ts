@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { GameMessage } from '../types/gameTypes';
 import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
@@ -11,11 +11,14 @@ export function useGameWebSocket(gameID: number) {
   const deleteGame = useGameStore((state) => state.deleteGame);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
+  const addChatMessage = useGameStore((state) => state.addChatMessage);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
   const navigate = useNavigate();
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
+    socketRef.current = socket;
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as GameMessage;
@@ -33,6 +36,9 @@ export function useGameWebSocket(gameID: number) {
           'info'
         );
         deleteGame();
+      }
+      if (message.type === 'msg') {
+        addChatMessage(message.payload);
       }
     };
 
@@ -70,4 +76,12 @@ export function useGameWebSocket(gameID: number) {
       }
     };
   }, []);
+
+  const sendMessage = (message: GameMessage) => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(message));
+    }
+  };
+
+  return sendMessage;
 }

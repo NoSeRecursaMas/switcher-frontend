@@ -1,23 +1,5 @@
 import { Movement, Figure, Color } from '../../types/gameTypes';
 
-const MOVEMENT_CARDS = [
-  {
-    type: Movement.mov1,
-    cardID: 1,
-    isUsed: false,
-  },
-  {
-    type: Movement.mov2,
-    cardID: 2,
-    isUsed: false,
-  },
-  {
-    type: Movement.mov3,
-    cardID: 3,
-    isUsed: true,
-  },
-];
-
 const BOARD = Array.from({ length: 36 }, (_, i) => ({
   posX: i % 6,
   posY: Math.floor(i / 6),
@@ -35,6 +17,7 @@ const BOARD = Array.from({ length: 36 }, (_, i) => ({
 export const GAME = {
   gameID: 1,
   board: BOARD,
+  timer: 0,
   figuresToUse: [
     [
       { posX: 1, posY: 1 },
@@ -43,8 +26,7 @@ export const GAME = {
       { posX: 4, posY: 1 },
     ],
   ],
-  prohibitedColor: null,
-  cardsMovement: MOVEMENT_CARDS,
+  prohibitedColor: undefined,
   posEnabledToPlay: 2,
   players: [
     {
@@ -68,6 +50,23 @@ export const GAME = {
           type: Figure.fig03,
           cardID: 3,
           isBlocked: true,
+        },
+      ],
+      cardsMovement: [
+        {
+          type: Movement.mov1,
+          cardID: 1,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov2,
+          cardID: 2,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov3,
+          cardID: 3,
+          isUsed: false,
         },
       ],
     },
@@ -94,6 +93,23 @@ export const GAME = {
           isBlocked: true,
         },
       ],
+      cardsMovement: [
+        {
+          type: Movement.mov4,
+          cardID: 4,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov5,
+          cardID: 5,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov6,
+          cardID: 6,
+          isUsed: false,
+        },
+      ],
     },
     {
       position: 4,
@@ -118,6 +134,23 @@ export const GAME = {
           isBlocked: false,
         },
       ],
+      cardsMovement: [
+        {
+          type: Movement.mov7,
+          cardID: 7,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov1,
+          cardID: 8,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov2,
+          cardID: 9,
+          isUsed: false,
+        },
+      ],
     },
     {
       position: 1,
@@ -130,6 +163,23 @@ export const GAME = {
           type: Figure.fig06,
           cardID: 12,
           isBlocked: true,
+        },
+      ],
+      cardsMovement: [
+        {
+          type: Movement.mov3,
+          cardID: 10,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov4,
+          cardID: 11,
+          isUsed: false,
+        },
+        {
+          type: Movement.mov5,
+          cardID: 12,
+          isUsed: false,
         },
       ],
     },

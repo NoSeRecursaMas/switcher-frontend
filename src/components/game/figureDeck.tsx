@@ -1,4 +1,4 @@
-import { HStack, Button, VStack } from '@chakra-ui/react';
+import { HStack, Button, VStack, Text } from '@chakra-ui/react';
 import fig01 from '/figureCards/fig01.png';
 import fig02 from '/figureCards/fig02.png';
 import fig03 from '/figureCards/fig03.png';
@@ -24,6 +24,8 @@ import fige04 from '/figureCards/fige04.png';
 import fige05 from '/figureCards/fige05.png';
 import fige06 from '/figureCards/fige06.png';
 import fige07 from '/figureCards/fige07.png';
+import figblock from '/figureCards/figblock.png';
+import figreverse from '/figureCards/figreverse.png';
 import { Figure } from '../../types/gameTypes';
 import type { FigureCard } from '../../types/gameTypes';
 import { useGame } from '../../hooks/useGame';
@@ -107,17 +109,22 @@ function getImgFigureCard(card: FigureCard) {
       img = fige07;
       break;
   }
+  if (card.isBlocked) {
+    img = figblock;
+  }
 
   return img;
 }
 
 interface FigureDeckProps {
   figures: FigureCard[];
+  amount: number;
   vertical: boolean;
+  chiquito?: boolean;
 }
 
 export default function FigureDeck(props: FigureDeckProps) {
-  const { figures, vertical } = props;
+  const { figures, vertical, chiquito } = props;
   const { handleClickCard, selectedCard } = useGame();
 
   const RenderFigureCard = ({
@@ -134,8 +141,8 @@ export default function FigureDeck(props: FigureDeckProps) {
       backgroundImage={getImgFigureCard(card)}
       backgroundSize="cover"
       variant="unstyled"
-      w="12vh"
-      h="12vh"
+      w={chiquito ? '10vh' : '12vh'}
+      h={chiquito ? '10vh' : '12vh'}
       _hover={{
         transform: 'scale(1.1)',
       }}
@@ -148,6 +155,17 @@ export default function FigureDeck(props: FigureDeckProps) {
     <>
       {vertical ? (
         <VStack spacing={4} aria-label="Figure deck vertical">
+          <Button
+            backgroundImage={figreverse}
+            backgroundSize="cover"
+            variant="unstyled"
+            w={chiquito ? '10vh' : '12vh'}
+            h={chiquito ? '10vh' : '12vh'}
+          >
+            <Text fontSize={chiquito ? '6vh' : '8vh'} color="white">
+              {props.amount}
+            </Text>
+          </Button>
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&
@@ -164,6 +182,18 @@ export default function FigureDeck(props: FigureDeckProps) {
         </VStack>
       ) : (
         <HStack spacing={4} aria-label="Figure deck horizontal">
+          <Button
+            backgroundImage={figreverse}
+            backgroundSize="cover"
+            variant="unstyled"
+            w={chiquito ? '10vh' : '12vh'}
+            h={chiquito ? '10vh' : '12vh'}
+          >
+            <Text fontSize={chiquito ? '6vh' : '8vh'} color="white">
+              {props.amount}
+            </Text>
+          </Button>
+
           {figures.map((card, index) => {
             const isSelected =
               selectedCard &&

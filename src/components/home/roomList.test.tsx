@@ -161,4 +161,57 @@ describe('RoomList', () => {
     render(<RoomList />);
     expect(screen.getByText('No hay salas disponibles')).toBeInTheDocument();
   });
+
+  it('Filtra las salas por nombre', async () => {
+    const user = userEvent.setup();
+    render(<RoomList />);
+
+    await user.type(screen.getByPlaceholderText('Buscar por nombre'), 'test');
+    expect(screen.getByText('Sala de test')).toBeInTheDocument();
+    expect(screen.queryByText('Sala llena')).not.toBeInTheDocument();
+  });
+
+  it('Filtra las salas por cantidad de jugadores', async () => {
+    const user = userEvent.setup();
+    render(<RoomList />);
+
+    await user.type(screen.getByLabelText('Cantidad de jugadores'), '2');
+    expect(screen.getByText('Sala de test')).toBeInTheDocument();
+    expect(screen.queryByText('Sala llena')).not.toBeInTheDocument();
+  });
+
+  it('Ordena las salas por nombre', async () => {
+    const user = userEvent.setup();
+    render(<RoomList />);
+
+    await user.selectOptions(screen.getByRole('combobox'), 'name');
+    const rooms = screen.getAllByLabelText('Nombre de la sala');
+    expect(rooms[0]).toHaveTextContent('Sala de test');
+    expect(rooms[1]).toHaveTextContent('Sala llena');
+    expect(rooms[2]).toHaveTextContent('Sala privada');
+  });
+
+  it('Ordena las salas por cantidad de jugadores', async () => {
+    const user = userEvent.setup();
+    render(<RoomList />);
+
+    await user.selectOptions(screen.getByRole('combobox'), 'players');
+    const rooms = screen.getAllByLabelText('Nombre de la sala');
+    expect(rooms[0]).toHaveTextContent('Sala llena');
+    expect(rooms[1]).toHaveTextContent('Sala de test');
+    expect(rooms[2]).toHaveTextContent('Sala privada');
+  });
+
+  it('Si no tengo ningun valor en los filtros, se muestran todas las salas', async () => {
+    const user = userEvent.setup();
+    render(<RoomList />);
+
+    await user.type(screen.getByPlaceholderText('Buscar por nombre'), 'test');
+    await user.type(screen.getByLabelText('Cantidad de jugadores'), '2');
+    await user.clear(screen.getByPlaceholderText('Buscar por nombre'));
+    await user.clear(screen.getByLabelText('Cantidad de jugadores'));
+    expect(screen.getByText('Sala de test')).toBeInTheDocument();
+    expect(screen.getByText('Sala llena')).toBeInTheDocument();
+    expect(screen.getByText('Sala privada')).toBeInTheDocument();
+  });
 });
