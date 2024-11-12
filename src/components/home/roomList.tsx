@@ -210,9 +210,7 @@ export default function RoomList() {
                 <Heading size="md" w="50%" aria-label="Nombre de la sala">
                   {room.roomName}
                 </Heading>
-                <Text
-                  as={room.actualPlayers === room.maxPlayers ? 's' : undefined}
-                >
+                <Text>
                   {room.actualPlayers}/{room.maxPlayers} jugadores
                 </Text>
                 {room.started ? (
