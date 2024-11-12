@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { RoomDetails } from "../types/roomTypes";
+import { create } from 'zustand';
+import { RoomDetails } from '../types/roomTypes';
 
 interface RoomListState {
   roomList: RoomDetails[] | undefined;
@@ -7,6 +7,11 @@ interface RoomListState {
   selectedRoomID: number | undefined;
   selectRoomID: (roomID: number) => void;
   deselectRoomID: () => void;
+  passwordModalOpen: boolean;
+  openPasswordModal: () => void;
+  closePasswordModal: () => void;
+  roomMessage: string | undefined;
+  setRoomMessage: (message: string | undefined) => void;
 }
 
 export const useRoomListStore = create<RoomListState>((set) => ({
@@ -20,5 +25,16 @@ export const useRoomListStore = create<RoomListState>((set) => ({
   },
   deselectRoomID: () => {
     set({ selectedRoomID: undefined });
+  },
+  passwordModalOpen: false,
+  openPasswordModal: () => {
+    set({ passwordModalOpen: true });
+  },
+  closePasswordModal: () => {
+    set({ passwordModalOpen: false });
+  },
+  roomMessage: undefined,
+  setRoomMessage: (message: string | undefined) => {
+    set({ roomMessage: message });
   },
 }));

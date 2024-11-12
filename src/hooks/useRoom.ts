@@ -17,19 +17,51 @@ export const useRoom = () => {
   const player = usePlayerStore((state) => state.player);
   const room = useRoomStore((state) => state.room);
   const selectedRoomID = useRoomListStore((state) => state.selectedRoomID);
+  const roomList = useRoomListStore((state) => state.roomList);
+  const openPasswordModal = useRoomListStore(
+    (state) => state.openPasswordModal
+  );
+  const closePasswordModal = useRoomListStore(
+    (state) => state.closePasswordModal
+  );
 
   const navigate = useNavigate();
 
-  const joinRoom = async () => {
+  const joinRoom = async (password?: string) => {
     if (!validatePlayerLoaded(player)) return;
     if (!selectedRoomID) {
       sendToast('La información de la sala no es válida', null, 'error');
       return;
     }
 
-    const data = await joinRoomEndpoint(selectedRoomID, {
-      playerID: player.playerID,
-    });
+    if (
+      roomList
+        ?.find((room) => room.roomID === selectedRoomID)
+        ?.playersID.includes(player.playerID)
+    ) {
+      if (roomList.find((room) => room.roomID === selectedRoomID)?.started) {
+        navigate(`/game/${selectedRoomID.toString()}`);
+      } else {
+        navigate(`/room/${selectedRoomID.toString()}`);
+      }
+      return;
+    }
+
+    if (
+      roomList?.find((room) => room.roomID === selectedRoomID)?.private &&
+      !password
+    ) {
+      openPasswordModal();
+      return;
+    }
+
+    const data = await joinRoomEndpoint(
+      selectedRoomID,
+      {
+        playerID: player.playerID,
+      },
+      password
+    );
 
     handleNotificationResponse(
       data,
@@ -37,6 +69,7 @@ export const useRoom = () => {
       'Error al intentar unirse a la sala',
       () => {
         navigate(`/room/${selectedRoomID.toString()}`);
+        closePasswordModal();
       }
     );
   };
@@ -60,7 +93,8 @@ export const useRoom = () => {
   const createRoom = async (
     roomName: string,
     maxPlayers: number,
-    minPlayers: number
+    minPlayers: number,
+    password?: string
   ) => {
     if (!validatePlayerLoaded(player)) return;
 
@@ -69,6 +103,7 @@ export const useRoom = () => {
       roomName,
       minPlayers,
       maxPlayers,
+      password,
     });
     handleNotificationResponse(
       data,

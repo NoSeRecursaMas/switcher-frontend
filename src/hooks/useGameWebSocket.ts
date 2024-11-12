@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { GameMessage } from '../types/gameTypes';
 import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
 import { useNavigate } from 'react-router-dom';
 import { sendToast } from '../services/utils';
+import { useRoomListStore } from '../stores/roomListStore';
 
 export function useGameWebSocket(gameID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -11,11 +12,16 @@ export function useGameWebSocket(gameID: number) {
   const deleteGame = useGameStore((state) => state.deleteGame);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
+  const addChatMessage = useGameStore((state) => state.addChatMessage);
+  const setRoomMessage = useRoomListStore((state) => state.setRoomMessage);
+  const cleanChat = useGameStore((state) => state.cleanChat);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
   const navigate = useNavigate();
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const socket = new WebSocket(webSocketUrl);
+    socketRef.current = socket;
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data as string) as GameMessage;
@@ -27,12 +33,12 @@ export function useGameWebSocket(gameID: number) {
 
       if (message.type === 'end') {
         navigate('/');
-        sendToast(
-          'Partida finalizada',
-          `El ganador es ${message.payload.username}`,
-          'info'
-        );
+        cleanChat();
+        setRoomMessage(message.payload.username);
         deleteGame();
+      }
+      if (message.type === 'msg') {
+        addChatMessage(message.payload);
       }
     };
 
@@ -44,6 +50,7 @@ export function useGameWebSocket(gameID: number) {
           'error'
         );
         navigate('/');
+        cleanChat();
       } else if (e.code === 4005) {
         sendToast(
           'Conexión iniciada en otro dispositivo',
@@ -51,9 +58,11 @@ export function useGameWebSocket(gameID: number) {
           'warning'
         );
         navigate('/');
+        cleanChat();
       } else if (e.code === 4003) {
         sendToast('No se pudo conectar a la partida', e.reason, 'error');
         navigate('/');
+        cleanChat();
       }
     };
 
@@ -70,4 +79,12 @@ export function useGameWebSocket(gameID: number) {
       }
     };
   }, []);
+
+  const sendMessage = (message: GameMessage) => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(message));
+    }
+  };
+
+  return sendMessage;
 }

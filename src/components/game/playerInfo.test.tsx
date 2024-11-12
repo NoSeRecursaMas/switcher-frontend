@@ -24,6 +24,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -37,6 +38,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -50,6 +52,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -63,6 +66,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -76,6 +80,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -89,6 +94,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 1,
       playerID: 123,
       isActive: true,
@@ -102,6 +108,7 @@ describe('PlayerInfo Component', () => {
     const player = {
       username: 'Player1',
       cardsFigure: [],
+      cardsMovement: [],
       position: 2,
       playerID: 123,
       isActive: true,

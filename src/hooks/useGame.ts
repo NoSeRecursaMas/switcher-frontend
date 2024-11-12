@@ -32,10 +32,13 @@ export const useGame = () => {
   const room = useRoomStore((state) => state.room);
   const game = useGameStore((state) => state.game);
   const selectedCard = useGameStore((state) => state.selectedCard);
+  const turnTimestamp = useGameStore((state) => state.game?.timer ?? 0);
   const selectCard = useGameStore((state) => state.selectCard);
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
+  const chatMessages = useGameStore((state) => state.chat);
   const navigate = useNavigate();
+  const cleanChat = useGameStore((state) => state.cleanChat);
 
   const currentPlayer =
     player && game ? getPlayerInGame(player, game) : undefined;
@@ -57,8 +60,27 @@ export const useGame = () => {
       areCardsEqual(cardInHand, card)
     );
 
-    if (!isCardInPlayerHand && isFigureCard(card)) {
-      sendToast('Esa carta no es tuya', null, 'warning');
+    const cardOwner = game?.players.find((playerInGame) =>
+      playerInGame.cardsFigure.some((cardInHand) =>
+        areCardsEqual(cardInHand, card)
+      )
+    );
+
+    const ownerHasBlockedCard = cardOwner?.cardsFigure.some(
+      (cardInHand) => cardInHand.isBlocked
+    );
+
+    if (
+      !isCardInPlayerHand &&
+      isFigureCard(card) &&
+      cardOwner!.cardsFigure.length < 3
+    ) {
+      sendToast('El jugador tiene menos de 3 cartas', null, 'warning');
+      return;
+    }
+
+    if (!isCardInPlayerHand && isFigureCard(card) && ownerHasBlockedCard) {
+      sendToast('El jugador ya tiene una carta bloqueada', null, 'warning');
       return;
     }
 
@@ -81,7 +103,7 @@ export const useGame = () => {
 
   const posEnabledToPlay = game?.posEnabledToPlay;
 
-  const cardsMovement = game?.cardsMovement;
+  const prohibitedColor = game?.prohibitedColor;
 
   const startGame = async () => {
     if (!validatePlayerOwnerRoom(player, room)) return;
@@ -118,7 +140,9 @@ export const useGame = () => {
   const cancelMove = async () => {
     if (!validatePlayerTurn(player, game)) return;
 
-    if (!cardsMovement?.map((card) => card.isUsed).includes(true)) {
+    if (
+      !currentPlayer?.cardsMovement.map((card) => card?.isUsed).includes(true)
+    ) {
       sendToast('No hay movimientos para cancelar', null, 'warning');
       return;
     }
@@ -147,6 +171,7 @@ export const useGame = () => {
       'Error al intentar abandonar la partida',
       () => {
         navigate('/');
+        cleanChat();
       }
     );
   };
@@ -155,12 +180,14 @@ export const useGame = () => {
     otherPlayersInPos,
     currentPlayer,
     posEnabledToPlay,
-    cardsMovement,
     selectedCard,
+    prohibitedColor,
+    turnTimestamp,
     startGame,
     endTurn,
     cancelMove,
     leaveGame,
     handleClickCard,
+    chatMessages,
   };
 };

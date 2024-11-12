@@ -92,16 +92,17 @@ interface PlayerInGame {
   isActive: boolean; // Si abandonó la partida o no
   sizeDeckFigure: number; // Tamaño de la pila de figuras
   cardsFigure: FigureCard[];
+  cardsMovement: (MovementCard | null)[];
 }
 
 interface Game {
   gameID: number;
   board: Tile[];
   figuresToUse: CoordsTile[][]; // Figuras formadas, es una lista de figuras, donde cada figura es una lista de posiciones
-  prohibitedColor: Color | null;
-  cardsMovement: MovementCard[];
+  prohibitedColor: Color | undefined;
   posEnabledToPlay: number; // Turno
   players: PlayerInGame[];
+  timer: number; // Segundos restantes para el próximo turno
 }
 
 interface GameID {
@@ -121,6 +122,13 @@ interface PlayFigureCardRequest {
   figure: { posX: number; posY: number }[];
 }
 
+interface BlockFigureCardRequest {
+  cardID: number;
+  playerID: number;
+  targetID: number;
+  figure: { posX: number; posY: number }[];
+}
+
 interface GameStatusMessage {
   type: 'status';
   payload: Game;
@@ -134,13 +142,24 @@ interface GameEndMessage {
   };
 }
 
-type GameMessage = GameStatusMessage | GameEndMessage;
+interface ChatMessage {
+  username: string;
+  text: string;
+}
+
+interface GameChatMessage {
+  type: 'msg';
+  payload: ChatMessage;
+}
+
+type GameMessage = GameStatusMessage | GameEndMessage | GameChatMessage;
 
 export type {
   Game,
   GameID,
   PlayMovementCardRequest,
   PlayFigureCardRequest,
+  BlockFigureCardRequest,
   GameMessage,
   Tile,
   ExtendedTile,
@@ -148,6 +167,7 @@ export type {
   MovementCard,
   FigureCard,
   PlayerInGame,
+  ChatMessage,
 };
 export { Color, Movement, Figure, isMovementCard, isFigureCard };
 export default Game;
