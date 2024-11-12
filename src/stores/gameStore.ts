@@ -14,6 +14,7 @@ interface GameState {
   setGame: (game: Game) => void;
   deleteGame: () => void;
   addChatMessage: (message: ChatMessage) => void;
+  cleanChat: () => void;
   selectTile: (posX: number, posY: number) => void;
   unselectTile: () => void;
   selectCard: (card: MovementCard | FigureCard) => void;
@@ -33,6 +34,9 @@ export const useGameStore = create<GameState>((set) => ({
   },
   addChatMessage: (message: ChatMessage) => {
     set((state) => ({ chat: [...state.chat, message] }));
+  },
+  cleanChat: () => {
+    set({ chat: [] });
   },
   selectTile: (posX, posY) => {
     set({ selectedTile: { posX, posY } });

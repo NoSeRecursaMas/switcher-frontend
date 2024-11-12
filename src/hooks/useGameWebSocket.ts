@@ -14,6 +14,7 @@ export function useGameWebSocket(gameID: number) {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const addChatMessage = useGameStore((state) => state.addChatMessage);
   const setRoomMessage = useRoomListStore((state) => state.setRoomMessage);
+  const cleanChat = useGameStore((state) => state.cleanChat);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
   const navigate = useNavigate();
   const socketRef = useRef<WebSocket | null>(null);
@@ -32,6 +33,7 @@ export function useGameWebSocket(gameID: number) {
 
       if (message.type === 'end') {
         navigate('/');
+        cleanChat();
         setRoomMessage(message.payload.username);
         deleteGame();
       }
