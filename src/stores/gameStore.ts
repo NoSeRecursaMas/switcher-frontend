@@ -1,12 +1,19 @@
 import { create } from 'zustand';
-import { Game, MovementCard, FigureCard } from '../types/gameTypes';
+import {
+  Game,
+  MovementCard,
+  FigureCard,
+  ChatMessage,
+} from '../types/gameTypes';
 
 interface GameState {
   game: Game | undefined;
+  chat: ChatMessage[];
   selectedTile: { posX: number; posY: number } | undefined;
   selectedCard: MovementCard | FigureCard | undefined;
   setGame: (game: Game) => void;
   deleteGame: () => void;
+  addChatMessage: (message: ChatMessage) => void;
   selectTile: (posX: number, posY: number) => void;
   unselectTile: () => void;
   selectCard: (card: MovementCard | FigureCard) => void;
@@ -15,6 +22,7 @@ interface GameState {
 
 export const useGameStore = create<GameState>((set) => ({
   game: undefined,
+  chat: [],
   selectedTile: undefined,
   selectedCard: undefined,
   setGame: (game: Game) => {
@@ -22,6 +30,9 @@ export const useGameStore = create<GameState>((set) => ({
   },
   deleteGame: () => {
     set({ game: undefined });
+  },
+  addChatMessage: (message: ChatMessage) => {
+    set((state) => ({ chat: [...state.chat, message] }));
   },
   selectTile: (posX, posY) => {
     set({ selectedTile: { posX, posY } });

@@ -11,9 +11,9 @@ export const sendToast = (
     title,
     description,
     status,
-    duration: 9000,
+    duration: 2500,
     isClosable: true,
-    position: 'bottom-left',
+    position: 'top',
   });
 };
 
@@ -37,6 +37,6 @@ export const handleNotificationResponse = (
     sendErrorToast(data, text_error);
   } else {
     action();
-    sendToast(text_success, null, 'success');
+    //sendToast(text_success, null, 'success');
   }
 };
