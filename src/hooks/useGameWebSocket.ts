@@ -4,6 +4,7 @@ import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
 import { useNavigate } from 'react-router-dom';
 import { sendToast } from '../services/utils';
+import { useRoomListStore } from '../stores/roomListStore';
 
 export function useGameWebSocket(gameID: number) {
   const playerID = usePlayerStore((state) => state.player?.playerID ?? 0);
@@ -12,6 +13,7 @@ export function useGameWebSocket(gameID: number) {
   const unselectCard = useGameStore((state) => state.unselectCard);
   const unselectTile = useGameStore((state) => state.unselectTile);
   const addChatMessage = useGameStore((state) => state.addChatMessage);
+  const setRoomMessage = useRoomListStore((state) => state.setRoomMessage);
   const webSocketUrl = `ws://localhost:8000/games/${playerID.toString()}/${gameID.toString()}`;
   const navigate = useNavigate();
   const socketRef = useRef<WebSocket | null>(null);
@@ -30,11 +32,7 @@ export function useGameWebSocket(gameID: number) {
 
       if (message.type === 'end') {
         navigate('/');
-        sendToast(
-          'Partida finalizada',
-          `El ganador es ${message.payload.username}`,
-          'info'
-        );
+        setRoomMessage(message.payload.username);
         deleteGame();
       }
       if (message.type === 'msg') {

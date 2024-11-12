@@ -10,6 +10,8 @@ interface RoomListState {
   passwordModalOpen: boolean;
   openPasswordModal: () => void;
   closePasswordModal: () => void;
+  roomMessage: string | undefined;
+  setRoomMessage: (message: string | undefined) => void;
 }
 
 export const useRoomListStore = create<RoomListState>((set) => ({
@@ -30,5 +32,9 @@ export const useRoomListStore = create<RoomListState>((set) => ({
   },
   closePasswordModal: () => {
     set({ passwordModalOpen: false });
+  },
+  roomMessage: undefined,
+  setRoomMessage: (message: string | undefined) => {
+    set({ roomMessage: message });
   },
 }));

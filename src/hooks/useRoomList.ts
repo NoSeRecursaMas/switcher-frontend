@@ -14,6 +14,8 @@ export const useRoomList = () => {
     (state) => state.closePasswordModal
   );
   const playerID = usePlayer().player?.playerID;
+  const roomMessage = useRoomListStore((state) => state.roomMessage);
+  const setRoomMessage = useRoomListStore((state) => state.setRoomMessage);
 
   const handleSelectRoomID = (newRoomID: number) => {
     const roomData = roomList?.find((room) => room.roomID === newRoomID);
@@ -48,5 +50,7 @@ export const useRoomList = () => {
     handleSelectRoomID,
     passwordModalOpen,
     closePasswordModal,
+    roomMessage,
+    setRoomMessage,
   };
 };
