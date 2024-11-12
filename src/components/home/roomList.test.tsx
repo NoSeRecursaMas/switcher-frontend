@@ -32,6 +32,7 @@ describe('RoomList', () => {
       actualPlayers: 2,
       started: false,
       private: false,
+      playersID: [1000, 1001],
     },
     {
       roomID: 2,
@@ -40,6 +41,7 @@ describe('RoomList', () => {
       maxPlayers: 4,
       private: false,
       started: false,
+      playersID: [1000, 1001, 1002, 1003],
     },
     {
       roomID: 3,
@@ -48,6 +50,7 @@ describe('RoomList', () => {
       maxPlayers: 4,
       private: true,
       started: false,
+      playersID: [1000, 1001],
     },
     {
       roomID: 4,
@@ -56,6 +59,7 @@ describe('RoomList', () => {
       maxPlayers: 4,
       private: false,
       started: true,
+      playersID: [1000, 1001],
     },
   ];
 
