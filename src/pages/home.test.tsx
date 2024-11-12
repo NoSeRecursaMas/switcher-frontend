@@ -142,4 +142,35 @@ describe('Home', () => {
     await user.click(screen.getByText('Unirse'));
     expect(mockJoinRoom).toHaveBeenCalledWith('test-password');
   });
+  it('Displays room message modal when roomMessage is set', () => {
+    (useRoomList as Mock).mockReturnValue({
+      selectedRoomID: 1,
+      roomMessage: 'Player1',
+      setRoomMessage: vi.fn(),
+    });
+    render(
+      <ChakraProvider>
+        <Home />
+      </ChakraProvider>
+    );
+    expect(screen.getByText('El ganador fue...')).toBeInTheDocument();
+    expect(screen.getByText('Player1')).toBeInTheDocument();
+  });
+
+  it('Closes room message modal when close button is clicked', async () => {
+    const user = userEvent.setup();
+    const setRoomMessageMock = vi.fn();
+    (useRoomList as Mock).mockReturnValue({
+      selectedRoomID: 1,
+      roomMessage: 'Player1',
+      setRoomMessage: setRoomMessageMock,
+    });
+    render(
+      <ChakraProvider>
+        <Home />
+      </ChakraProvider>
+    );
+    await user.click(screen.getByText('Cerrar'));
+    expect(setRoomMessageMock).toHaveBeenCalledWith(undefined);
+  });
 });

@@ -30,8 +30,13 @@ import { useState } from 'react';
 
 export default function Home() {
   const { player } = usePlayer();
-  const { selectedRoomID, passwordModalOpen, closePasswordModal } =
-    useRoomList();
+  const {
+    selectedRoomID,
+    passwordModalOpen,
+    closePasswordModal,
+    roomMessage,
+    setRoomMessage,
+  } = useRoomList();
   const { joinRoom } = useRoom();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [password, setPassword] = useState<string | undefined>(undefined);
@@ -39,6 +44,34 @@ export default function Home() {
   return (
     <Center h="100vh">
       <RoomCreationForm isOpen={isOpen} onClose={onClose} />
+      <Modal
+        isOpen={roomMessage !== undefined}
+        onClose={() => {
+          setRoomMessage(undefined);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Partida finalizada</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody textAlign="center">
+            <Text>El ganador fue...</Text>
+            <Text as="b" fontSize="2xl">
+              {roomMessage}
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="gray"
+              onClick={() => {
+                setRoomMessage(undefined);
+              }}
+            >
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Modal isOpen={passwordModalOpen} onClose={closePasswordModal}>
         <ModalOverlay />
         <ModalContent>
