@@ -1,5 +1,6 @@
 import { sendToast } from '../services/utils';
 import { useRoomListStore } from '../stores/roomListStore';
+import { usePlayer } from './usePlayer';
 
 export const useRoomList = () => {
   const selectedRoomID = useRoomListStore((state) => state.selectedRoomID);
@@ -12,10 +13,17 @@ export const useRoomList = () => {
   const closePasswordModal = useRoomListStore(
     (state) => state.closePasswordModal
   );
+  const playerID = usePlayer().player?.playerID;
 
   const handleSelectRoomID = (newRoomID: number) => {
     const roomData = roomList?.find((room) => room.roomID === newRoomID);
     if (!roomData) return; // No debería pasar
+
+    if (roomData.playersID.includes(playerID ?? -1)) {
+      selectRoomID(newRoomID);
+      return;
+    }
+
     if (roomData.started) return; // No debería pasar
 
     if (roomData.actualPlayers >= roomData.maxPlayers) {

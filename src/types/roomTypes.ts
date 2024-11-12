@@ -20,6 +20,7 @@ interface RoomDetails {
   actualPlayers: number;
   started: boolean;
   private: boolean;
+  playersID: number[];
 }
 
 interface CreateRoomRequest {

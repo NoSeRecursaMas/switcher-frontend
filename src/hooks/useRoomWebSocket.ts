@@ -56,6 +56,8 @@ export function useRoomWebSocket(roomID: number) {
       } else if (e.code === 4003) {
         sendToast('No se pudo conectar a la sala', e.reason, 'error');
         navigate('/');
+      } else if (e.code === 4007) {
+        navigate(`/game/${roomID.toString()}`);
       }
     };
 
