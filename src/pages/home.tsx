@@ -54,6 +54,9 @@ export default function Home() {
             />
           </ModalBody>
           <ModalFooter>
+            <Button variant="ghost" onClick={closePasswordModal}>
+              Cancelar
+            </Button>
             <Button
               colorScheme="teal"
               mr={3}
@@ -63,9 +66,6 @@ export default function Home() {
               }}
             >
               Unirse
-            </Button>
-            <Button variant="ghost" onClick={closePasswordModal}>
-              Cancelar
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -11,7 +11,7 @@ export const sendToast = (
     title,
     description,
     status,
-    duration: 1000,
+    duration: 2500,
     isClosable: true,
     position: 'top',
   });
