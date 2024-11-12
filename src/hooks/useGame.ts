@@ -38,6 +38,7 @@ export const useGame = () => {
   const unselectTile = useGameStore((state) => state.unselectTile);
   const chatMessages = useGameStore((state) => state.chat);
   const navigate = useNavigate();
+  const cleanChat = useGameStore((state) => state.cleanChat);
 
   const currentPlayer =
     player && game ? getPlayerInGame(player, game) : undefined;
@@ -170,6 +171,7 @@ export const useGame = () => {
       'Error al intentar abandonar la partida',
       () => {
         navigate('/');
+        cleanChat();
       }
     );
   };

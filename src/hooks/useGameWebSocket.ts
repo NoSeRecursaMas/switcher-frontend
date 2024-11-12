@@ -50,6 +50,7 @@ export function useGameWebSocket(gameID: number) {
           'error'
         );
         navigate('/');
+        cleanChat();
       } else if (e.code === 4005) {
         sendToast(
           'Conexión iniciada en otro dispositivo',
@@ -57,9 +58,11 @@ export function useGameWebSocket(gameID: number) {
           'warning'
         );
         navigate('/');
+        cleanChat();
       } else if (e.code === 4003) {
         sendToast('No se pudo conectar a la partida', e.reason, 'error');
         navigate('/');
+        cleanChat();
       }
     };
 
